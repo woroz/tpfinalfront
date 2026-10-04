@@ -8,7 +8,10 @@ async function readResponse(response) {
   try {
     return JSON.parse(text);
   } catch {
-    throw new Error("El servidor devolvió una respuesta invalida");
+    if (response.status === 401) {
+      throw new Error("Tu sesion expiró o no es valida. Volve a iniciar sesion.");
+    }
+    throw new Error(`El servidor devolvió una respuesta invalida (${response.status})`);
   }
 }
 
@@ -24,9 +27,13 @@ async function request(path, options = {}) {
     credentials: "include",
   });
 
+  if (res.status === 401) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+  }
   const data = await readResponse(res);
   if (!res.ok) {
-    throw new Error(data.message || "No se pudo completar la solicitud");
+    throw new Error(data.message);
   }
 
   return data;
@@ -41,7 +48,7 @@ export async function login(email, password) {
   });
 
   const data = await readResponse(res);
-  if (!res.ok) throw new Error(data.message || "Error al iniciar sesión");
+  if (!res.ok) throw new Error(data.message);
   return data;
 }
 
@@ -53,7 +60,7 @@ export async function register(email, password, nombre, rol) {
   });
 
   const data = await readResponse(res);
-  if (!res.ok) throw new Error(data.message || "Error al registrarse");
+  if (!res.ok) throw new Error(data.message);
   return data;
 }
 
@@ -90,11 +97,11 @@ export async function geocodificarDireccion(direccion) {
   });
   const response = await fetch(`https://nominatim.openstreetmap.org/search?${params}`);
   if (!response.ok) {
-    throw new Error("No se pudo buscar esa dirección");
+    throw new Error("No se pudo buscar esa direccion");
   }
   const results = await response.json();
   if (!results.length) {
-    throw new Error("No encontramos esa dirección. Probá con ciudad y provincia.");
+    throw new Error("No encontramos esa direccion. Proba con ciudad y provincia.");
   }
   return {
     latitud: Number(results[0].lat),

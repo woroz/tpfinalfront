@@ -253,9 +253,131 @@ button {
 .pending-page h1 { margin: 0 0 8px; font-size: 32px; }
 .pending-page p { color: #778195; }
 
+.app-page {
+  min-height: 100vh;
+  padding: 20px 0 0;
+  background: #eef3fb;
+}
+
+.placeholder-content {
+  max-width: 1280px;
+  margin: 70px auto;
+  text-align: center;
+}
+
+.placeholder-content h1 {
+  margin: 0 0 10px;
+  color: #172235;
+  font-size: 36px;
+}
+
+.placeholder-content p {
+  color: #778195;
+}
+
+.app-navbar {
+  position: relative;
+  z-index: 1100;
+  display: flex;
+  width: 100%;
+  min-height: 72px;
+  margin: 0 0 12px;
+  padding: 0 clamp(20px, 4vw, 64px);
+  box-sizing: border-box;
+  align-items: center;
+  gap: clamp(28px, 5vw, 88px);
+}
+
+.navbar-logo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.navbar-logo img {
+  display: block;
+  width: 170px;
+  height: auto;
+}
+
+.navbar-links {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: clamp(12px, 2vw, 28px);
+}
+
+.navbar-link {
+  padding: 12px 10px;
+  color: #536078;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.navbar-link:hover,
+.navbar-link.active {
+  color: #2f62c6;
+}
+
+.navbar-user {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.navbar-avatar {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 0 3px 10px rgba(35, 57, 96, .16);
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.navbar-user-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  display: grid;
+  min-width: 160px;
+  padding: 7px;
+  border: 1px solid #e0e6f0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(35, 57, 96, .16);
+}
+
+.navbar-user-menu a,
+.navbar-user-menu button {
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 8px;
+  color: #344158;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navbar-user-menu a:hover,
+.navbar-user-menu button:hover {
+  background: #f1f5fc;
+  color: #2f62c6;
+}
+
 .map-page {
   min-height: 100vh;
-  padding: 30px clamp(16px, 4vw, 64px);
+  padding: 20px 0 0;
   background: #eef3fb;
 }
 
@@ -357,13 +479,14 @@ button {
 
 .map-shell {
   position: relative;
-  max-width: 1280px;
-  height: calc(100vh - 150px);
+  height: calc(100vh - 106px);
   min-height: 500px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   overflow: hidden;
-  border: 5px solid #fff;
-  border-radius: 24px;
+  border: 0;
+  border-radius: 0;
   box-shadow: 0 20px 55px rgba(47, 74, 125, .16);
 }
 
@@ -399,19 +522,35 @@ button {
 }
 
 .map-help {
-  max-width: 1280px;
-  margin: 12px auto 0;
   color: #778195;
   font-size: 13px;
   text-align: center;
 }
 
 .map-results {
-  max-width: 1280px;
-  margin: 12px auto 0;
   color: #536078;
   font-size: 13px;
   text-align: center;
+}
+
+.map-info-overlay {
+  position: absolute;
+  z-index: 1000;
+  bottom: 18px;
+  left: 50%;
+  display: grid;
+  gap: 6px;
+  width: min(100% - 32px, 620px);
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 5px 15px rgba(20, 45, 86, .15);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.map-info-overlay p {
+  margin: 0;
 }
 
 .professor-profile-preview {
@@ -430,9 +569,20 @@ button {
 }
 
 .profile-preview-top h2 {
-  margin: 0;
+  margin: 0 0 8px;
   color: #172235;
   font-size: 24px;
+}
+
+.professor-profile-button {
+  padding: 0;
+  border: 0;
+  color: #3b6fd6;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
 }
 
 .profile-preview-details {
@@ -514,7 +664,6 @@ button {
   font-size: 10px;
 }
 
-.leaflet-popup-content { margin: 14px; }
 .professor-preview { display: grid; min-width: 235px; grid-template-columns: 38px 1fr; gap: 10px; }
 .preview-avatar,
 .modal-avatar {
@@ -560,6 +709,63 @@ button {
   border-radius: 20px;
   background: white;
   box-shadow: 0 20px 55px rgba(20, 39, 79, .25);
+}
+.map-professor-popup {
+  width: 340px;
+  max-width: none;
+  box-sizing: border-box;
+  padding: 18px;
+  box-shadow: none;
+}
+.map-professor-popup .modal-close {
+  top: 6px;
+  right: 8px;
+}
+.map-professor-card {
+  position: absolute;
+  z-index: 1000;
+  transform: translate(-50%, calc(-100% - 20px));
+  pointer-events: none;
+}
+.map-professor-card .profile-modal {
+  box-shadow: 0 10px 30px rgba(20, 39, 79, .25);
+}
+.map-professor-card .modal-close {
+  pointer-events: auto;
+}
+.map-professor-card::after {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  content: "";
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@media (max-width: 560px) {
+  .app-navbar {
+    flex-wrap: wrap;
+    min-height: 64px;
+    padding: 0 16px;
+    gap: 12px 18px;
+  }
+
+  .navbar-links {
+    order: 3;
+    width: 100%;
+    gap: 18px;
+    overflow-x: auto;
+  }
+
+  .navbar-link {
+    font-size: 13px;
+  }
+
+  .map-professor-popup {
+    width: min(340px, calc(100vw - 32px));
+  }
 }
 .modal-close {
   position: absolute;
@@ -667,10 +873,10 @@ button {
   .auth-card { min-height: 100vh; border-radius: 0; }
   .auth-brand-panel { display: none; }
   .auth-form-panel { width: 100%; padding: 42px 24px; }
-  .map-page { padding: 20px 12px; }
+  .map-page { padding: 12px 0 0; }
   .map-header { align-items: start; }
   .map-brand { font-size: 20px; }
-  .map-shell { height: calc(100vh - 125px); min-height: 450px; border-width: 3px; border-radius: 16px; }
+  .map-shell { height: calc(100vh - 94px); min-height: 450px; border-width: 0; border-radius: 0; }
   .location-search-row { flex-direction: column; }
   .location-search button { min-height: 42px; }
   .professor-list { margin-top: 16px; padding: 18px; }

@@ -3,6 +3,8 @@ import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-lea
 import L from "leaflet";
 import { buscarProfesores, obtenerPerfilProfesor } from "../services/api";
 import professorImage from "../assets/profesor.png";
+import ProfessorCard from "../components/ProfessorCard";
+import Navbar from "../components/Navbar";
 import "leaflet/dist/leaflet.css";
 
 const DEFAULT_CENTER = [-34.6037, -58.3816];
@@ -24,29 +26,6 @@ const professorIcon = L.divIcon({
   iconAnchor: [21, 21],
 });
 
-function getProfessorSubjects(professor) {
-  const materias = professor.materias?.length
-    ? professor.materias
-    : (professor.clases || []);
-
-  return materias
-    .map((item) => (
-      item.materia?.nombreMateria
-      || item.nombreMateria
-      || item.materia?.nombre
-      || item.materia?.nombre_materia
-      || item.nombre
-      || item.nombre_materia
-    ))
-    .filter(Boolean)
-    .filter((subject, index, subjects) => subjects.indexOf(subject) === index)
-    .join(", ");
-}
-
-function getProfessorPrice(professor) {
-  return professor.tarifa ?? professor.tarifa_hora;
-}
-
 function calculateDistanceInKm([fromLatitude, fromLongitude], professor) {
   const latitude = Number(professor.latitud_prof);
   const longitude = Number(professor.longitud_prof);
@@ -62,10 +41,6 @@ function calculateDistanceInKm([fromLatitude, fromLongitude], professor) {
     * Math.sin(longitudeDelta / 2) ** 2;
 
   return 2 * earthRadius * Math.asin(Math.sqrt(haversine));
-}
-
-function getProfessorName(professor) {
-  return professor.usuario?.nombre || professor.nombre || professor.usuario?.email || "Profesor";
 }
 
 function CenterOnLocation({ location }) {
@@ -90,6 +65,37 @@ function MapMovement({ onMove }) {
     },
   });
   return null;
+}
+
+function ProfessorMapCard({ professor, onClose }) {
+  const map = useMap();
+  const [position, setPosition] = useState(null);
+
+  useEffect(() => {
+    const updatePosition = () => {
+      const latitude = Number(professor.latitud_prof);
+      const longitude = Number(professor.longitud_prof);
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
+
+      const point = map.latLngToContainerPoint([latitude, longitude]);
+      setPosition({ left: point.x, top: point.y });
+    };
+
+    updatePosition();
+    map.on("move zoom", updatePosition);
+    return () => map.off("move zoom", updatePosition);
+  }, [map, professor.latitud_prof, professor.longitud_prof]);
+
+  if (!position) return null;
+
+  return (
+    <div
+      className="map-professor-card"
+      style={{ left: position.left, top: position.top }}
+    >
+      <ProfessorCard professor={professor} onClose={onClose} />
+    </div>
+  );
 }
 
 function getBrowserLocation() {
@@ -177,13 +183,7 @@ export default function Buscar() {
 
   return (
     <main className="map-page">
-      <header className="map-header">
-        <div>
-          <span className="map-eyebrow">MentorAr</span>
-          <h1>Profesores cerca tuyo</h1>
-        </div>
-        <div className="map-brand">Mentor<span>Ar</span></div>
-      </header>
+      <Navbar />
 
       <section className="map-shell" aria-label="Mapa interactivo">
         {locationSource === "loading" && (
@@ -191,11 +191,11 @@ export default function Buscar() {
         )}
         {locationSource === "default" && (
           <div className="map-notice">
-            No pudimos obtener tu ubicacioon. Podes mover el mapa manualmente.
+            No pudimos obtener tu ubicacion. Podes mover el mapa manualmente.
           </div>
         )}
         {searchingProfessors && (
-          <div className="map-loading">Buscando profesores en esta zona</div>
+          <div className="map-loading">Buscando profesores en esta zona.</div>
         )}
         <MapContainer
           center={DEFAULT_CENTER}
@@ -221,57 +221,26 @@ export default function Buscar() {
               eventHandlers={{ click: () => handleProfessorClick(profesor) }}
             />
           ))}
+          {selectedProfessor && (
+            <ProfessorMapCard
+              professor={selectedProfessor}
+              onClose={() => setSelectedProfessor(null)}
+            />
+          )}
         </MapContainer>
+        <div className="map-info-overlay">
+          <p className="map-results">
+            {profesores.length
+              ? `${profesores.length} profesores encontrados en el area visible.`
+              : "No hay profesores ubicados en esta zona."}
+          </p>
+          <p className="map-help">
+            Arrastra el mapa para explorar otras zonas. Hace clic en un marcador para ver el perfil.
+          </p>
+        </div>
       </section>
 
       {error && <p className="map-error" role="alert">{error}</p>}
-      <p className="map-results">
-        {profesores.length
-          ? `${profesores.length} profesores encontrados en el área visible`
-          : "No hay profesores ubicados en esta zona."}
-      </p>
-
-      {selectedProfessor && (
-        <div className="profile-modal-backdrop" role="presentation" onClick={() => setSelectedProfessor(null)}>
-          <article className="profile-modal professor-profile-preview" role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
-            <button className="modal-close" type="button" onClick={() => setSelectedProfessor(null)} aria-label="Cerrar">
-              ×
-            </button>
-            <div className="profile-preview-top">
-              <div className="modal-avatar">
-                <img src={professorImage} alt="" />
-              </div>
-              <div>
-                <h2>{getProfessorName(selectedProfessor)}</h2>
-              </div>
-            </div>
-            <div className="profile-preview-details">
-              <div>
-                <strong>Materias: {getProfessorSubjects(selectedProfessor) || "No informadas"}</strong>
-              </div>
-              <div>
-                <strong>
-                  Precio: {getProfessorPrice(selectedProfessor) != null
-                    ? `$${getProfessorPrice(selectedProfessor)} / hora`
-                    : "No informado"}
-                </strong>
-              </div>
-              <div>
-                <strong>
-                  Distancia: {selectedProfessor.distancia != null
-                    ? `${Number(selectedProfessor.distancia).toFixed(1)} km desde tu ubicación`
-                    : "No disponible"}
-                </strong>
-              </div>
-            </div>
-            <p>{selectedProfessor.descripcion || selectedProfessor.usuario?.perfil?.biografia || "Este profesor todavia no agregó una descripcion."}</p>
-          </article>
-        </div>
-      )}
-
-      <p className="map-help">
-        Arrastra el mapa para explorar otras zonas. Hace clic en un marcador para ver el perfil.
-      </p>
     </main>
   );
 }

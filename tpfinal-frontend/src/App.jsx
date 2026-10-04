@@ -3,12 +3,26 @@ import { AuthProvider, useAuth } from "./context/authContext";
 import Buscar from "./pages/buscar";
 import Login from "./pages/login";
 import Register from "./pages/register";
+import Navbar from "./components/Navbar";
 
 function ProfesorPlaceholder() {
   return (
-    <main className="pending-page">
-      <h1>Sesión iniciada</h1>
-      <p>El espacio para profesores estará disponible próximamente.</p>
+    <main className="app-page">
+      <Navbar />
+      <h1>Sesion iniciada</h1>
+      <p>El espacio para profesores estara disponible proximamente.</p>
+    </main>
+  );
+}
+
+function PagePlaceholder({ title, description }) {
+  return (
+    <main className="app-page">
+      <Navbar />
+      <section className="placeholder-content">
+        <h1>{title}</h1>
+        <p>{description}</p>
+      </section>
     </main>
   );
 }
@@ -28,6 +42,46 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Buscar />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inicio"
+        element={
+          <ProtectedRoute>
+            <PagePlaceholder title="Inicio" description="Bienvenido a MentorAr." />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tablon"
+        element={
+          <ProtectedRoute>
+            <PagePlaceholder title="Tablon de anuncios" description="Aca vas a poder publicar y consultar anuncios." />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/biblioteca"
+        element={
+          <ProtectedRoute>
+            <PagePlaceholder title="Biblioteca" description="Aca vas a encontrar recursos para aprender." />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/reportar"
+        element={
+          <ProtectedRoute>
+            <PagePlaceholder title="Reportar" description="Aca vas a poder informar un problema o enviar una sugerencia." />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/perfil"
+        element={
+          <ProtectedRoute>
+            <PagePlaceholder title="Mi perfil" description="Aca vas a poder consultar y editar tu perfil." />
           </ProtectedRoute>
         }
       />
