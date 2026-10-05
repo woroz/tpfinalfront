@@ -4,16 +4,12 @@ import Buscar from "./pages/buscar";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import Navbar from "./components/Navbar";
-
-function ProfesorPlaceholder() {
-  return (
-    <main className="app-page">
-      <Navbar />
-      <h1>Sesion iniciada</h1>
-      <p>El espacio para profesores estara disponible proximamente.</p>
-    </main>
-  );
-}
+import ReservarClase from "./pages/reservarClase";
+import PagoResultado from "./pages/pagoResultado";
+import MisClases from "./pages/misClases";
+import ClasesProfesor from "./pages/clasesProfesor";
+import DisponibilidadProfesor from "./pages/disponibilidadProfesor";
+import "./styles/reservas.css";
 
 function PagePlaceholder({ title, description }) {
   return (
@@ -27,9 +23,13 @@ function PagePlaceholder({ title, description }) {
   );
 }
 
-function ProtectedRoute({ children }) {
-  const { estaAutenticado } = useAuth();
-  return estaAutenticado ? children : <Navigate to="/login" replace />;
+function ProtectedRoute({ children, roles }) {
+  const { estaAutenticado, usuario } = useAuth();
+  if (!estaAutenticado) return <Navigate to="/login" replace />;
+  if (roles && !roles.includes(usuario?.rol)) {
+    return <Navigate to={usuario?.rol === "profesor" ? "/profesor" : "/buscar"} replace />;
+  }
+  return children;
 }
 
 function AppRoutes() {
@@ -88,8 +88,40 @@ function AppRoutes() {
       <Route
         path="/profesor"
         element={
-          <ProtectedRoute>
-            <ProfesorPlaceholder />
+          <ProtectedRoute roles={["profesor"]}>
+            <ClasesProfesor />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profesor/disponibilidad"
+        element={
+          <ProtectedRoute roles={["profesor"]}>
+            <DisponibilidadProfesor />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profesores/:id/reservar"
+        element={
+          <ProtectedRoute roles={["alumno"]}>
+            <ReservarClase />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mis-clases"
+        element={
+          <ProtectedRoute roles={["alumno"]}>
+            <MisClases />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pago/resultado"
+        element={
+          <ProtectedRoute roles={["alumno"]}>
+            <PagoResultado />
           </ProtectedRoute>
         }
       />

@@ -25,6 +25,10 @@ function getAvatarColor(user) {
   return colors[hash % colors.length];
 }
 
+function claseLink({ isActive }) {
+  return isActive ? "navbar-link active" : "navbar-link";
+}
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { usuario, cerrarSesion } = useAuth();
@@ -48,6 +52,21 @@ export default function Navbar() {
         <NavLink className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"} to="/buscar">
           Buscar profesores
         </NavLink>
+        {usuario?.rol === "alumno" && (
+          <NavLink className={claseLink} to="/mis-clases">
+            Mis clases
+          </NavLink>
+        )}
+        {usuario?.rol === "profesor" && (
+          <>
+            <NavLink className={claseLink} to="/profesor" end>
+              Clases programadas
+            </NavLink>
+            <NavLink className={claseLink} to="/profesor/disponibilidad">
+              Disponibilidad
+            </NavLink>
+          </>
+        )}
         <NavLink className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"} to="/tablon">
           Tablón de anuncios
         </NavLink>
