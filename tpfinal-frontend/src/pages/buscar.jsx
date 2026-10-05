@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
-import { buscarProfesores, obtenerPerfilProfesor } from "../services/api";
+import { buscarProfesores,obtenerAreas, obtenerMaterias, obtenerPerfilProfesor } from "../services/api";
 import professorImage from "../assets/profesor.png";
 import ProfessorCard from "../components/ProfessorCard";
 import Navbar from "../components/Navbar";
@@ -123,12 +123,17 @@ export default function Buscar() {
   const [profesores, setProfesores] = useState([]);
   const [selectedProfessor, setSelectedProfessor] = useState(null);
   const [searchingProfessors, setSearchingProfessors] = useState(false);
+  const [materias, setMaterias] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [selectedMateria, setSelectedMateria] = useState("");
+  const [selectedArea, setSelectedArea] = useState("");
+  const [openFilter, setOpenFilter] = useState(null);
   const [error, setError] = useState("");
 
-  async function loadProfessors(mapCenter) {
+  async function loadProfessors(mapCenter, filters = {}) {
     setSearchingProfessors(true);
     try {
-      const response = await buscarProfesores(mapCenter[0], mapCenter[1], 100);
+      const response = await buscarProfesores(mapCenter[0], mapCenter[1], 100, filters);
       setProfesores(response.profesores || []);
       setError("");
     } catch (err) {
@@ -154,10 +159,45 @@ export default function Buscar() {
     };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+
+    Promise.all([obtenerMaterias(), obtenerAreas()])
+      .then(([materiasResponse, areasResponse]) => {
+        if (!active) return;
+        setMaterias(materiasResponse.materias || []);
+        setAreas(areasResponse.areas || []);
+      })
+      .catch((err) => {
+        if (active) setError(err.message);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   async function handleMapMove(mapCenter) {
     setLocation(mapCenter);
-    await loadProfessors(mapCenter);
+    await loadProfessors(mapCenter, {
+      idMateria: selectedMateria,
+      idArea: selectedArea,
+    });
   }
+
+  async function handleFilterChange(nextFilters) {
+    setSelectedMateria(nextFilters.idMateria);
+    setSelectedArea(nextFilters.idArea);
+    setOpenFilter(null);
+    await loadProfessors(location, nextFilters);
+  }
+
+  const selectedMateriaName = materias.find(
+    (materia) => String(materia.id_materia) === String(selectedMateria),
+  )?.nombreMateria || "Materias";
+  const selectedAreaName = areas.find(
+    (area) => String(area.id_area) === String(selectedArea),
+  )?.nombreArea || "Areas";
 
   async function handleProfessorClick(professor) {
     try {
@@ -186,8 +226,84 @@ export default function Buscar() {
       <Navbar />
 
       <section className="map-shell" aria-label="Mapa interactivo">
+        <div className="map-filters" aria-label="Filtros de búsqueda">
+          <div className="map-filter">
+            <button
+              type="button"
+              className="map-filter-button"
+              aria-expanded={openFilter === "materia"}
+              onClick={() => setOpenFilter(openFilter === "materia" ? null : "materia")}
+            >
+              {selectedMateriaName}
+            </button>
+            {openFilter === "materia" && (
+              <div className="map-filter-menu" role="menu">
+                <button
+                  type="button"
+                  className={!selectedMateria ? "active" : ""}
+                  onClick={() => handleFilterChange({
+                    idMateria: "",
+                    idArea: selectedArea,
+                  })}
+                >
+                  Todas las materias
+                </button>
+              {materias.map((materia) => (
+                <button
+                  type="button"
+                  key={materia.id_materia}
+                  className={String(selectedMateria) === String(materia.id_materia) ? "active" : ""}
+                  onClick={() => handleFilterChange({
+                    idMateria: String(materia.id_materia),
+                    idArea: selectedArea,
+                  })}
+                >
+                  {materia.nombreMateria}
+                </button>
+              ))}
+              </div>
+            )}
+          </div>
+          <div className="map-filter">
+            <button
+              type="button"
+              className="map-filter-button"
+              aria-expanded={openFilter === "area"}
+              onClick={() => setOpenFilter(openFilter === "area" ? null : "area")}
+            >
+              {selectedAreaName}
+            </button>
+            {openFilter === "area" && (
+              <div className="map-filter-menu" role="menu">
+                <button
+                  type="button"
+                  className={!selectedArea ? "active" : ""}
+                  onClick={() => handleFilterChange({
+                    idMateria: selectedMateria,
+                    idArea: "",
+                  })}
+                >
+                  Todas las areas
+                </button>
+              {areas.map((area) => (
+                <button
+                  type="button"
+                  key={area.id_area}
+                  className={String(selectedArea) === String(area.id_area) ? "active" : ""}
+                  onClick={() => handleFilterChange({
+                    idMateria: selectedMateria,
+                    idArea: String(area.id_area),
+                  })}
+                >
+                  {area.nombreArea}
+                </button>
+              ))}
+              </div>
+            )}
+          </div>
+        </div>
         {locationSource === "loading" && (
-          <div className="map-loading">Buscando tu ubicacion</div>
+          <div className="map-loading map-loading-location">Buscando tu ubicacion</div>
         )}
         {locationSource === "default" && (
           <div className="map-notice">
@@ -195,7 +311,7 @@ export default function Buscar() {
           </div>
         )}
         {searchingProfessors && (
-          <div className="map-loading">Buscando profesores en esta zona.</div>
+          <div className="map-loading map-loading-search">Buscando profesores en esta zona.</div>
         )}
         <MapContainer
           center={DEFAULT_CENTER}
