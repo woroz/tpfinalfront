@@ -8,6 +8,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [cargando, setCargando] = useState(false);
   const navigate = useNavigate();
   const { guardarSesion } = useAuth();
@@ -15,6 +16,14 @@ export default function Login() {
   async function handleSubmit(event) {
     event.preventDefault();
     setError("");
+    const errors = {};
+    if (!email.trim()) errors.email = "El email es obligatorio";
+    else if (!email.includes("@")) errors.email = "Ingresá un email válido";
+    if (!password) errors.password = "La contraseña es obligatoria";
+    else if (password.length < 6) errors.password = "Debe tener al menos 6 caracteres";
+    setFieldErrors(errors);
+    if (Object.keys(errors).length) return;
+
     setCargando(true);
     try {
       const data = await login(email, password);
@@ -35,7 +44,7 @@ export default function Login() {
         <p>Entra a tu cuenta para buscar o dar clases.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="auth-form">
+      <form onSubmit={handleSubmit} className="auth-form" noValidate>
         <label htmlFor="login-email">Email</label>
         <input
           id="login-email"
@@ -46,6 +55,7 @@ export default function Login() {
           onChange={(event) => setEmail(event.target.value)}
           placeholder="tu@email.com"
         />
+        {fieldErrors.email && <span className="auth-field-error">{fieldErrors.email}</span>}
 
         <label htmlFor="login-password">Contraseña</label>
         <input
@@ -58,6 +68,7 @@ export default function Login() {
           onChange={(event) => setPassword(event.target.value)}
           placeholder="Ingresa tu contraseña"
         />
+        {fieldErrors.password && <span className="auth-field-error">{fieldErrors.password}</span>}
 
         {error && <p className="auth-error" role="alert">{error}</p>}
 

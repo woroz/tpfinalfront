@@ -229,6 +229,12 @@ button {
   font-size: 13px;
 }
 
+.auth-field-error {
+  margin: -8px 0 4px;
+  color: #c03945;
+  font-size: 12px;
+}
+
 .auth-switch {
   margin-top: 24px;
   text-align: center;
@@ -490,11 +496,87 @@ button {
   box-shadow: 0 20px 55px rgba(47, 74, 125, .16);
 }
 
+.map-filters {
+  position: absolute;
+  z-index: 1001;
+  top: 18px;
+  left: 50%;
+  display: flex;
+  gap: 10px;
+  pointer-events: auto;
+  transform: translateX(-50%);
+}
+
+.map-filter {
+  position: relative;
+}
+
+.map-filter-button {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid #dadce0;
+  border-radius: 20px;
+  color: #202124;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(60, 64, 67, .3);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.map-filter-button:hover,
+.map-filter-button[aria-expanded="true"] {
+  border-color: #c5c8cc;
+  background: #f8f9fa;
+  box-shadow: 0 2px 6px rgba(60, 64, 67, .3);
+}
+
+.map-filter-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 1002;
+  display: grid;
+  width: 220px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid #e0e5eb;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(20, 45, 86, .2);
+}
+
+.map-filter-menu button {
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 9px;
+  color: #344158;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.map-filter-menu button:hover,
+.map-filter-menu button.active {
+  color: #2e62d2;
+  background: #f0f5ff;
+}
+
 .professors-map { width: 100%; height: 100%; }
 .map-loading {
   position: absolute;
   z-index: 1000;
-  top: 18px;
+  top: 72px;
   left: 50%;
   padding: 10px 16px;
   border-radius: 99px;
@@ -505,10 +587,14 @@ button {
   transform: translateX(-50%);
 }
 
+.map-loading-search {
+  top: 122px;
+}
+
 .map-notice {
   position: absolute;
   z-index: 1000;
-  top: 18px;
+  top: 122px;
   left: 50%;
   width: max-content;
   max-width: calc(100% - 32px);
@@ -766,6 +852,24 @@ button {
   .map-professor-popup {
     width: min(340px, calc(100vw - 32px));
   }
+
+  .map-filters {
+    width: calc(100% - 24px);
+    justify-content: center;
+  }
+
+  .map-filter {
+    flex: 1;
+  }
+
+  .map-filter-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .map-filter-menu {
+    width: min(220px, calc(100vw - 24px));
+  }
 }
 .modal-close {
   position: absolute;
@@ -868,6 +972,73 @@ button {
   text-align: left;
 }
 
+.ubicacion-overlay {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(20, 32, 53, .42);
+}
+
+.ubicacion-dialog {
+  width: min(100%, 430px);
+  padding: 28px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 18px 50px rgba(20, 39, 79, .25);
+}
+
+.ubicacion-dialog h2 {
+  margin: 0 0 10px;
+  color: #172235;
+  font-size: 22px;
+}
+
+.ubicacion-dialog > p {
+  margin: 0;
+  color: #697489;
+  line-height: 1.55;
+}
+
+.ubicacion-dialog .res-error {
+  margin: 14px 0 0;
+}
+
+.ubicacion-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.ubicacion-actions button {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 9px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.ubicacion-secondary {
+  border: 1px solid #dce4f0;
+  color: #536078;
+  background: #fff;
+}
+
+.ubicacion-primary {
+  border: 1px solid #3b6fd6;
+  color: #fff;
+  background: #3b6fd6;
+}
+
+.ubicacion-actions button:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
 @media (max-width: 720px) {
   .auth-page { padding: 0; align-items: stretch; }
   .auth-card { min-height: 100vh; border-radius: 0; }
@@ -882,4 +1053,7 @@ button {
   .professor-list { margin-top: 16px; padding: 18px; }
   .list-heading { display: block; }
   .list-hint { display: block; margin-top: 6px; }
+  .ubicacion-dialog { padding: 22px; }
+  .ubicacion-actions { flex-direction: column-reverse; }
+  .ubicacion-actions button { width: 100%; }
 }

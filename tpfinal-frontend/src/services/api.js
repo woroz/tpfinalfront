@@ -52,11 +52,11 @@ export async function login(email, password) {
   return data;
 }
 
-export async function register(email, password, nombre, rol) {
+export async function register(email, password, nombre, rol, direccion) {
   const res = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password, nombre, rol }),
+    body: JSON.stringify({ email, password, nombre, rol, direccion }),
   });
 
   const data = await readResponse(res);
@@ -68,13 +68,24 @@ export async function obtenerPerfil() {
   return request("/perfil");
 }
 
-export async function buscarProfesores(latitud, longitud, radio = 100) {
+export async function buscarProfesores(latitud, longitud, radio = 100, filtros = {}) {
   const query = new URLSearchParams({
     latitud: String(latitud),
     longitud: String(longitud),
     radio: String(radio),
   });
+  if (filtros.idMateria) query.set("id_materia", filtros.idMateria);
+  if (filtros.idArea) query.set("id_area", filtros.idArea);
   return request(`/profesores/buscar?${query}`);
+}
+
+export async function obtenerMaterias(idArea) {
+  const query = idArea ? `?id_area=${encodeURIComponent(idArea)}` : "";
+  return request(`/materias${query}`);
+}
+
+export async function obtenerAreas() {
+  return request("/areas");
 }
 
 export async function obtenerPerfilProfesor(idProfesor) {
