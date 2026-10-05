@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import professorImage from "../assets/profesor.png";
+import { useAuth } from "../context/authContext";
 
 function getProfessorSubjects(professor) {
   const materias = professor.materias?.length
@@ -28,6 +30,9 @@ function getProfessorName(professor) {
 }
 
 export default function ProfessorCard({ professor, onClose }) {
+  const navigate = useNavigate();
+  const { usuario } = useAuth();
+
   return (
     <article
       className="profile-modal professor-profile-preview map-professor-popup"
@@ -68,6 +73,15 @@ export default function ProfessorCard({ professor, onClose }) {
           </div>
         </div>
         <p>{professor.descripcion || professor.usuario?.perfil?.biografia || "Este profesor todavia no agregó una descripcion."}</p>
+        {usuario?.rol === "alumno" && professor.id_profesor && (
+          <button
+            className="professor-reserve-button"
+            type="button"
+            onClick={() => navigate(`/profesores/${professor.id_profesor}/reservar`)}
+          >
+            Reservar clase
+          </button>
+        )}
     </article>
   );
 }

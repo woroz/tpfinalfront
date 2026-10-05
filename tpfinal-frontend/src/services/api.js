@@ -109,3 +109,45 @@ export async function geocodificarDireccion(direccion) {
     nombre: results[0].display_name,
   };
 }
+
+export async function obtenerHorariosProfesor(idProfesor, desde, hasta) {
+  const query = new URLSearchParams({ desde, hasta });
+  return request(`/profesores/${idProfesor}/horarios?${query}`);
+}
+
+export async function crearInscripcion(datos) {
+  return request("/inscripciones", {
+    method: "POST",
+    body: JSON.stringify(datos),
+  });
+}
+
+export async function obtenerMisInscripciones(historial = false) {
+  return request(`/inscripciones/mias?historial=${historial}`);
+}
+
+export async function obtenerInscripcion(idInscripcion) {
+  return request(`/inscripciones/${idInscripcion}`);
+}
+
+export async function pagarInscripcion(idInscripcion) {
+  return request(`/inscripciones/${idInscripcion}/pago`, {
+    method: "POST",
+    body: JSON.stringify({ plataforma: "web" }),
+  });
+}
+
+export async function obtenerClasesProgramadas(historial = false) {
+  return request(`/clases/programadas?historial=${historial}`);
+}
+
+export async function obtenerMiDisponibilidad() {
+  return request("/disponibilidad");
+}
+
+export async function guardarMiDisponibilidad(franjas) {
+  return request("/disponibilidad", {
+    method: "PUT",
+    body: JSON.stringify({ franjas }),
+  });
+}

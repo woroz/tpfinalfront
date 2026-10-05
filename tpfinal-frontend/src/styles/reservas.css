@@ -1,0 +1,326 @@
+.res-contenedor {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8px clamp(20px, 4vw, 64px) 56px;
+}
+
+.res-centrado { max-width: 640px; }
+
+.res-volver {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: #3b6fd6;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.res-encabezado h1 {
+  margin: 0 0 6px;
+  color: #172235;
+  font-size: 30px;
+}
+
+.res-encabezado p {
+  margin: 0 0 20px;
+  color: #778195;
+}
+
+.res-encabezado a { color: #3b6fd6; }
+
+.res-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.res-tarjeta {
+  padding: 24px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 40px rgba(47, 74, 125, .12);
+}
+
+.res-tarjeta h2 {
+  margin: 0 0 14px;
+  color: #172235;
+  font-size: 17px;
+}
+
+.res-tarjeta h2:not(:first-child) { margin-top: 24px; }
+
+.res-calendario-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #172235;
+  text-transform: capitalize;
+}
+
+.res-calendario-cabecera button {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #d6deec;
+  border-radius: 9px;
+  color: #3b6fd6;
+  background: #fff;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.res-calendario-cabecera button:disabled { cursor: not-allowed; opacity: .35; }
+
+.res-calendario-grilla {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.res-calendario-letra {
+  padding: 4px 0;
+  color: #8a94a8;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.res-dia {
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 10px;
+  color: #b4bccb;
+  background: transparent;
+  font-size: 14px;
+}
+
+.res-dia:disabled { cursor: not-allowed; }
+
+.res-dia.disponible {
+  color: #2e62d2;
+  background: #f0f5ff;
+  font-weight: 700;
+}
+
+.res-dia.disponible:hover { background: #dfe9ff; }
+
+.res-dia.activo {
+  color: #fff;
+  background: #3b6fd6;
+}
+
+.res-fecha-elegida {
+  margin: 0 0 10px;
+  color: #536078;
+  text-transform: capitalize;
+}
+
+.res-horarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 8px;
+}
+
+.res-horario {
+  padding: 10px 0;
+  border: 1px solid #d6deec;
+  border-radius: 9px;
+  color: #2e62d2;
+  background: #fff;
+  font-weight: 650;
+}
+
+.res-horario:hover { border-color: #3b6fd6; }
+
+.res-horario.activo {
+  border-color: #3b6fd6;
+  color: #fff;
+  background: #3b6fd6;
+}
+
+.res-etiqueta {
+  display: block;
+  margin: 12px 0 6px;
+  color: #536078;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.res-campo {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #d6deec;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.res-resumen {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: #2e62d2;
+  background: #f0f5ff;
+  font-weight: 650;
+  text-transform: capitalize;
+}
+
+.res-boton {
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  padding: 13px 18px;
+  border: 0;
+  border-radius: 9px;
+  color: #fff;
+  background: #3b6fd6;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.res-boton:hover { background: #2f5cbb; }
+.res-boton:disabled { cursor: not-allowed; opacity: .55; }
+
+.res-enlace { width: auto; }
+
+.res-boton-secundario {
+  padding: 8px 12px;
+  border: 1px solid #d6deec;
+  border-radius: 9px;
+  color: #3b6fd6;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.res-nota {
+  margin: 10px 0 0;
+  color: #778195;
+  font-size: 13px;
+}
+
+.res-mensaje { color: #778195; }
+.res-mensaje a { color: #3b6fd6; }
+.res-error { color: #c03945; font-size: 14px; }
+.res-ok { color: #1f8a5b; font-size: 14px; }
+
+.res-resultado { text-align: center; }
+.res-resultado h1 { margin: 0 0 10px; color: #172235; font-size: 26px; }
+.res-resultado p { color: #536078; }
+
+.res-pestanias {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 18px;
+  padding: 4px;
+  border-radius: 12px;
+  background: #dde6f6;
+}
+
+.res-pestanias button {
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 9px;
+  color: #536078;
+  background: transparent;
+  font-weight: 650;
+}
+
+.res-pestanias button.activo {
+  color: #2e62d2;
+  background: #fff;
+}
+
+.res-lista {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.res-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 28px rgba(47, 74, 125, .1);
+}
+
+.res-item h2 { margin: 0 0 6px; color: #172235; font-size: 18px; }
+.res-item p { margin: 2px 0; color: #536078; text-transform: capitalize; }
+
+.res-item-lado {
+  display: flex;
+  min-width: 160px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.res-item-lado .res-boton { width: auto; margin-top: 0; }
+.res-item-lado small { color: #778195; }
+
+.res-estado {
+  padding: 5px 12px;
+  border-radius: 999px;
+  color: #536078;
+  background: #e8edf6;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.res-estado.confirmada { color: #1f8a5b; background: #e1f5ec; }
+.res-estado.disponible { color: #2e62d2; background: #e6eeff; }
+.res-estado.pendiente_pago { color: #a8690f; background: #fdf0d9; }
+
+.res-dia-semana {
+  padding: 12px 0;
+  border-bottom: 1px solid #edf1f8;
+}
+
+.res-dia-semana-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #172235;
+}
+
+.res-franja {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: #536078;
+}
+
+.res-franja input {
+  padding: 8px 10px;
+  border: 1px solid #d6deec;
+  border-radius: 9px;
+}
+
+.professor-reserve-button {
+  width: 100%;
+  margin: 12px 0 4px;
+  padding: 11px 14px;
+  border: 0;
+  border-radius: 9px;
+  color: #fff;
+  background: #3b6fd6;
+  font-weight: 650;
+}
+
+.professor-reserve-button:hover { background: #2f5cbb; }
+
+@media (max-width: 800px) {
+  .res-layout { grid-template-columns: 1fr; }
+  .res-item { flex-direction: column; }
+  .res-item-lado { align-items: flex-start; }
+}
