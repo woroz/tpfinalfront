@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { obtenerMisInscripciones, pagarInscripcion } from "../services/api";
+import { obtenerMisInscripciones } from "../services/api";
 import { formatearFecha, formatearHora, formatearPrecio } from "../utils/fechas";
 
 const ETIQUETAS = {
@@ -16,7 +16,6 @@ export default function MisClases() {
   const [inscripciones, setInscripciones] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
-  const [pagando, setPagando] = useState(null);
 
   useEffect(() => {
     let activo = true;
@@ -41,18 +40,6 @@ export default function MisClases() {
     if (valor === historial) return;
     setCargando(true);
     setHistorial(valor);
-  }
-
-  async function pagar(idInscripcion) {
-    setPagando(idInscripcion);
-    setError("");
-    try {
-      const data = await pagarInscripcion(idInscripcion);
-      window.location.assign(data.urlPago);
-    } catch (err) {
-      setError(err.message);
-      setPagando(null);
-    }
   }
 
   return (
@@ -88,20 +75,25 @@ export default function MisClases() {
               <div>
                 <h2>{item.clase.titulo}</h2>
                 <p>Con {item.profesor.nombre}</p>
-                <p>{formatearFecha(item.clase.inicio)} · {formatearHora(item.clase.inicio)} a {formatearHora(item.clase.fin)}</p>
+                <p>{formatearFecha(item.clase.inicio)}, de {formatearHora(item.clase.inicio)} a {formatearHora(item.clase.fin)}</p>
                 <p>{formatearPrecio(item.clase.precio)}</p>
               </div>
               <div className="res-item-lado">
                 <span className={`res-estado ${item.estado}`}>{ETIQUETAS[item.estado] || item.estado}</span>
                 {item.estado === "pendiente_pago" && (
                   <>
-                    <button type="button" className="res-boton" disabled={pagando === item.id_inscripcion} onClick={() => pagar(item.id_inscripcion)}>
-                      {pagando === item.id_inscripcion ? "Redirigiendo…" : "Pagar ahora"}
-                    </button>
+                    <Link className="res-boton res-enlace res-boton-chico" to={`/mis-clases/${item.id_inscripcion}/pagar`}>
+                      Pagar clase
+                    </Link>
                     {item.expira_en && (
                       <small>Disponible hasta las {formatearHora(item.expira_en)}</small>
                     )}
                   </>
+                )}
+                {item.estado === "confirmada" && item.pago && (
+                  <Link className="perfil-enlace" to={`/mis-clases/${item.id_inscripcion}/pagar`}>
+                    Ver comprobante
+                  </Link>
                 )}
               </div>
             </li>

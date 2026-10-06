@@ -9,6 +9,10 @@ import PagoResultado from "./pages/pagoResultado";
 import MisClases from "./pages/misClases";
 import ClasesProfesor from "./pages/clasesProfesor";
 import DisponibilidadProfesor from "./pages/disponibilidadProfesor";
+import PerfilProfesor from "./pages/perfilProfesor";
+import PagarClase from "./pages/pagarClase";
+import MisPagos from "./pages/misPagos";
+import CrearClaseProfesor from "./pages/crearClaseProfesor";
 import "./styles/reservas.css";
 
 function PagePlaceholder({ title, description }) {
@@ -102,6 +106,22 @@ function AppRoutes() {
         }
       />
       <Route
+        path="/profesor/crear-clase"
+        element={
+          <ProtectedRoute roles={["profesor"]}>
+            <CrearClaseProfesor />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profesores/:id"
+        element={
+          <ProtectedRoute>
+            <PerfilProfesor />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/profesores/:id/reservar"
         element={
           <ProtectedRoute roles={["alumno"]}>
@@ -114,6 +134,22 @@ function AppRoutes() {
         element={
           <ProtectedRoute roles={["alumno"]}>
             <MisClases />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mis-clases/:id/pagar"
+        element={
+          <ProtectedRoute roles={["alumno"]}>
+            <PagarClase />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mis-pagos"
+        element={
+          <ProtectedRoute roles={["alumno"]}>
+            <MisPagos />
           </ProtectedRoute>
         }
       />

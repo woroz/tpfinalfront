@@ -88,6 +88,30 @@ export async function obtenerAreas() {
   return request("/areas");
 }
 
+export async function crearArea(nombreArea) {
+  return request("/areas", {
+    method: "POST",
+    body: JSON.stringify({ nombreArea }),
+  });
+}
+
+export async function crearMateria(nombreMateria, idArea) {
+  return request("/materias", {
+    method: "POST",
+    body: JSON.stringify({
+      nombreMateria,
+      id_area_conocimiento: idArea,
+    }),
+  });
+}
+
+export async function crearClase(datos) {
+  return request("/clases/crear", {
+    method: "POST",
+    body: JSON.stringify(datos),
+  });
+}
+
 export async function obtenerPerfilProfesor(idProfesor) {
   return request(`/profesores/${idProfesor}`);
 }
@@ -160,5 +184,16 @@ export async function guardarMiDisponibilidad(franjas) {
   return request("/disponibilidad", {
     method: "PUT",
     body: JSON.stringify({ franjas }),
+  });
+}
+
+export async function obtenerPagos() {
+  return request("/pagos/mios");
+}
+
+export async function verificarPago(idPago) {
+  return request("/pagos/verificar", {
+    method: "POST",
+    body: JSON.stringify({ payment_id: String(idPago) }),
   });
 }

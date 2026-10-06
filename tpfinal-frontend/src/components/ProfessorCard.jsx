@@ -48,7 +48,12 @@ export default function ProfessorCard({ professor, onClose }) {
           </div>
           <div>
             <h2 id="professor-card-title">{getProfessorName(professor)}</h2>
-            <button className="professor-profile-button" type="button">
+            <button
+              className="professor-profile-button"
+              type="button"
+              disabled={!professor.id_profesor}
+              onClick={() => navigate(`/profesores/${professor.id_profesor}`)}
+            >
               Ver perfil
             </button>
           </div>
