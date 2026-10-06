@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Calendario from "../components/Calendario";
 import Navbar from "../components/Navbar";
 import { crearInscripcion, obtenerHorariosProfesor } from "../services/api";
@@ -16,6 +16,8 @@ const DIAS_VISIBLES = 60;
 export default function ReservarClase() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const inicioInicial = useRef(params.get("inicio"));
   const [agenda, setAgenda] = useState(null);
   const [version, setVersion] = useState(0);
   const [cargando, setCargando] = useState(true);
@@ -36,6 +38,14 @@ export default function ReservarClase() {
         if (!activo) return;
         setAgenda(data);
         setMateria((actual) => actual || data.profesor.materias[0]?.id_materia || "");
+        if (inicioInicial.current) {
+          const dia = data.dias.find((item) => item.horarios.some((h) => h.inicio === inicioInicial.current));
+          if (dia) {
+            setFecha(dia.fecha);
+            setHorario(dia.horarios.find((h) => h.inicio === inicioInicial.current));
+          }
+          inicioInicial.current = null;
+        }
       })
       .catch((err) => {
         if (activo) setError(err.message);
@@ -95,7 +105,7 @@ export default function ReservarClase() {
     <main className="app-page">
       <Navbar />
       <section className="res-contenedor">
-        <Link className="res-volver" to="/buscar">← Volver al mapa</Link>
+        <Link className="res-volver" to={`/profesores/${id}`}>Volver al perfil</Link>
 
         {cargando && <p className="res-mensaje">Cargando horarios…</p>}
 

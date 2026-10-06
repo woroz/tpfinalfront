@@ -53,9 +53,14 @@ export default function Navbar() {
           Buscar profesores
         </NavLink>
         {usuario?.rol === "alumno" && (
-          <NavLink className={claseLink} to="/mis-clases">
-            Mis clases
-          </NavLink>
+          <>
+            <NavLink className={claseLink} to="/mis-clases">
+              Mis clases
+            </NavLink>
+            <NavLink className={claseLink} to="/mis-pagos">
+              Mis pagos
+            </NavLink>
+          </>
         )}
         {usuario?.rol === "profesor" && (
           <>

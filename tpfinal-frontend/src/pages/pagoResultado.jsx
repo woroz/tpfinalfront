@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { obtenerInscripcion } from "../services/api";
+import { obtenerInscripcion, verificarPago } from "../services/api";
 import { formatearFecha, formatearHora } from "../utils/fechas";
 
 const MAX_INTENTOS = 10;
@@ -10,6 +10,7 @@ const ESPERA_MS = 2000;
 export default function PagoResultado() {
   const [params] = useSearchParams();
   const idInscripcion = params.get("inscripcion");
+  const idPago = params.get("payment_id") || params.get("collection_id");
   const [inscripcion, setInscripcion] = useState(null);
   const [consultando, setConsultando] = useState(Boolean(idInscripcion));
   const [error, setError] = useState("");
@@ -38,12 +39,17 @@ export default function PagoResultado() {
       }
     }
 
-    consultar();
+    async function iniciar() {
+      if (idPago) await verificarPago(idPago).catch(() => null);
+      if (activo) await consultar();
+    }
+
+    iniciar();
     return () => {
       activo = false;
       clearTimeout(temporizador);
     };
-  }, [idInscripcion]);
+  }, [idInscripcion, idPago]);
 
   let titulo = "Estamos verificando tu pago";
   let detalle = "Esto puede demorar unos segundos.";
@@ -52,7 +58,7 @@ export default function PagoResultado() {
     titulo = "No encontramos la reserva";
     detalle = "Revisá tus clases para ver el estado de tus reservas.";
   } else if (inscripcion?.estado === "confirmada") {
-    titulo = "¡Reserva confirmada!";
+    titulo = "¡Pago registrado y clase confirmada!";
     detalle = `Tu clase de ${inscripcion.clase.materia} es el ${formatearFecha(inscripcion.clase.inicio)} a las ${formatearHora(inscripcion.clase.inicio)}.`;
   } else if (inscripcion?.estado === "pendiente_pago" && !consultando) {
     titulo = "Todavía no recibimos el pago";
@@ -70,7 +76,12 @@ export default function PagoResultado() {
           <h1>{titulo}</h1>
           <p>{detalle}</p>
           {error && <p className="res-error" role="alert">{error}</p>}
-          <Link className="res-boton res-enlace" to="/mis-clases">Ver mis clases</Link>
+          {idInscripcion && (
+            <Link className="res-boton res-enlace" to={`/mis-clases/${idInscripcion}/pagar`}>
+              {inscripcion?.estado === "confirmada" ? "Ver comprobante" : "Ver estado del pago"}
+            </Link>
+          )}
+          <Link className="perfil-enlace" to="/mis-clases">Ir a mis clases</Link>
         </div>
       </section>
     </main>

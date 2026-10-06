@@ -162,3 +162,14 @@ export async function guardarMiDisponibilidad(franjas) {
     body: JSON.stringify({ franjas }),
   });
 }
+
+export async function obtenerPagos() {
+  return request("/pagos/mios");
+}
+
+export async function verificarPago(idPago) {
+  return request("/pagos/verificar", {
+    method: "POST",
+    body: JSON.stringify({ payment_id: String(idPago) }),
+  });
+}

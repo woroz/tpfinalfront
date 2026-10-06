@@ -56,7 +56,6 @@
   justify-content: space-between;
   margin-bottom: 10px;
   color: #172235;
-  text-transform: capitalize;
 }
 
 .res-calendario-cabecera button {
@@ -113,7 +112,6 @@
 .res-fecha-elegida {
   margin: 0 0 10px;
   color: #536078;
-  text-transform: capitalize;
 }
 
 .res-horarios {
@@ -162,7 +160,6 @@
   color: #2e62d2;
   background: #f0f5ff;
   font-weight: 650;
-  text-transform: capitalize;
 }
 
 .res-boton {
@@ -253,7 +250,7 @@
 }
 
 .res-item h2 { margin: 0 0 6px; color: #172235; font-size: 18px; }
-.res-item p { margin: 2px 0; color: #536078; text-transform: capitalize; }
+.res-item p { margin: 2px 0; color: #536078; }
 
 .res-item-lado {
   display: flex;
@@ -273,7 +270,7 @@
   background: #e8edf6;
   font-size: 12px;
   font-weight: 700;
-  text-transform: capitalize;
+  display: inline-block;
 }
 
 .res-estado.confirmada { color: #1f8a5b; background: #e1f5ec; }
@@ -323,4 +320,209 @@
   .res-layout { grid-template-columns: 1fr; }
   .res-item { flex-direction: column; }
   .res-item-lado { align-items: flex-start; }
+}
+
+.res-estado.aprobado { color: #1f8a5b; background: #e1f5ec; }
+.res-estado.rechazado { color: #c03945; background: #fbe6e8; }
+.res-estado.reembolsado,
+.res-estado.reembolso_pendiente { color: #536078; background: #e8edf6; }
+.res-estado.expirada { color: #c03945; background: #fbe6e8; }
+
+.res-boton-chico {
+  margin-top: 0;
+  padding: 9px 16px;
+}
+
+.perfil-cabecera {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.perfil-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e6eeff;
+}
+
+.perfil-datos h1 {
+  margin: 0 0 4px;
+  color: #172235;
+  font-size: 28px;
+}
+
+.perfil-linea {
+  margin: 2px 0;
+  color: #536078;
+}
+
+.perfil-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.perfil-chips li {
+  padding: 5px 12px;
+  border-radius: 999px;
+  color: #2e62d2;
+  background: #e6eeff;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.perfil-descripcion {
+  max-width: 62ch;
+  margin: 14px 0 0;
+  color: #394559;
+  line-height: 1.55;
+}
+
+.perfil-reservar {
+  width: auto;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.perfil-grilla { margin-bottom: 20px; }
+
+.perfil-bloque { margin-bottom: 20px; }
+
+.perfil-dia + .perfil-dia { margin-top: 16px; }
+
+.perfil-dia-titulo {
+  margin: 0 0 8px;
+  color: #172235;
+  font-weight: 650;
+}
+
+.perfil-horas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.perfil-horas .res-horario {
+  min-width: 68px;
+  padding: 8px 12px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.perfil-hora-fija { cursor: default; }
+
+.perfil-enlace {
+  display: inline-block;
+  margin-top: 14px;
+  color: #3b6fd6;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.perfil-enlace:hover { text-decoration: underline; }
+
+.res-item-lado .perfil-enlace { margin-top: 0; }
+
+.perfil-semana {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.perfil-semana li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid #edf1f8;
+  color: #172235;
+}
+
+.perfil-semana li span:last-child { color: #536078; text-align: right; }
+.perfil-semana .perfil-sin-atencion { color: #9aa4b8; }
+
+.perfil-clase h3 {
+  margin: 0 0 6px;
+  color: #172235;
+  font-size: 17px;
+}
+
+.perfil-resenas {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.perfil-resenas li {
+  padding-bottom: 14px;
+  border-bottom: 1px solid #edf1f8;
+}
+
+.perfil-resenas li:last-child { padding-bottom: 0; border-bottom: 0; }
+.perfil-resenas span { margin-left: 10px; color: #536078; font-size: 14px; }
+.perfil-resenas p { margin: 6px 0 0; color: #394559; }
+
+.pago-titulo {
+  margin: 0 0 18px;
+  color: #172235;
+  font-size: 24px;
+}
+
+.pago-subtitulo {
+  margin: 24px 0 10px;
+  color: #172235;
+  font-size: 17px;
+}
+
+.pago-detalle {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.pago-detalle > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 11px 0;
+  border-bottom: 1px solid #edf1f8;
+}
+
+.pago-detalle dt { color: #778195; }
+.pago-detalle dd { margin: 0; color: #172235; font-weight: 600; text-align: right; }
+
+.pago-detalle .pago-total dt,
+.pago-detalle .pago-total dd {
+  color: #172235;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.pago-operacion { font-size: 13px; }
+
+@media (max-width: 800px) {
+  .perfil-cabecera { grid-template-columns: 1fr; }
+  .perfil-reservar { width: 100%; }
+}
+
+.res-calendario-cabecera strong::first-letter,
+.res-fecha-elegida::first-letter,
+.res-resumen::first-letter,
+.perfil-dia-titulo::first-letter,
+.res-item p::first-letter,
+.pago-detalle dd::first-letter,
+.res-estado::first-letter {
+  text-transform: uppercase;
 }
