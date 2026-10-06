@@ -12,6 +12,7 @@ import DisponibilidadProfesor from "./pages/disponibilidadProfesor";
 import PerfilProfesor from "./pages/perfilProfesor";
 import PagarClase from "./pages/pagarClase";
 import MisPagos from "./pages/misPagos";
+import CrearClaseProfesor from "./pages/crearClaseProfesor";
 import "./styles/reservas.css";
 
 function PagePlaceholder({ title, description }) {
@@ -101,6 +102,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute roles={["profesor"]}>
             <DisponibilidadProfesor />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profesor/crear-clase"
+        element={
+          <ProtectedRoute roles={["profesor"]}>
+            <CrearClaseProfesor />
           </ProtectedRoute>
         }
       />

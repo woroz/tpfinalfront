@@ -88,6 +88,30 @@ export async function obtenerAreas() {
   return request("/areas");
 }
 
+export async function crearArea(nombreArea) {
+  return request("/areas", {
+    method: "POST",
+    body: JSON.stringify({ nombreArea }),
+  });
+}
+
+export async function crearMateria(nombreMateria, idArea) {
+  return request("/materias", {
+    method: "POST",
+    body: JSON.stringify({
+      nombreMateria,
+      id_area_conocimiento: idArea,
+    }),
+  });
+}
+
+export async function crearClase(datos) {
+  return request("/clases/crear", {
+    method: "POST",
+    body: JSON.stringify(datos),
+  });
+}
+
 export async function obtenerPerfilProfesor(idProfesor) {
   return request(`/profesores/${idProfesor}`);
 }

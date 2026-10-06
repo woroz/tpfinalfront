@@ -294,6 +294,16 @@ button {
   gap: clamp(28px, 5vw, 88px);
 }
 
+.app-navbar::after {
+  position: absolute;
+  right: clamp(20px, 4vw, 64px);
+  bottom: 0;
+  left: clamp(20px, 4vw, 64px);
+  height: 1px;
+  background: #d8e0ed;
+  content: "";
+}
+
 .navbar-logo {
   display: flex;
   flex-shrink: 0;

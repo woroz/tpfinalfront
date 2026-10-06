@@ -316,10 +316,62 @@
 
 .professor-reserve-button:hover { background: #2f5cbb; }
 
+.crear-clase-page {
+  max-width: 760px;
+}
+
+.crear-clase-form {
+  display: grid;
+  gap: 24px;
+}
+
+.crear-clase-seccion {
+  display: grid;
+  gap: 0;
+}
+
+.crear-clase-seccion + .crear-clase-seccion {
+  padding-top: 24px;
+  border-top: 1px solid #edf1f8;
+}
+
+.crear-clase-seccion h2 {
+  margin: 0 0 8px;
+  color: #172235;
+  font-size: 18px;
+}
+
+.crear-clase-inline {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.crear-clase-inline .res-campo {
+  min-width: 0;
+}
+
+.crear-clase-inline .res-boton-secundario {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.crear-clase-dos-columnas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 14px;
+}
+
+.crear-clase-dos-columnas .res-etiqueta {
+  margin-top: 12px;
+}
+
 @media (max-width: 800px) {
   .res-layout { grid-template-columns: 1fr; }
   .res-item { flex-direction: column; }
   .res-item-lado { align-items: flex-start; }
+  .crear-clase-inline { flex-direction: column; }
+  .crear-clase-inline .res-boton-secundario { width: 100%; }
 }
 
 .res-estado.aprobado { color: #1f8a5b; background: #e1f5ec; }
@@ -339,6 +391,10 @@
   gap: 24px;
   align-items: start;
   margin-bottom: 20px;
+  border: 1px solid #b8bdc8;
+  border-radius: 4px;
+  box-shadow: none;
+  font-family: Arial, sans-serif;
 }
 
 .perfil-avatar {
@@ -350,14 +406,20 @@
 }
 
 .perfil-datos h1 {
-  margin: 0 0 4px;
+  margin: 0 0 10px;
   color: #172235;
-  font-size: 28px;
+  font-size: 30px;
+  font-weight: 700;
 }
 
 .perfil-linea {
-  margin: 2px 0;
+  margin: 0;
   color: #536078;
+  font-size: 15px;
+}
+
+.perfil-linea + .perfil-linea {
+  margin-top: 6px;
 }
 
 .perfil-chips {
@@ -382,6 +444,7 @@
   max-width: 62ch;
   margin: 14px 0 0;
   color: #394559;
+  font-size: 15px;
   line-height: 1.55;
 }
 
@@ -391,7 +454,23 @@
   white-space: nowrap;
 }
 
-.perfil-grilla { margin-bottom: 20px; }
+.perfil-grilla {
+  margin-bottom: 20px;
+}
+
+.perfil-grilla > .res-tarjeta,
+.perfil-bloque {
+  border: 1px solid #b8bdc8;
+  border-radius: 4px;
+  box-shadow: none;
+  font-family: Arial, sans-serif;
+}
+
+.perfil-grilla > .res-tarjeta h2,
+.perfil-bloque > h2 {
+  font-size: 16px;
+  font-weight: 700;
+}
 
 .perfil-bloque { margin-bottom: 20px; }
 
@@ -400,6 +479,7 @@
 .perfil-dia-titulo {
   margin: 0 0 8px;
   color: #172235;
+  font-size: 14px;
   font-weight: 650;
 }
 
@@ -446,6 +526,7 @@
   padding: 10px 0;
   border-bottom: 1px solid #edf1f8;
   color: #172235;
+  font-size: 14px;
 }
 
 .perfil-semana li span:last-child { color: #536078; text-align: right; }
@@ -454,7 +535,14 @@
 .perfil-clase h3 {
   margin: 0 0 6px;
   color: #172235;
-  font-size: 17px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.perfil-clase {
+  border: 1px solid #b8bdc8;
+  border-radius: 4px;
+  box-shadow: none;
 }
 
 .perfil-resenas {

@@ -70,6 +70,9 @@ export default function Navbar() {
             <NavLink className={claseLink} to="/profesor/disponibilidad">
               Disponibilidad
             </NavLink>
+            <NavLink className={claseLink} to="/profesor/crear-clase">
+              Crear clase
+            </NavLink>
           </>
         )}
         <NavLink className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"} to="/tablon">
