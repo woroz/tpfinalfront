@@ -79,6 +79,18 @@ export async function buscarProfesores(latitud, longitud, radio = 100, filtros =
   return request(`/profesores/buscar?${query}`);
 }
 
+export async function buscarClases(consulta, latitud, longitud, radio = 100) {
+  return request("/clases/buscar", {
+    method: "POST",
+    body: JSON.stringify({
+      consulta,
+      latitud,
+      longitud,
+      radio,
+    }),
+  });
+}
+
 export async function obtenerMaterias(idArea) {
   const query = idArea ? `?id_area=${encodeURIComponent(idArea)}` : "";
   return request(`/materias${query}`);
