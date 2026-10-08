@@ -18,6 +18,7 @@ export default function ReservarClase() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const inicioInicial = useRef(params.get("inicio"));
+  const materiaInicial = useRef(params.get("materia"));
   const [agenda, setAgenda] = useState(null);
   const [version, setVersion] = useState(0);
   const [cargando, setCargando] = useState(true);
@@ -37,7 +38,8 @@ export default function ReservarClase() {
       .then((data) => {
         if (!activo) return;
         setAgenda(data);
-        setMateria((actual) => actual || data.profesor.materias[0]?.id_materia || "");
+        setMateria((actual) => actual || materiaInicial.current || data.profesor.materias[0]?.id_materia || "");
+        materiaInicial.current = null;
         if (inicioInicial.current) {
           const dia = data.dias.find((item) => item.horarios.some((h) => h.inicio === inicioInicial.current));
           if (dia) {

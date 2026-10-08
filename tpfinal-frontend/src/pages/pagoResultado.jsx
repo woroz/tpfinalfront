@@ -72,16 +72,21 @@ export default function PagoResultado() {
     <main className="app-page">
       <Navbar />
       <section className="res-contenedor res-centrado">
-        <div className="res-tarjeta res-resultado">
+        <div className={`res-tarjeta res-resultado ${inscripcion?.estado === "confirmada" ? "res-resultado-exito" : ""}`}>
+          {inscripcion?.estado === "confirmada" && (
+            <div className="res-resultado-icono" aria-hidden="true">✓</div>
+          )}
           <h1>{titulo}</h1>
-          <p>{detalle}</p>
+          <p className="res-resultado-detalle">{detalle}</p>
           {error && <p className="res-error" role="alert">{error}</p>}
           {idInscripcion && (
-            <Link className="res-boton res-enlace" to={`/mis-clases/${idInscripcion}/pagar`}>
-              {inscripcion?.estado === "confirmada" ? "Ver comprobante" : "Ver estado del pago"}
-            </Link>
+            <div className="res-resultado-acciones">
+              <Link className="res-boton res-enlace" to={`/mis-clases/${idInscripcion}/pagar`}>
+                {inscripcion?.estado === "confirmada" ? "Ver comprobante" : "Ver estado del pago"}
+              </Link>
+              <Link className="res-resultado-secundario" to="/mis-clases">Ir a mis clases</Link>
+            </div>
           )}
-          <Link className="perfil-enlace" to="/mis-clases">Ir a mis clases</Link>
         </div>
       </section>
     </main>

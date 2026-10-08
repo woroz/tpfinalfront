@@ -13,6 +13,7 @@ import PerfilProfesor from "./pages/perfilProfesor";
 import PagarClase from "./pages/pagarClase";
 import MisPagos from "./pages/misPagos";
 import CrearClaseProfesor from "./pages/crearClaseProfesor";
+import DetalleClase from "./pages/detalleClase";
 import "./styles/reservas.css";
 
 function PagePlaceholder({ title, description }) {
@@ -126,6 +127,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute roles={["alumno"]}>
             <ReservarClase />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/clases/:id"
+        element={
+          <ProtectedRoute roles={["alumno"]}>
+            <DetalleClase />
           </ProtectedRoute>
         }
       />

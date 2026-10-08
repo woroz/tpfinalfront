@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
-import { buscarProfesores,obtenerAreas, obtenerMaterias, obtenerPerfilProfesor } from "../services/api";
+import { buscarClases, buscarProfesores, obtenerAreas, obtenerMaterias, obtenerPerfilProfesor } from "../services/api";
 import professorImage from "../assets/profesor.png";
 import ProfessorCard from "../components/ProfessorCard";
 import Navbar from "../components/Navbar";
+import { formatearFecha, formatearHora, formatearPrecio } from "../utils/fechas";
 import "leaflet/dist/leaflet.css";
 
 const DEFAULT_CENTER = [-34.6037, -58.3816];
@@ -117,6 +119,7 @@ function getBrowserLocation() {
 }
 
 export default function Buscar() {
+  const navigate = useNavigate();
   const [location, setLocation] = useState(DEFAULT_CENTER);
   const [userLocation, setUserLocation] = useState(DEFAULT_CENTER);
   const [locationSource, setLocationSource] = useState("loading");
@@ -129,6 +132,11 @@ export default function Buscar() {
   const [selectedArea, setSelectedArea] = useState("");
   const [openFilter, setOpenFilter] = useState(null);
   const [error, setError] = useState("");
+  const [mode, setMode] = useState("profesores");
+  const [classQuery, setClassQuery] = useState("");
+  const [classResults, setClassResults] = useState([]);
+  const [classSearchDone, setClassSearchDone] = useState(false);
+  const [searchingClasses, setSearchingClasses] = useState(false);
 
   async function loadProfessors(mapCenter, filters = {}) {
     setSearchingProfessors(true);
@@ -137,9 +145,29 @@ export default function Buscar() {
       setProfesores(response.profesores || []);
       setError("");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "No se pudieron cargar los profesores.");
     } finally {
       setSearchingProfessors(false);
+    }
+  }
+
+  async function loadClasses(mapCenter, query = classQuery) {
+    if (!query.trim()) {
+      setClassResults([]);
+      setClassSearchDone(false);
+      return;
+    }
+
+    setSearchingClasses(true);
+    try {
+      const response = await buscarClases(query.trim(), mapCenter[0], mapCenter[1], 100);
+      setClassResults(response.clases || []);
+      setClassSearchDone(true);
+      setError("");
+    } catch (err) {
+      setError(err.message || "No se pudieron buscar las clases.");
+    } finally {
+      setSearchingClasses(false);
     }
   }
 
@@ -179,10 +207,14 @@ export default function Buscar() {
 
   async function handleMapMove(mapCenter) {
     setLocation(mapCenter);
-    await loadProfessors(mapCenter, {
-      idMateria: selectedMateria,
-      idArea: selectedArea,
-    });
+    if (mode === "clases") {
+      await loadClasses(mapCenter);
+    } else {
+      await loadProfessors(mapCenter, {
+        idMateria: selectedMateria,
+        idArea: selectedArea,
+      });
+    }
   }
 
   async function handleFilterChange(nextFilters) {
@@ -192,12 +224,31 @@ export default function Buscar() {
     await loadProfessors(location, nextFilters);
   }
 
+  async function handleClassSearch(event) {
+    event.preventDefault();
+    await loadClasses(location);
+  }
+
+  function changeMode(nextMode) {
+    setMode(nextMode);
+    setSelectedProfessor(null);
+    setError("");
+    if (nextMode === "profesores") {
+      setClassResults([]);
+      setClassSearchDone(false);
+      loadProfessors(location, {
+        idMateria: selectedMateria,
+        idArea: selectedArea,
+      });
+    }
+  }
+
   const selectedMateriaName = materias.find(
     (materia) => String(materia.id_materia) === String(selectedMateria),
   )?.nombreMateria || "Materias";
   const selectedAreaName = areas.find(
     (area) => String(area.id_area) === String(selectedArea),
-  )?.nombreArea || "Areas";
+  )?.nombreArea || "Áreas";
 
   async function handleProfessorClick(professor) {
     try {
@@ -226,8 +277,46 @@ export default function Buscar() {
       <Navbar />
 
       <section className="map-shell" aria-label="Mapa interactivo">
+        <div className="map-mode-switch" role="tablist" aria-label="Tipo de búsqueda">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === "profesores"}
+            className={mode === "profesores" ? "active" : ""}
+            onClick={() => changeMode("profesores")}
+          >
+            Buscar profesores
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === "clases"}
+            className={mode === "clases" ? "active" : ""}
+            onClick={() => changeMode("clases")}
+          >
+            Buscar clases
+          </button>
+        </div>
+        {mode === "clases" && (
+          <form className="map-class-search" onSubmit={handleClassSearch}>
+            <label htmlFor="class-search">¿Qué clase estás buscando?</label>
+            <div>
+              <input
+                id="class-search"
+                type="search"
+                value={classQuery}
+                onChange={(event) => setClassQuery(event.target.value)}
+                placeholder="Ej. clase de álgebra o lengua y literatura"
+                maxLength={100}
+              />
+              <button type="submit" disabled={searchingClasses || !classQuery.trim()}>
+                {searchingClasses ? "Buscando..." : "Buscar"}
+              </button>
+            </div>
+          </form>
+        )}
         <div className="map-filters" aria-label="Filtros de búsqueda">
-          <div className="map-filter">
+          {mode === "profesores" && <><div className="map-filter">
             <button
               type="button"
               className="map-filter-button"
@@ -283,7 +372,7 @@ export default function Buscar() {
                     idArea: "",
                   })}
                 >
-                  Todas las areas
+                  Todas las áreas
                 </button>
               {areas.map((area) => (
                 <button
@@ -300,18 +389,44 @@ export default function Buscar() {
               ))}
               </div>
             )}
-          </div>
+          </div></>}
         </div>
         {locationSource === "loading" && (
-          <div className="map-loading map-loading-location">Buscando tu ubicacion</div>
+          <div className="map-loading map-loading-location">Buscando tu ubicación...</div>
         )}
         {locationSource === "default" && (
           <div className="map-notice">
-            No pudimos obtener tu ubicacion. Podes mover el mapa manualmente.
+            No pudimos obtener tu ubicación. Podés mover el mapa manualmente.
           </div>
         )}
-        {searchingProfessors && (
+        {mode === "profesores" && searchingProfessors && (
           <div className="map-loading map-loading-search">Buscando profesores en esta zona.</div>
+        )}
+        {mode === "clases" && searchingClasses && (
+          <div className="map-loading map-loading-search">Buscando clases en esta zona.</div>
+        )}
+        {mode === "clases" && classResults.length > 0 && (
+          <div className="map-class-results" aria-label="Resultados de clases">
+            {classResults.map((clase) => (
+              <button
+                type="button"
+                className="map-class-result"
+                key={clase.id_clase}
+                onClick={() => navigate(`/clases/${clase.id_clase}`, { state: { clase } })}
+              >
+                <strong>{clase.titulo}</strong>
+                <span>{clase.materia.nombre} · {clase.tema}</span>
+                <span>{clase.profesor.nombre} · {formatearPrecio(clase.precio)}</span>
+                <span>{formatearFecha(clase.inicio)} · {formatearHora(clase.inicio)} · {clase.distancia_km} km</span>
+              </button>
+            ))}
+          </div>
+        )}
+        {mode === "clases" && classSearchDone && !searchingClasses && !classResults.length && (
+          <div className="map-class-empty" role="status">
+            No encontramos clases disponibles para “{classQuery}” en un radio de 100 km.
+            Probá con otra materia o mové el mapa hacia otra zona.
+          </div>
         )}
         <MapContainer
           center={DEFAULT_CENTER}
@@ -329,7 +444,7 @@ export default function Buscar() {
             attribution={MAP_TILES.attribution}
             url={MAP_TILES.url}
           />
-          {profesores.map((profesor) => (
+          {mode === "profesores" && profesores.map((profesor) => (
             <Marker
               key={profesor.id_profesor}
               position={[Number(profesor.latitud_prof), Number(profesor.longitud_prof)]}
@@ -337,7 +452,7 @@ export default function Buscar() {
               eventHandlers={{ click: () => handleProfessorClick(profesor) }}
             />
           ))}
-          {selectedProfessor && (
+          {mode === "profesores" && selectedProfessor && (
             <ProfessorMapCard
               professor={selectedProfessor}
               onClose={() => setSelectedProfessor(null)}
@@ -346,12 +461,18 @@ export default function Buscar() {
         </MapContainer>
         <div className="map-info-overlay">
           <p className="map-results">
-            {profesores.length
-              ? `${profesores.length} profesores encontrados en el area visible.`
+            {mode === "clases"
+              ? (classResults.length
+                ? `${classResults.length} clases encontradas en el área visible.`
+                : "Buscá una clase para ver resultados.")
+              : profesores.length
+              ? `${profesores.length} profesores encontrados en el área visible.`
               : "No hay profesores ubicados en esta zona."}
           </p>
           <p className="map-help">
-            Arrastra el mapa para explorar otras zonas. Hace clic en un marcador para ver el perfil.
+            {mode === "clases"
+              ? "Los resultados se ordenan por relevancia y distancia. Hacé clic en una clase para elegir el horario."
+              : "Arrastrá el mapa para explorar otras zonas. Hacé clic en un marcador para ver el perfil."}
           </p>
         </div>
       </section>
