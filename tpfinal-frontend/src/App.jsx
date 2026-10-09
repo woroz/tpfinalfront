@@ -14,6 +14,8 @@ import PagarClase from "./pages/pagarClase";
 import MisPagos from "./pages/misPagos";
 import CrearClaseProfesor from "./pages/crearClaseProfesor";
 import DetalleClase from "./pages/detalleClase";
+import MateriasProfesor from "./pages/materiasProfesor";
+import MiPerfil from "./pages/miPerfil";
 import "./styles/reservas.css";
 
 function PagePlaceholder({ title, description }) {
@@ -85,8 +87,8 @@ function AppRoutes() {
       <Route
         path="/perfil"
         element={
-          <ProtectedRoute>
-            <PagePlaceholder title="Mi perfil" description="Aca vas a poder consultar y editar tu perfil." />
+          <ProtectedRoute roles={["profesor", "alumno"]}>
+            <MiPerfil />
           </ProtectedRoute>
         }
       />
@@ -103,6 +105,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute roles={["profesor"]}>
             <DisponibilidadProfesor />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profesor/materias"
+        element={
+          <ProtectedRoute roles={["profesor"]}>
+            <MateriasProfesor />
           </ProtectedRoute>
         }
       />
