@@ -16,6 +16,7 @@ import CrearClaseProfesor from "./pages/crearClaseProfesor";
 import DetalleClase from "./pages/detalleClase";
 import MateriasProfesor from "./pages/materiasProfesor";
 import MiPerfil from "./pages/miPerfil";
+import { ClaseVirtual } from "./pages/ClaseVirtual";
 import "./styles/reservas.css";
 
 function PagePlaceholder({ title, description }) {
@@ -177,6 +178,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute roles={["alumno"]}>
             <PagoResultado />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/clase-virtual/:id_clase"
+        element={
+          <ProtectedRoute roles={["alumno", "profesor"]}>
+            <ClaseVirtual />
           </ProtectedRoute>
         }
       />
