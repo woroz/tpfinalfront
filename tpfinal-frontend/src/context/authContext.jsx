@@ -53,6 +53,10 @@ export function AuthProvider({ children }) {
     setUsuario(null);
   }
 
+  function actualizarUsuario(datos) {
+    setUsuario((actual) => actual ? { ...actual, ...datos } : actual);
+  }
+
   const value = {
     usuario,
     token,
@@ -60,6 +64,7 @@ export function AuthProvider({ children }) {
     cargandoSesion,
     guardarSesion,
     cerrarSesion,
+    actualizarUsuario,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

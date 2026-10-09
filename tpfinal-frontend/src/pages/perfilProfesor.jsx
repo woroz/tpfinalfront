@@ -65,6 +65,12 @@ export default function PerfilProfesor() {
     });
     return mapa;
   }, [perfil]);
+  const nombresMaterias = useMemo(() => new Map(
+    (perfil?.materias || []).map((item) => [
+      item.materia?.id_materia || item.id_materia,
+      item.materia?.nombreMateria || item.nombreMateria,
+    ]),
+  ), [perfil]);
 
   if (cargando) {
     return (
@@ -103,7 +109,7 @@ export default function PerfilProfesor() {
         <Link className="res-volver" to="/buscar">Volver al mapa</Link>
 
         <header className="res-tarjeta perfil-cabecera">
-          <img className="perfil-avatar" src={professorImage} alt="" />
+          <img className="perfil-avatar" src={perfil.usuario?.perfil?.avatarURL || professorImage} alt="" />
           <div className="perfil-datos">
             <h1>{nombre}</h1>
             <p className="perfil-linea">
@@ -149,15 +155,17 @@ export default function PerfilProfesor() {
                   {dia.horarios.map((horario) => (
                     esAlumno ? (
                       <Link
-                        key={horario.inicio}
+                        key={`${horario.inicio}-${horario.id_materia || "todas"}`}
                         className="res-horario"
-                        to={`/profesores/${id}/reservar?inicio=${encodeURIComponent(horario.inicio)}`}
+                        to={`/profesores/${id}/reservar?inicio=${encodeURIComponent(horario.inicio)}${horario.id_materia ? `&materia=${encodeURIComponent(horario.id_materia)}` : ""}`}
                       >
                         {formatearHora(horario.inicio)}
+                        {` · ${horario.id_materia ? nombresMaterias.get(horario.id_materia) || "Materia" : "Todas"}`}
                       </Link>
                     ) : (
-                      <span key={horario.inicio} className="res-horario perfil-hora-fija">
+                      <span key={`${horario.inicio}-${horario.id_materia || "todas"}`} className="res-horario perfil-hora-fija">
                         {formatearHora(horario.inicio)}
+                        {` · ${horario.id_materia ? nombresMaterias.get(horario.id_materia) || "Materia" : "Todas"}`}
                       </span>
                     )
                   ))}
@@ -181,7 +189,12 @@ export default function PerfilProfesor() {
                     <span>{dia.nombre}</span>
                     <span className={franjas ? "" : "perfil-sin-atencion"}>
                       {franjas
-                        ? franjas.map((franja) => `${franja.desde} a ${franja.hasta}`).join(", ")
+                        ? franjas.map((franja) => {
+                          const materia = franja.id_materia
+                            ? nombresMaterias.get(franja.id_materia) || "Materia"
+                            : "Todas las materias";
+                          return `${materia}: ${franja.desde} a ${franja.hasta}`;
+                        }).join(" · ")
                         : "No atiende"}
                     </span>
                   </li>
