@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { obtenerMisInscripciones } from "../services/api";
@@ -16,6 +17,7 @@ export default function MisClases() {
   const [inscripciones, setInscripciones] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     let activo = true;
@@ -70,7 +72,14 @@ export default function MisClases() {
         )}
 
         <ul className="res-lista">
-          {inscripciones.map((item) => (
+          {inscripciones.map((item) => {
+           //const ahora = new Date();
+           //const inicioClase = new Date(item.clase.inicio);
+           //const finClase = new Date(item.clase.fin);
+           //const ventanaEntrada = new Date(inicioClase.getTime() - 10 * 60 * 1000);
+           //const claseEstaActiva = ahora >= ventanaEntrada && ahora <= finClase;
+           const claseEstaActiva = true;
+           return (
             <li key={item.id_inscripcion} className="res-item">
               <div>
                 <h2>{item.clase.titulo}</h2>
@@ -90,14 +99,34 @@ export default function MisClases() {
                     )}
                   </>
                 )}
-                {item.estado === "confirmada" && item.pago && (
-                  <Link className="perfil-enlace" to={`/mis-clases/${item.id_inscripcion}/pagar`}>
-                    Ver comprobante
-                  </Link>
-                )}
+                {item.estado === "confirmada" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "flex-end" }}>
+              <button
+                disabled={!claseEstaActiva}
+                onClick={() => navigate(`/clase-virtual/${item.clase.id_clase}`)}
+                className={`res-boton res-boton-chico`}
+                style={{
+                  backgroundColor: claseEstaActiva ? "#28a745" : "#6c757d",
+                  color: "white",
+                  border: "none",
+                  cursor: claseEstaActiva ? "pointer" : "not-allowed",
+                  fontWeight: "bold",
+                  opacity: claseEstaActiva ? 1 : 0.7
+                }}
+              >
+                {claseEstaActiva ? "Unirse a Videollamada" : "Videollamada inactiva"}
+              </button>
+              {item.pago && (
+                <Link className="perfil-enlace" to={`/mis-clases/${item.id_inscripcion}/pagar`}>
+                  Ver comprobante
+                </Link>
+              )}
+            </div>
+          )}
               </div>
             </li>
-          ))}
+              );
+              })}
         </ul>
       </section>
     </main>
