@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { asociarMateriaProfesor, obtenerMaterias, obtenerMateriasProfesor } from "../services/api";
+import {
+  asociarMateriaProfesor,
+  desasociarMateriaProfesor,
+  obtenerMaterias,
+  obtenerMateriasProfesor,
+} from "../services/api";
 
 export default function MateriasProfesor() {
   const [materiasDisponibles, setMateriasDisponibles] = useState([]);
@@ -9,6 +14,7 @@ export default function MateriasProfesor() {
   const [seleccionada, setSeleccionada] = useState("");
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
+  const [eliminando, setEliminando] = useState(null);
   const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState("");
 
@@ -62,6 +68,25 @@ export default function MateriasProfesor() {
     }
   }
 
+  async function eliminarMateria(materia) {
+    if (!window.confirm(`¿Querés quitar ${materia.nombreMateria} de las materias de tu perfil? Esto no elimina tus clases ya programadas.`)) {
+      return;
+    }
+
+    setEliminando(materia.id_materia);
+    setError("");
+    setMensaje("");
+    try {
+      await desasociarMateriaProfesor(materia.id_materia);
+      setMateriasDictadas((actuales) => actuales.filter((item) => item.id_materia !== materia.id_materia));
+      setMensaje(`${materia.nombreMateria} se quitó de las materias de tu perfil.`);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setEliminando(null);
+    }
+  }
+
   return (
     <main className="app-page">
       <Navbar />
@@ -103,7 +128,7 @@ export default function MateriasProfesor() {
                       </option>
                     ))}
                   </select>
-                  <button className="res-boton-secundario" type="submit" disabled={!seleccionada || guardando}>
+                  <button className="res-boton-secundario" type="submit" disabled={!seleccionada || guardando || eliminando !== null}>
                     {guardando ? "Agregando…" : "Agregar a mis materias"}
                   </button>
                 </form>
@@ -120,8 +145,19 @@ export default function MateriasProfesor() {
                 <ul className="materias-profesor-lista">
                   {materiasDictadas.map((materia) => (
                     <li key={materia.id_materia}>
-                      <strong>{materia.nombreMateria}</strong>
-                      {materia.areaConocimiento?.nombreArea && <span>{materia.areaConocimiento.nombreArea}</span>}
+                      <div className="materias-profesor-item-info">
+                        <strong>{materia.nombreMateria}</strong>
+                        {materia.areaConocimiento?.nombreArea && <span>{materia.areaConocimiento.nombreArea}</span>}
+                      </div>
+                      <button
+                        type="button"
+                        className="materias-profesor-quitar"
+                        onClick={() => eliminarMateria(materia)}
+                        disabled={eliminando !== null || guardando}
+                        aria-label={`Quitar ${materia.nombreMateria} de mi perfil`}
+                      >
+                        {eliminando === materia.id_materia ? "Quitando…" : "Quitar"}
+                      </button>
                     </li>
                   ))}
                 </ul>

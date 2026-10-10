@@ -12,6 +12,7 @@ import {
 } from "../services/api";
 
 const MAX_PDF = 4 * 1024 * 1024;
+const MAX_PDFS = 3;
 
 const INITIAL_FORM = {
   idArea: "",
@@ -32,7 +33,7 @@ export default function CrearClaseProfesor() {
   const [areas, setAreas] = useState([]);
   const [materias, setMaterias] = useState([]);
   const [form, setForm] = useState(INITIAL_FORM);
-  const [archivoPdf, setArchivoPdf] = useState(null);
+  const [archivosPdf, setArchivosPdf] = useState([]);
   const [inputPdfKey, setInputPdfKey] = useState(0);
   const [nuevaArea, setNuevaArea] = useState("");
   const [nuevaMateria, setNuevaMateria] = useState("");
@@ -60,26 +61,31 @@ export default function CrearClaseProfesor() {
   }
 
   function elegirPdf(event) {
-    const archivo = event.target.files?.[0] ?? null;
+    const archivos = Array.from(event.target.files ?? []);
     setError("");
     setMensaje("");
-    if (!archivo) {
-      setArchivoPdf(null);
+    if (!archivos.length) {
+      setArchivosPdf([]);
       return;
     }
-    if (archivo.type !== "application/pdf") {
+    if (archivos.length > MAX_PDFS) {
+      setError(`Podés elegir hasta ${MAX_PDFS} archivos PDF por clase.`);
+      setInputPdfKey((k) => k + 1);
+      return;
+    }
+    const archivoInvalido = archivos.find((archivo) => archivo.type !== "application/pdf");
+    if (archivoInvalido) {
       setError("Solo se permiten archivos PDF.");
-      setArchivoPdf(null);
       setInputPdfKey((k) => k + 1);
       return;
     }
-    if (archivo.size > MAX_PDF) {
-      setError("El PDF no puede superar los 4 MB.");
-      setArchivoPdf(null);
+    const archivoGrande = archivos.find((archivo) => archivo.size > MAX_PDF);
+    if (archivoGrande) {
+      setError("Cada PDF puede pesar como máximo 4 MB.");
       setInputPdfKey((k) => k + 1);
       return;
     }
-    setArchivoPdf(archivo);
+    setArchivosPdf(archivos);
   }
 
   async function guardarArea() {
@@ -182,18 +188,24 @@ export default function CrearClaseProfesor() {
       });
 
       const idClase = respuesta?.clase?.id_clase;
-      let avisoPdf = "";
-      if (archivoPdf && idClase) {
-        try {
-          await subirMaterialClase(idClase, archivoPdf);
-        } catch (errPdf) {
-          avisoPdf = ` Pero no se pudo subir el PDF (${errPdf.message}).`;
+      const erroresPdf = [];
+      if (idClase) {
+        for (const archivo of archivosPdf) {
+          try {
+            await subirMaterialClase(idClase, archivo);
+          } catch (errPdf) {
+            erroresPdf.push(`${archivo.name}: ${errPdf.message}`);
+          }
         }
       }
 
-      setMensaje(`La clase se creó correctamente.${avisoPdf}`);
+      setMensaje(
+        erroresPdf.length
+          ? `La clase se creó y se subieron ${archivosPdf.length - erroresPdf.length} de ${archivosPdf.length} PDF. No se pudieron subir: ${erroresPdf.join("; ")}. Podés completar los archivos desde Clases programadas.`
+          : "La clase se creó correctamente.",
+      );
       setForm(INITIAL_FORM);
-      setArchivoPdf(null);
+      setArchivosPdf([]);
       setInputPdfKey((k) => k + 1);
     } catch (err) {
       setError(err.message);
@@ -267,11 +279,15 @@ export default function CrearClaseProfesor() {
             <label className="res-etiqueta" htmlFor="clase-contenido">Contenido que se va a dictar</label>
             <textarea className="res-campo" id="clase-contenido" rows={5} maxLength={5000} value={form.contenido} onChange={(event) => cambiar("contenido", event.target.value)} placeholder="Contale al alumno qué va a ver en la clase (temario, objetivos, qué tiene que traer)" />
 
-            <label className="res-etiqueta" htmlFor="clase-pdf">Material en PDF (opcional, máx. 4 MB)</label>
+            <label className="res-etiqueta" htmlFor="clase-pdf">Material en PDF (opcional, hasta 3 archivos; máx. 4 MB cada uno)</label>
             <label className="file-upload" htmlFor="clase-pdf">
-              <span className="file-upload-trigger">Elegir archivo</span>
-              <span className="file-upload-name">{archivoPdf ? archivoPdf.name : "No se eligió ningún PDF"}</span>
-              <input id="clase-pdf" key={inputPdfKey} type="file" accept="application/pdf" onChange={elegirPdf} />
+              <span className="file-upload-trigger">Elegir archivos</span>
+              <span className="file-upload-name">
+                {archivosPdf.length
+                  ? `${archivosPdf.length} archivo${archivosPdf.length === 1 ? "" : "s"}: ${archivosPdf.map((archivo) => archivo.name).join(", ")}`
+                  : "No se eligieron PDF"}
+              </span>
+              <input id="clase-pdf" key={inputPdfKey} type="file" accept="application/pdf" multiple onChange={elegirPdf} />
             </label>
 
             <div className="crear-clase-dos-columnas">
