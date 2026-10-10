@@ -1,8 +1,26 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { actualizarPerfil, cambiarHorarioClase, obtenerClasesProgramadas, obtenerPerfil } from "../services/api";
+import {
+  actualizarPerfil,
+  cambiarHorarioClase,
+  obtenerClasesProgramadas,
+  obtenerPerfil,
+  eliminarMaterialClase,
+  reemplazarMaterialClase,
+  subirMaterialClase,
+} from "../services/api";
 import { formatearFecha, formatearHora, formatearPrecio } from "../utils/fechas";
+
+const MAX_PDF = 4 * 1024 * 1024;
+const MAX_PDFS = 3;
+
+function obtenerMaterialesPdf(clase) {
+  if (clase.materialesPdf?.length) return clase.materialesPdf;
+  return clase.materialUrl
+    ? [{ nombre: clase.materialNombre || "Material de la clase", url: clase.materialUrl }]
+    : [];
+}
 
 function fechaHoraLocal(iso) {
   const partes = new Intl.DateTimeFormat("en-CA", {
@@ -124,6 +142,8 @@ export default function ClasesProfesor() {
   const [nuevoHorario, setNuevoHorario] = useState({ fechaInicio: "", horaInicio: "", fechaFin: "", horaFin: "" });
   const [guardandoHorario, setGuardandoHorario] = useState(false);
   const [mensaje, setMensaje] = useState("");
+  const [subiendoMaterial, setSubiendoMaterial] = useState(null);
+  const [actualizandoMaterial, setActualizandoMaterial] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
 
@@ -206,6 +226,102 @@ export default function ClasesProfesor() {
     }
   }
 
+  async function subirPdf(event, clase) {
+    const input = event.currentTarget;
+    const archivo = input.files?.[0];
+    input.value = "";
+    if (!archivo) return;
+
+    if (archivo.type !== "application/pdf") {
+      setError("Solo se permiten archivos PDF.");
+      return;
+    }
+    if (archivo.size > MAX_PDF) {
+      setError("Cada PDF puede pesar como máximo 4 MB.");
+      return;
+    }
+    if (obtenerMaterialesPdf(clase).length >= MAX_PDFS) {
+      setError("Esta clase ya tiene el máximo de 3 archivos PDF.");
+      return;
+    }
+
+    setError("");
+    setMensaje("");
+    setSubiendoMaterial(clase.id_clase);
+    try {
+      const respuesta = await subirMaterialClase(clase.id_clase, archivo);
+      setClases((actuales) => actuales.map((item) => item.id_clase === clase.id_clase
+        ? { ...item, materialesPdf: [...obtenerMaterialesPdf(item), respuesta.material] }
+        : item));
+      setMensaje(`Se agregó "${respuesta.material.nombre}" a la clase.`);
+    } catch (err) {
+      setError(err.message || "No se pudo subir el PDF.");
+    } finally {
+      setSubiendoMaterial(null);
+    }
+  }
+
+  async function reemplazarPdf(event, clase, material) {
+    const input = event.currentTarget;
+    const archivo = input.files?.[0];
+    input.value = "";
+    if (!archivo) return;
+
+    if (archivo.type !== "application/pdf") {
+      setError("Solo se permiten archivos PDF.");
+      return;
+    }
+    if (archivo.size > MAX_PDF) {
+      setError("Cada PDF puede pesar como máximo 4 MB.");
+      return;
+    }
+    if (!window.confirm(`¿Querés reemplazar "${material.nombre}" por "${archivo.name}"?`)) return;
+
+    setError("");
+    setMensaje("");
+    setActualizandoMaterial(`${clase.id_clase}:${material.id_material}`);
+    try {
+      const respuesta = await reemplazarMaterialClase(clase.id_clase, material.id_material, archivo);
+      setClases((actuales) => actuales.map((item) => item.id_clase === clase.id_clase
+        ? {
+          ...item,
+          materialesPdf: obtenerMaterialesPdf(item).map((actual) => actual.id_material === material.id_material
+            ? respuesta.material
+            : actual),
+        }
+        : item));
+      setMensaje(respuesta.advertencia || `Se reemplazó "${material.nombre}" por "${respuesta.material.nombre}".`);
+    } catch (err) {
+      setError(err.message || "No se pudo reemplazar el PDF.");
+    } finally {
+      setActualizandoMaterial(null);
+    }
+  }
+
+  async function borrarPdf(clase, material) {
+    if (!window.confirm(`¿Querés quitar "${material.nombre}" de esta clase? Los alumnos dejarán de verlo.`)) return;
+
+    setError("");
+    setMensaje("");
+    setActualizandoMaterial(`${clase.id_clase}:${material.id_material}`);
+    try {
+      const respuesta = await eliminarMaterialClase(clase.id_clase, material.id_material);
+      setClases((actuales) => actuales.map((item) => item.id_clase === clase.id_clase
+        ? {
+          ...item,
+          materialesPdf: obtenerMaterialesPdf(item).filter((actual) => actual.id_material !== material.id_material),
+          materialUrl: item.materialUrl === material.url ? null : item.materialUrl,
+          materialNombre: item.materialUrl === material.url ? null : item.materialNombre,
+        }
+        : item));
+      setMensaje(respuesta.advertencia || `"${material.nombre}" se quitó de la clase. Los alumnos ya no podrán acceder al PDF.`);
+    } catch (err) {
+      setError(err.message || "No se pudo quitar el PDF.");
+    } finally {
+      setActualizandoMaterial(null);
+    }
+  }
+
   return (
     <main className="app-page">
       <Navbar />
@@ -247,6 +363,52 @@ export default function ClasesProfesor() {
                     ? `Alumnos: ${clase.alumnos.map((alumno) => alumno.nombre).join(", ")}`
                     : "Sin alumnos inscriptos"}
                 </p>
+                <div className="clases-profesor-materiales">
+                  <strong>PDF de la clase ({obtenerMaterialesPdf(clase).length}/{MAX_PDFS})</strong>
+                  {obtenerMaterialesPdf(clase).length > 0 && (
+                    <ul>
+                      {obtenerMaterialesPdf(clase).map((material) => (
+                        <li key={material.id_material || material.url} className="clases-profesor-material-item">
+                          <a href={material.url} target="_blank" rel="noreferrer" className="clases-profesor-material-link">
+                            Ver {material.nombre}
+                          </a>
+                          {material.id_material && (
+                            <div className="clases-profesor-material-acciones">
+                              <label className="clases-profesor-accion-pdf">
+                                {actualizandoMaterial === `${clase.id_clase}:${material.id_material}` ? "Procesando…" : "Reemplazar"}
+                                <input
+                                  type="file"
+                                  accept="application/pdf"
+                                  onChange={(event) => reemplazarPdf(event, clase, material)}
+                                  disabled={actualizandoMaterial !== null || subiendoMaterial !== null}
+                                />
+                              </label>
+                              <button
+                                type="button"
+                                className="clases-profesor-eliminar-pdf"
+                                onClick={() => borrarPdf(clase, material)}
+                                disabled={actualizandoMaterial !== null || subiendoMaterial !== null}
+                              >
+                                Quitar
+                              </button>
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {obtenerMaterialesPdf(clase).length < MAX_PDFS && (
+                    <label className="clases-profesor-subir-pdf">
+                      {subiendoMaterial === clase.id_clase ? "Subiendo PDF…" : "+ Agregar PDF"}
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        onChange={(event) => subirPdf(event, clase)}
+                        disabled={subiendoMaterial !== null || actualizandoMaterial !== null}
+                      />
+                    </label>
+                  )}
+                </div>
               </div>
               <div className="res-item-lado">
                 <span className={`res-estado ${clase.estado}`}>{clase.estado}</span>

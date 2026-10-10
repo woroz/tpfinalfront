@@ -371,6 +371,139 @@
 .res-item h2 { margin: 0 0 6px; color: #172235; font-size: 18px; }
 .res-item p { margin: 2px 0; color: #536078; }
 
+.mis-clases-detalle {
+  margin-top: 12px;
+  color: #536078;
+}
+
+.mis-clases-detalle summary {
+  width: fit-content;
+  color: #2e62d2;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.mis-clases-detalle-contenido {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+.mis-clases-detalle-contenido p { margin: 0; }
+.mis-clases-material { width: fit-content; }
+.mis-clases-pdf-lista,
+.detalle-clase-pdf-lista {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.mis-clases-pdf-lista a,
+.detalle-clase-pdf-lista a {
+  color: #2e62d2;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.mis-clases-pdf-lista a:hover,
+.detalle-clase-pdf-lista a:hover { text-decoration: underline; }
+
+.clases-profesor-materiales {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+  color: #536078;
+  font-size: 14px;
+}
+
+.clases-profesor-materiales ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.clases-profesor-material-item {
+  padding-left: 2px;
+}
+
+.clases-profesor-material-link {
+  color: #2e62d2;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.clases-profesor-material-link:hover { text-decoration: underline; }
+
+.clases-profesor-material-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 6px;
+}
+
+.clases-profesor-subir-pdf,
+.clases-profesor-accion-pdf,
+.clases-profesor-eliminar-pdf {
+  position: relative;
+  width: fit-content;
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 13px;
+  border: 1px solid #cddaf2;
+  border-radius: 9px;
+  color: #285bc0;
+  background: linear-gradient(180deg, #fff 0%, #f2f6ff 100%);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  transition: border-color .16s, background .16s, box-shadow .16s, transform .16s;
+}
+
+.clases-profesor-subir-pdf:hover,
+.clases-profesor-accion-pdf:hover,
+.clases-profesor-eliminar-pdf:hover:not(:disabled) {
+  border-color: #8ba9e8;
+  background: #eaf1ff;
+  box-shadow: 0 3px 9px rgba(47, 91, 180, .12);
+  transform: translateY(-1px);
+}
+
+.clases-profesor-subir-pdf input,
+.clases-profesor-accion-pdf input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.clases-profesor-eliminar-pdf {
+  border-color: #f1d4d6;
+  color: #a63843;
+  background: #fff8f8;
+}
+
+.clases-profesor-eliminar-pdf:hover:not(:disabled) {
+  border-color: #e3aeb2;
+  color: #8c2731;
+  background: #fff0f1;
+}
+
+.clases-profesor-subir-pdf:has(input:disabled),
+.clases-profesor-accion-pdf:has(input:disabled),
+.clases-profesor-eliminar-pdf:disabled {
+  cursor: wait;
+  opacity: .6;
+  transform: none;
+}
+
 .res-item-lado {
   display: flex;
   min-width: 160px;
@@ -721,12 +854,43 @@
 }
 
 .materias-profesor-lista li {
-  display: grid;
-  gap: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   padding: 14px;
   border: 1px solid #e2e9f5;
   border-radius: 11px;
   background: #f8faff;
+}
+
+.materias-profesor-item-info {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.materias-profesor-quitar {
+  flex: 0 0 auto;
+  padding: 7px 11px;
+  border: 1px solid #f1d4d6;
+  border-radius: 8px;
+  color: #a63843;
+  background: #fff8f8;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  transition: border-color .16s, background .16s;
+}
+
+.materias-profesor-quitar:hover:not(:disabled) {
+  border-color: #e3aeb2;
+  background: #fff0f1;
+}
+
+.materias-profesor-quitar:disabled {
+  cursor: wait;
+  opacity: .55;
 }
 
 .materias-profesor-lista strong {
@@ -1036,6 +1200,34 @@
   margin-bottom: 20px;
 }
 
+.perfil-calendario-card .res-calendario {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.perfil-calendario-ayuda {
+  margin: -4px 0 16px;
+  color: #64718a;
+  font-size: 14px;
+}
+
+.perfil-calendario-horarios {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #e8edf5;
+}
+
+.perfil-calendario-horarios h3 {
+  margin: 0 0 12px;
+  color: #172235;
+  font-size: 16px;
+  text-transform: capitalize;
+}
+
+.perfil-calendario-horarios .res-mensaje {
+  margin: 0;
+}
+
 .perfil-grilla > .res-tarjeta,
 .perfil-bloque {
   border: 1px solid #b8bdc8;
@@ -1062,18 +1254,52 @@
 }
 
 .perfil-horas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 175px), 1fr));
+  gap: 10px;
 }
 
 .perfil-horas .res-horario {
-  min-width: 68px;
-  max-width: 220px;
-  padding: 8px 12px;
-  text-align: center;
+  display: grid;
+  min-width: 0;
+  min-height: 54px;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+  padding: 10px 12px;
+  text-align: left;
   text-decoration: none;
+  transition: border-color .16s, background .16s, box-shadow .16s, transform .16s;
+}
+
+.perfil-horas a.res-horario:hover {
+  border-color: #9cb5e9;
+  background: #f7f9ff;
+  box-shadow: 0 4px 12px rgba(47, 91, 180, .1);
+  transform: translateY(-1px);
+}
+
+.perfil-horario-hora {
+  padding: 5px 7px;
+  border-radius: 7px;
+  color: #285bc0;
+  background: #edf3ff;
+  font-size: 13px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.perfil-horario-materia {
+  min-width: 0;
+  color: #394559;
+  font-size: 13px;
+  line-height: 1.35;
   overflow-wrap: anywhere;
+}
+
+.perfil-hora-fija .perfil-horario-materia {
+  color: #536078;
 }
 
 .perfil-hora-fija { cursor: default; }
@@ -1100,17 +1326,57 @@
 }
 
 .perfil-semana li {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 10px 0;
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  padding: 9px 0;
   border-bottom: 1px solid #edf1f8;
   color: #172235;
   font-size: 14px;
 }
 
-.perfil-semana li span:last-child { color: #536078; text-align: right; }
-.perfil-semana .perfil-sin-atencion { color: #9aa4b8; }
+.perfil-semana-dia {
+  padding-top: 5px;
+  font-weight: 600;
+}
+
+.perfil-semana-franjas {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.perfil-semana-franja {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  padding: 6px 9px;
+  border: 1px solid #e2e9f5;
+  border-radius: 8px;
+  background: #f7f9fe;
+}
+
+.perfil-semana-materia {
+  color: #394b69;
+  font-size: 12px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.perfil-semana-horario {
+  color: #2e62d2;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.perfil-semana-franjas.perfil-sin-atencion {
+  align-self: center;
+  color: #9aa4b8;
+  font-size: 13px;
+}
 
 .perfil-clase h3 {
   margin: 0 0 6px;

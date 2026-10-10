@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Calendario from "../components/Calendario";
 import Navbar from "../components/Navbar";
 import professorImage from "../assets/profesor.png";
 import { useAuth } from "../context/authContext";
@@ -23,8 +24,8 @@ const DIAS_SEMANA = [
   { valor: 0, nombre: "Domingo" },
 ];
 
-const DIAS_PROXIMOS = 14;
-const DIAS_MOSTRADOS = 5;
+const DIAS_PROXIMOS = 60;
+const DIAS_VACIOS = [];
 
 export default function PerfilProfesor() {
   const { id } = useParams();
@@ -32,6 +33,7 @@ export default function PerfilProfesor() {
   const { usuario } = useAuth();
   const [perfil, setPerfil] = useState(null);
   const [agenda, setAgenda] = useState(null);
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(hoyLocal());
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
 
@@ -49,7 +51,12 @@ export default function PerfilProfesor() {
       } else {
         setPerfil(perfilResultado.value.perfil);
       }
-      if (agendaResultado.status === "fulfilled") setAgenda(agendaResultado.value);
+      if (agendaResultado.status === "fulfilled") {
+        const datosAgenda = agendaResultado.value;
+        setAgenda(datosAgenda);
+        const primerDiaDisponible = datosAgenda.dias.find((dia) => dia.horarios.length > 0);
+        if (primerDiaDisponible) setFechaSeleccionada(primerDiaDisponible.fecha);
+      }
       setCargando(false);
     });
     return () => {
@@ -71,6 +78,12 @@ export default function PerfilProfesor() {
       item.materia?.nombreMateria || item.nombreMateria,
     ]),
   ), [perfil]);
+  const diasProximos = agenda?.dias || DIAS_VACIOS;
+  const diasDisponibles = useMemo(
+    () => new Set(diasProximos.filter((dia) => dia.horarios.length > 0).map((dia) => dia.fecha)),
+    [diasProximos],
+  );
+  const horariosDelDia = diasProximos.find((dia) => dia.fecha === fechaSeleccionada)?.horarios || [];
 
   if (cargando) {
     return (
@@ -97,7 +110,6 @@ export default function PerfilProfesor() {
 
   const nombre = perfil.usuario?.nombre || "Profesor";
   const materias = (perfil.materias || []).map((item) => item.materia?.nombreMateria).filter(Boolean);
-  const diasProximos = (agenda?.dias || []).slice(0, DIAS_MOSTRADOS);
   const clases = perfil.clases || [];
   const resenas = (perfil.resenas || []).slice(0, 5);
   const promedio = perfil.promedioResenas;
@@ -142,40 +154,52 @@ export default function PerfilProfesor() {
           )}
         </header>
 
-        <div className="res-layout perfil-grilla">
-          <div className="res-tarjeta">
+        <div className="res-layout perfil-grilla perfil-calendario-grilla">
+          <div className="res-tarjeta perfil-calendario-card">
             <h2>Próximos horarios libres</h2>
-            {!diasProximos.length && (
+            {!diasDisponibles.size ? (
               <p className="res-mensaje">No hay horarios libres en los próximos {DIAS_PROXIMOS} días.</p>
-            )}
-            {diasProximos.map((dia) => (
-              <div key={dia.fecha} className="perfil-dia">
-                <p className="perfil-dia-titulo">{formatearFechaDeDia(dia.fecha)}</p>
-                <div className="perfil-horas">
-                  {dia.horarios.map((horario) => (
-                    esAlumno ? (
-                      <Link
-                        key={`${horario.inicio}-${horario.id_materia || "todas"}`}
-                        className="res-horario"
-                        to={`/profesores/${id}/reservar?inicio=${encodeURIComponent(horario.inicio)}${horario.id_materia ? `&materia=${encodeURIComponent(horario.id_materia)}` : ""}`}
-                      >
-                        {formatearHora(horario.inicio)}
-                        {` · ${horario.id_materia ? nombresMaterias.get(horario.id_materia) || "Materia" : "Todas"}`}
-                      </Link>
-                    ) : (
-                      <span key={`${horario.inicio}-${horario.id_materia || "todas"}`} className="res-horario perfil-hora-fija">
-                        {formatearHora(horario.inicio)}
-                        {` · ${horario.id_materia ? nombresMaterias.get(horario.id_materia) || "Materia" : "Todas"}`}
-                      </span>
-                    )
-                  ))}
-                </div>
-              </div>
-            ))}
-            {esAlumno && agenda?.dias.length > DIAS_MOSTRADOS && (
-              <Link className="perfil-enlace" to={`/profesores/${id}/reservar`}>
-                Ver todos los horarios en el calendario
-              </Link>
+            ) : (
+              <>
+                <p className="perfil-calendario-ayuda">Elegí un día marcado para ver los horarios disponibles.</p>
+                <Calendario
+                  diasDisponibles={diasDisponibles}
+                  seleccionada={fechaSeleccionada}
+                  onSeleccionar={setFechaSeleccionada}
+                  minimo={hoy}
+                  maximo={sumarDias(hoy, DIAS_PROXIMOS - 1)}
+                />
+                <section className="perfil-calendario-horarios" aria-live="polite">
+                  <h3>{formatearFechaDeDia(fechaSeleccionada)}</h3>
+                  {horariosDelDia.length ? (
+                    <div className="perfil-horas">
+                      {horariosDelDia.map((horario) => {
+                        const nombreMateria = horario.id_materia
+                          ? nombresMaterias.get(horario.id_materia) || "Materia"
+                          : "Todas";
+                        const clave = `${horario.inicio}-${horario.id_materia || "todas"}`;
+                        return esAlumno ? (
+                          <Link
+                            key={clave}
+                            className="res-horario"
+                            to={`/profesores/${id}/reservar?inicio=${encodeURIComponent(horario.inicio)}${horario.id_materia ? `&materia=${encodeURIComponent(horario.id_materia)}` : ""}`}
+                          >
+                            <span className="perfil-horario-hora">{formatearHora(horario.inicio)}</span>
+                            <span className="perfil-horario-materia">{nombreMateria}</span>
+                          </Link>
+                        ) : (
+                          <span key={clave} className="res-horario perfil-hora-fija">
+                            <span className="perfil-horario-hora">{formatearHora(horario.inicio)}</span>
+                            <span className="perfil-horario-materia">{nombreMateria}</span>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="res-mensaje">Elegí un día marcado en el calendario para consultar sus horarios.</p>
+                  )}
+                </section>
+              </>
             )}
           </div>
 
@@ -186,17 +210,22 @@ export default function PerfilProfesor() {
                 const franjas = franjasPorDia.get(dia.valor);
                 return (
                   <li key={dia.valor}>
-                    <span>{dia.nombre}</span>
-                    <span className={franjas ? "" : "perfil-sin-atencion"}>
+                    <span className="perfil-semana-dia">{dia.nombre}</span>
+                    <div className={`perfil-semana-franjas${franjas ? "" : " perfil-sin-atencion"}`}>
                       {franjas
-                        ? franjas.map((franja) => {
-                          const materia = franja.id_materia
-                            ? nombresMaterias.get(franja.id_materia) || "Materia"
-                            : "Todas las materias";
-                          return `${materia}: ${franja.desde} a ${franja.hasta}`;
-                        }).join(" · ")
+                        ? franjas.map((franja, indice) => {
+                            const materia = franja.id_materia
+                              ? nombresMaterias.get(franja.id_materia) || "Materia"
+                              : "Todas las materias";
+                            return (
+                              <span className="perfil-semana-franja" key={`${franja.id_materia || "todas"}-${franja.desde}-${indice}`}>
+                                <span className="perfil-semana-materia">{materia}</span>
+                                <span className="perfil-semana-horario">{franja.desde}–{franja.hasta}</span>
+                              </span>
+                            );
+                          })
                         : "No atiende"}
-                    </span>
+                    </div>
                   </li>
                 );
               })}

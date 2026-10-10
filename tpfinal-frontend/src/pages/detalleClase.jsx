@@ -4,6 +4,13 @@ import { crearInscripcion } from "../services/api";
 import { formatearFecha, formatearHora, formatearPrecio } from "../utils/fechas";
 import { useState } from "react";
 
+function obtenerMaterialesPdf(clase) {
+  if (clase.materialesPdf?.length) return clase.materialesPdf;
+  return clase.materialUrl
+    ? [{ nombre: clase.materialNombre || "Material de la clase", url: clase.materialUrl }]
+    : [];
+}
+
 export default function DetalleClase() {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -92,12 +99,28 @@ export default function DetalleClase() {
               </dl>
 
               <div className="detalle-clase-material">
-                <h2>Material de la clase</h2>
-                <p>
-                  El profesor todavía no cargó el material. Cuando esté disponible,
-                  vas a poder consultarlo desde acá.
-                </p>
+                <h2>Materiales de la clase</h2>
+                {obtenerMaterialesPdf(clase).length ? (
+                  <ul className="detalle-clase-pdf-lista">
+                    {obtenerMaterialesPdf(clase).map((material) => (
+                      <li key={material.url}>
+                        <a href={material.url} target="_blank" rel="noreferrer">
+                          Ver PDF: {material.nombre}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>El profesor todavía no cargó el material.</p>
+                )}
               </div>
+
+              {clase.contenido && (
+                <div className="detalle-clase-material">
+                  <h2>Descripción de la clase</h2>
+                  <p>{clase.contenido}</p>
+                </div>
+              )}
 
               <div className="detalle-clase-reserva">
                 <h2>Reserva de cupo</h2>
