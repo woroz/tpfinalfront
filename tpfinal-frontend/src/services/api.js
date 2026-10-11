@@ -144,6 +144,21 @@ export async function subirMaterialClase(idClase, archivo) {
     body: formData,
   });
 }
+
+export async function reemplazarMaterialClase(idClase, idMaterial, archivo) {
+  const formData = new FormData();
+  formData.append("pdf", archivo);
+  return request(`/clases/${idClase}/material/${encodeURIComponent(idMaterial)}`, {
+    method: "PATCH",
+    body: formData,
+  });
+}
+
+export async function eliminarMaterialClase(idClase, idMaterial) {
+  return request(`/clases/${idClase}/material/${encodeURIComponent(idMaterial)}`, {
+    method: "DELETE",
+  });
+}
  
 // El profesor cambia el horario de una clase; el servidor avisa por mail a los alumnos inscriptos.
 export async function cambiarHorarioClase(idClase, fechaHoraInicio, fechaHoraFin) {
@@ -212,6 +227,12 @@ export async function asociarMateriaProfesor(idMateria) {
   return request("/profesores/materias", {
     method: "POST",
     body: JSON.stringify({ id_materia: idMateria }),
+  });
+}
+
+export async function desasociarMateriaProfesor(idMateria) {
+  return request(`/profesores/materias/${encodeURIComponent(idMateria)}`, {
+    method: "DELETE",
   });
 }
 

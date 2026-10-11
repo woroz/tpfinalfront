@@ -11,15 +11,14 @@ import "leaflet/dist/leaflet.css";
 
 const DEFAULT_CENTER = [-34.6037, -58.3816];
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_KEY;
-const MAP_TILES = MAPTILER_KEY
-  ? {
-      url: `https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
-      attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
-    }
-  : {
-      url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    };
+const MAPTILER_TILES = {
+  url: `https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
+  attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
+};
+const CARTO_TILES = {
+  url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+  attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+};
 
 const professorIcon = L.divIcon({
   className: "professor-marker-wrapper",
@@ -120,6 +119,7 @@ function getBrowserLocation() {
 
 export default function Buscar() {
   const navigate = useNavigate();
+  const [tileProvider, setTileProvider] = useState(MAPTILER_KEY ? "maptiler" : "carto");
   const [location, setLocation] = useState(DEFAULT_CENTER);
   const [userLocation, setUserLocation] = useState(DEFAULT_CENTER);
   const [locationSource, setLocationSource] = useState("loading");
@@ -271,6 +271,8 @@ export default function Buscar() {
       });
     }
   }
+
+  const mapTiles = tileProvider === "maptiler" ? MAPTILER_TILES : CARTO_TILES;
 
   return (
     <main className="map-page">
@@ -441,8 +443,14 @@ export default function Buscar() {
           <CenterOnLocation location={locationSource === "loading" ? null : location} />
           <MapMovement onMove={handleMapMove} />
           <TileLayer
-            attribution={MAP_TILES.attribution}
-            url={MAP_TILES.url}
+            key={tileProvider}
+            attribution={mapTiles.attribution}
+            url={mapTiles.url}
+            eventHandlers={{
+              tileerror: () => {
+                if (tileProvider === "maptiler") setTileProvider("carto");
+              },
+            }}
           />
           {mode === "profesores" && profesores.map((profesor) => (
             <Marker
