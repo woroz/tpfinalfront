@@ -44,7 +44,7 @@ export default function ProfessorCard({ professor, onClose }) {
         </button>
         <div className="profile-preview-top">
           <div className="modal-avatar">
-            <img src={professorImage} alt="" />
+            <img src={professor.usuario?.perfil?.avatarURL || professor.perfil?.avatarURL || professorImage} alt="" />
           </div>
           <div>
             <h2 id="professor-card-title">{getProfessorName(professor)}</h2>

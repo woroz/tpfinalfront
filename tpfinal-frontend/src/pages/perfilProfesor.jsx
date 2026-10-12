@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import professorImage from "../assets/profesor.png";
+import Calendario from "../components/Calendario";
 import { useAuth } from "../context/authContext";
 import { obtenerHorariosProfesor, obtenerPerfilProfesor } from "../services/api";
 import {
@@ -34,6 +35,7 @@ export default function PerfilProfesor() {
   const [agenda, setAgenda] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
 
   const hoy = useMemo(() => hoyLocal(), []);
 
@@ -58,6 +60,11 @@ export default function PerfilProfesor() {
   }, [id, hoy]);
 
   const esAlumno = usuario?.rol === "alumno";
+  const diasDisponibles = useMemo(
+    () => new Set((agenda?.dias || []).filter((dia) => dia.horarios?.length).map((dia) => dia.fecha)),
+    [agenda],
+  );
+
   const franjasPorDia = useMemo(() => {
     const mapa = new Map();
     (perfil?.disponibilidad || []).forEach((franja) => {
@@ -98,6 +105,8 @@ export default function PerfilProfesor() {
   const nombre = perfil.usuario?.nombre || "Profesor";
   const materias = (perfil.materias || []).map((item) => item.materia?.nombreMateria).filter(Boolean);
   const diasProximos = (agenda?.dias || []).slice(0, DIAS_MOSTRADOS);
+  const diaSeleccionado = agenda?.dias.find((dia) => dia.fecha === fechaSeleccionada)
+    || agenda?.dias.find((dia) => dia.horarios?.length);
   const clases = perfil.clases || [];
   const resenas = (perfil.resenas || []).slice(0, 5);
   const promedio = perfil.promedioResenas;
@@ -143,35 +152,47 @@ export default function PerfilProfesor() {
         </header>
 
         <div className="res-layout perfil-grilla">
-          <div className="res-tarjeta">
+          <div className="res-tarjeta perfil-horarios-card">
             <h2>Próximos horarios libres</h2>
             {!diasProximos.length && (
               <p className="res-mensaje">No hay horarios libres en los próximos {DIAS_PROXIMOS} días.</p>
             )}
-            {diasProximos.map((dia) => (
-              <div key={dia.fecha} className="perfil-dia">
-                <p className="perfil-dia-titulo">{formatearFechaDeDia(dia.fecha)}</p>
-                <div className="perfil-horas">
-                  {dia.horarios.map((horario) => (
-                    esAlumno ? (
-                      <Link
-                        key={`${horario.inicio}-${horario.id_materia || "todas"}`}
-                        className="res-horario"
-                        to={`/profesores/${id}/reservar?inicio=${encodeURIComponent(horario.inicio)}${horario.id_materia ? `&materia=${encodeURIComponent(horario.id_materia)}` : ""}`}
-                      >
-                        {formatearHora(horario.inicio)}
-                        {` · ${horario.id_materia ? nombresMaterias.get(horario.id_materia) || "Materia" : "Todas"}`}
-                      </Link>
-                    ) : (
-                      <span key={`${horario.inicio}-${horario.id_materia || "todas"}`} className="res-horario perfil-hora-fija">
-                        {formatearHora(horario.inicio)}
-                        {` · ${horario.id_materia ? nombresMaterias.get(horario.id_materia) || "Materia" : "Todas"}`}
-                      </span>
-                    )
-                  ))}
-                </div>
-              </div>
-            ))}
+            {diasProximos.length > 0 && (
+              <>
+                <p className="perfil-calendario-ayuda">Elegí un día marcado para ver los horarios disponibles.</p>
+                <Calendario
+                  diasDisponibles={diasDisponibles}
+                  seleccionada={diaSeleccionado?.fecha}
+                  onSeleccionar={setFechaSeleccionada}
+                  minimo={hoy}
+                  maximo={sumarDias(hoy, DIAS_PROXIMOS - 1)}
+                />
+                {diaSeleccionado && (
+                  <div className="perfil-dia perfil-dia-seleccionado">
+                    <p className="perfil-dia-titulo">{formatearFechaDeDia(diaSeleccionado.fecha)}</p>
+                    <div className="perfil-horas">
+                      {diaSeleccionado.horarios.map((horario) => (
+                        esAlumno ? (
+                          <Link
+                            key={`${horario.inicio}-${horario.id_materia || "todas"}`}
+                            className="res-horario"
+                            to={`/profesores/${id}/reservar?inicio=${encodeURIComponent(horario.inicio)}${horario.id_materia ? `&materia=${encodeURIComponent(horario.id_materia)}` : ""}`}
+                          >
+                            {formatearHora(horario.inicio)}
+                            {` · ${horario.id_materia ? nombresMaterias.get(horario.id_materia) || "Materia" : "Todas"}`}
+                          </Link>
+                        ) : (
+                          <span key={`${horario.inicio}-${horario.id_materia || "todas"}`} className="res-horario perfil-hora-fija">
+                            {formatearHora(horario.inicio)}
+                            {` · ${horario.id_materia ? nombresMaterias.get(horario.id_materia) || "Materia" : "Todas"}`}
+                          </span>
+                        )
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
             {esAlumno && agenda?.dias.length > DIAS_MOSTRADOS && (
               <Link className="perfil-enlace" to={`/profesores/${id}/reservar`}>
                 Ver todos los horarios en el calendario

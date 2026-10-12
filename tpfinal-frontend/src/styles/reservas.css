@@ -37,7 +37,7 @@
 
 .res-tarjeta {
   padding: 24px;
-  border-radius: 18px;
+  border-radius: 20px;
   background: #fff;
   box-shadow: 0 12px 40px rgba(47, 74, 125, .12);
 }
@@ -334,6 +334,7 @@
   padding: 4px;
   border-radius: 12px;
   background: #dde6f6;
+  transition: background .2s;
 }
 
 .res-pestanias button {
@@ -348,6 +349,7 @@
 .res-pestanias button.activo {
   color: #2e62d2;
   background: #fff;
+  box-shadow: 0 2px 6px rgba(47, 74, 125, .08);
 }
 
 .res-lista {
@@ -363,7 +365,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 20px 24px;
-  border-radius: 16px;
+  border-radius: 20px;
   background: #fff;
   box-shadow: 0 8px 28px rgba(47, 74, 125, .1);
 }
@@ -753,6 +755,27 @@
   gap: 4px;
 }
 
+.mi-perfil-card { padding: 30px; }
+.mi-perfil-campos { display: grid; gap: 0; }
+.mi-perfil-campo { padding: 18px 0; border-bottom: 1px solid #edf1f8; }
+.mi-perfil-campo-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mi-perfil-campo-cabecera span { color: #778195; font-size: 13px; font-weight: 700; }
+.mi-perfil-campo > p { margin: 8px 0 0; color: #172235; line-height: 1.5; white-space: pre-wrap; }
+.mi-perfil-lapiz {
+  display: grid; width: 32px; height: 32px; place-items: center; border: 0; border-radius: 50%;
+  color: #3b6fd6; background: #edf3ff; cursor: pointer; font-size: 17px;
+}
+.mi-perfil-lapiz:hover { background: #dce8ff; }
+.mi-perfil-editor { display: grid; gap: 10px; margin-top: 10px; }
+.mi-perfil-editor-acciones { display: flex; align-items: center; gap: 10px; }
+.mi-perfil-guardar, .mi-perfil-cancelar {
+  padding: 8px 13px; border-radius: 8px; cursor: pointer; font: inherit; font-size: 13px; font-weight: 700;
+}
+.mi-perfil-guardar { border: 0; color: #fff; background: #3b6fd6; }
+.mi-perfil-guardar:hover { background: #2f5cbb; }
+.mi-perfil-cancelar { border: 1px solid #d6deec; color: #536078; background: #fff; }
+.mi-perfil-guardar:disabled, .mi-perfil-cancelar:disabled { cursor: wait; opacity: .6; }
+
 .mi-perfil-form > .res-etiqueta {
   margin-top: 14px;
 }
@@ -767,6 +790,8 @@
 }
 
 .mi-perfil-avatar {
+  position: relative;
+  overflow: hidden;
   display: grid;
   width: 56px;
   height: 56px;
@@ -777,7 +802,44 @@
   background: #3b6fd6;
   font-size: 22px;
   font-weight: 750;
+  cursor: pointer;
 }
+
+.mi-perfil-avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.mi-perfil-avatar-wrap { position: relative; flex: 0 0 auto; }
+.mi-perfil-avatar-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(23, 34, 53, .68);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.mi-perfil-avatar:hover .mi-perfil-avatar-overlay,
+.mi-perfil-avatar:focus-visible .mi-perfil-avatar-overlay { opacity: 1; }
+.mi-perfil-avatar-overlay::before {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 9px;
+  background: rgba(23, 34, 53, .88);
+  content: "✎";
+  font-size: 16px;
+  line-height: 1;
+}
+.mi-perfil-archivo { display: none; }
+.mi-perfil-avatar-acciones { display: grid; gap: 6px; margin-top: 8px; }
+.mi-perfil-avatar-acciones button { white-space: nowrap; }
+.mi-perfil-identidad { display: grid; gap: 3px; min-width: 0; }
 
 .mi-perfil-resumen > div:nth-child(2) {
   display: grid;
@@ -813,12 +875,13 @@
 .professor-reserve-button:hover { background: #2f5cbb; }
 
 .crear-clase-page {
-  max-width: 760px;
+  max-width: 820px;
 }
 
 .crear-clase-form {
   display: grid;
   gap: 24px;
+  border-radius: 26px;
 }
 
 .crear-clase-seccion {
@@ -840,8 +903,13 @@
 .crear-clase-panel {
   padding: 16px;
   border: 1px solid #e4eaf5;
-  border-radius: 12px;
+  border-radius: 18px;
   background: linear-gradient(180deg, #f9fbff 0%, #f4f8ff 100%);
+}
+
+.crear-clase-form .res-campo {
+  min-height: 44px;
+  font-size: 14px;
 }
 
 .crear-clase-inline {
@@ -966,25 +1034,24 @@
 .perfil-cabecera {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  gap: 24px;
+  gap: 20px;
   align-items: start;
   margin-bottom: 20px;
-  border: 1px solid #b8bdc8;
-  border-radius: 4px;
-  box-shadow: none;
-  font-family: Arial, sans-serif;
+  border: 1px solid #d5deed;
+  border-radius: 26px;
+  box-shadow: 0 10px 28px rgba(47, 74, 125, .08);
 }
 
 .perfil-avatar {
   width: 96px;
   height: 96px;
-  border-radius: 50%;
+  border-radius: 22px;
   object-fit: cover;
   background: #e6eeff;
 }
 
 .perfil-datos h1 {
-  margin: 0 0 10px;
+  margin: 0 0 6px;
   color: #172235;
   font-size: 30px;
   font-weight: 700;
@@ -1020,7 +1087,7 @@
 
 .perfil-descripcion {
   max-width: 62ch;
-  margin: 14px 0 0;
+  margin: 12px 0 0;
   color: #394559;
   font-size: 15px;
   line-height: 1.55;
@@ -1038,10 +1105,9 @@
 
 .perfil-grilla > .res-tarjeta,
 .perfil-bloque {
-  border: 1px solid #b8bdc8;
-  border-radius: 4px;
-  box-shadow: none;
-  font-family: Arial, sans-serif;
+  border: 1px solid #d5deed;
+  border-radius: 22px;
+  box-shadow: 0 10px 28px rgba(47, 74, 125, .07);
 }
 
 .perfil-grilla > .res-tarjeta h2,
@@ -1051,6 +1117,22 @@
 }
 
 .perfil-bloque { margin-bottom: 20px; }
+
+.perfil-calendario-ayuda {
+  margin: -4px 0 12px;
+  color: #778195;
+  font-size: 13px;
+}
+
+.perfil-horarios-card .res-calendario {
+  margin-bottom: 16px;
+}
+
+.perfil-dia-seleccionado {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #edf1f8;
+}
 
 .perfil-dia + .perfil-dia { margin-top: 16px; }
 
@@ -1120,8 +1202,8 @@
 }
 
 .perfil-clase {
-  border: 1px solid #b8bdc8;
-  border-radius: 4px;
+  border: 1px solid #d5deed;
+  border-radius: 18px;
   box-shadow: none;
 }
 
@@ -1183,6 +1265,12 @@
 @media (max-width: 800px) {
   .perfil-cabecera { grid-template-columns: 1fr; }
   .perfil-reservar { width: 100%; }
+}
+
+@media (max-width: 520px) {
+  .mi-perfil-card { padding: 20px; }
+  .mi-perfil-resumen { align-items: flex-start; flex-wrap: wrap; }
+  .mi-perfil-resumen .perfil-enlace { width: 100%; margin-left: 0; }
 }
 
 .res-calendario-cabecera strong::first-letter,
