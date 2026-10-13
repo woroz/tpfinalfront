@@ -414,6 +414,25 @@ export default function ClasesProfesor() {
                 <span className={`res-estado ${clase.estado}`}>{clase.estado}</span>
                 <small>{formatearPrecio(clase.precio)}</small>
                 {!historial && (
+                  <Link
+                    to={`/clase-virtual/${clase.id_clase}`}
+                    style={{
+                      display: "block",
+                      textAlign: "center",
+                      backgroundColor: "#10b981",
+                      color: "white",
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      fontWeight: "500",
+                      marginBottom: "8px",
+                      textDecoration: "none",
+                      fontSize: "13px"
+                    }}
+                  >
+                    Iniciar Clase Virtual
+                  </Link>
+                )}
+                {!historial && (
                   <button
                     type="button"
                     className="res-boton-secundario"
