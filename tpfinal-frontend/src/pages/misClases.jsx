@@ -12,6 +12,13 @@ const ETIQUETAS = {
   cancelada: "Cancelada",
 };
 
+function obtenerMaterialesPdf(clase) {
+  if (clase.materialesPdf?.length) return clase.materialesPdf;
+  return clase.materialUrl
+    ? [{ nombre: clase.materialNombre || "Material de la clase", url: clase.materialUrl }]
+    : [];
+}
+
 export default function MisClases() {
   const [historial, setHistorial] = useState(false);
   const [inscripciones, setInscripciones] = useState([]);
@@ -73,6 +80,7 @@ export default function MisClases() {
 
         <ul className="res-lista">
           {inscripciones.map((item) => {
+           const materialesPdf = obtenerMaterialesPdf(item.clase);
            //const ahora = new Date();
            //const inicioClase = new Date(item.clase.inicio);
            //const finClase = new Date(item.clase.fin);
@@ -86,6 +94,30 @@ export default function MisClases() {
                 <p>Con {item.profesor.nombre}</p>
                 <p>{formatearFecha(item.clase.inicio)}, de {formatearHora(item.clase.inicio)} a {formatearHora(item.clase.fin)}</p>
                 <p>{formatearPrecio(item.clase.precio)}</p>
+                <details className="mis-clases-detalle">
+                  <summary>Ver más información</summary>
+                  <div className="mis-clases-detalle-contenido">
+                    {item.clase.materia && <p><strong>Materia:</strong> {item.clase.materia}</p>}
+                    {item.clase.tema && <p><strong>Tema:</strong> {item.clase.tema}</p>}
+                    <p>
+                      <strong>Descripción:</strong>{" "}
+                      {item.clase.contenido || "El profesor no agregó una descripción."}
+                    </p>
+                    {materialesPdf.length ? (
+                      <ul className="mis-clases-pdf-lista">
+                        {materialesPdf.map((material) => (
+                          <li key={material.url}>
+                            <a href={material.url} target="_blank" rel="noreferrer">
+                              Ver PDF: {material.nombre}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>El profesor todavía no subió material en PDF.</p>
+                    )}
+                  </div>
+                </details>
               </div>
               <div className="res-item-lado">
                 <span className={`res-estado ${item.estado}`}>{ETIQUETAS[item.estado] || item.estado}</span>
