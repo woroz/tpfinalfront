@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Calendario from "../components/Calendario";
 import Navbar from "../components/Navbar";
 import professorImage from "../assets/profesor.png";
+import Calendario from "../components/Calendario";
 import { useAuth } from "../context/authContext";
 import { obtenerHorariosProfesor, obtenerPerfilProfesor } from "../services/api";
 import {
@@ -36,6 +37,7 @@ export default function PerfilProfesor() {
   const [fechaSeleccionada, setFechaSeleccionada] = useState(hoyLocal());
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
 
   const hoy = useMemo(() => hoyLocal(), []);
 
@@ -65,6 +67,11 @@ export default function PerfilProfesor() {
   }, [id, hoy]);
 
   const esAlumno = usuario?.rol === "alumno";
+  const diasDisponibles = useMemo(
+    () => new Set((agenda?.dias || []).filter((dia) => dia.horarios?.length).map((dia) => dia.fecha)),
+    [agenda],
+  );
+
   const franjasPorDia = useMemo(() => {
     const mapa = new Map();
     (perfil?.disponibilidad || []).forEach((franja) => {

@@ -182,6 +182,15 @@ export async function actualizarPerfil(datos) {
   });
 }
 
+export async function subirAvatar(archivo) {
+  const formData = new FormData();
+  formData.append("avatar", archivo);
+  return request("/perfil/avatar", {
+    method: "POST",
+    body: formData,
+  });
+}
+
 export async function obtenerNotificaciones() {
   return request("/notificaciones");
 }

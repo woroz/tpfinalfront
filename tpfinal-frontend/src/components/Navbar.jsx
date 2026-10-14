@@ -26,6 +26,10 @@ function getAvatarColor(user) {
   return colors[hash % colors.length];
 }
 
+function getAvatarUrl(user) {
+  return user?.avatarURL || user?.perfil?.avatarURL || "";
+}
+
 function claseLink({ isActive }) {
   return isActive ? "navbar-link active" : "navbar-link";
 }
@@ -37,9 +41,10 @@ export default function Navbar() {
   const [errorNotificaciones, setErrorNotificaciones] = useState("");
   const { usuario, cerrarSesion } = useAuth();
   const navigate = useNavigate();
-
+  const idUsuario = usuario?.id_usuario;
+  
   useEffect(() => {
-    if (!usuario) return undefined;
+    if (!idUsuario) return undefined;
     let activo = true;
     async function cargarNotificaciones() {
       try {
@@ -58,7 +63,7 @@ export default function Navbar() {
       activo = false;
       window.clearInterval(intervalo);
     };
-  }, [usuario]);
+  }, [idUsuario]);
 
   function handleLogout() {
     cerrarSesion();
@@ -177,7 +182,9 @@ export default function Navbar() {
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <span aria-hidden="true">{getInitials(usuario)}</span>
+            {getAvatarUrl(usuario)
+              ? <img src={getAvatarUrl(usuario)} alt="" />
+              : <span aria-hidden="true">{getInitials(usuario)}</span>}
           </button>
           {menuOpen && (
             <div className="navbar-user-menu">

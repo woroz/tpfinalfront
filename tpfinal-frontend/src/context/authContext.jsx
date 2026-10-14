@@ -1,7 +1,27 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { obtenerPerfil } from "../services/api";
 
 const AuthContext = createContext(null);
+
+const claveAvatar = (id) => `avatarURL:${id}`;
+
+function leerAvatarCache(id) {
+  try {
+    return localStorage.getItem(claveAvatar(id)) || "";
+  } catch {
+    return "";
+  }
+}
+
+function guardarAvatarCache(id, url) {
+  try {
+    if (url) localStorage.setItem(claveAvatar(id), url);
+    else localStorage.removeItem(claveAvatar(id));
+  } catch {
+    // no hay cache
+  }
+}
 
 function decodificarToken(token) {
   try {
@@ -27,13 +47,35 @@ function obtenerSesionInicial() {
     return { token: null, usuario: null };
   }
 
-  return { token: tokenGuardado, usuario: payload };
+  return {
+    token: tokenGuardado,
+    usuario: { ...payload, avatarURL: leerAvatarCache(payload.id_usuario) },
+  };
 }
 
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(() => obtenerSesionInicial().usuario);
   const [token, setToken] = useState(() => obtenerSesionInicial().token);
   const cargandoSesion = false;
+
+  useEffect(() => {
+    if (!token) return undefined;
+    const idUsuario = decodificarToken(token)?.id_usuario;
+    if (!idUsuario) return undefined;
+
+    let activo = true;
+    obtenerPerfil()
+      .then((data) => {
+        if (!activo) return;
+        const avatarURL = data.perfil?.perfil?.avatarURL || "";
+        guardarAvatarCache(idUsuario, avatarURL);
+        setUsuario((actual) => (actual ? { ...actual, avatarURL } : actual));
+      })
+      .catch(() => {});
+    return () => {
+      activo = false;
+    };
+  }, [token]);
 
   function guardarSesion(data) {
     localStorage.setItem("token", data.token);
@@ -43,7 +85,11 @@ export function AuthProvider({ children }) {
 
     const payload = decodificarToken(data.token);
     setToken(data.token);
-    setUsuario(payload);
+    setUsuario(
+      payload
+        ? { ...payload, avatarURL: leerAvatarCache(payload.id_usuario) }
+        : payload,
+    );
   }
 
   function cerrarSesion() {
@@ -54,7 +100,10 @@ export function AuthProvider({ children }) {
   }
 
   function actualizarUsuario(datos) {
-    setUsuario((actual) => actual ? { ...actual, ...datos } : actual);
+    if (datos.avatarURL !== undefined && usuario) {
+      guardarAvatarCache(usuario.id_usuario, datos.avatarURL);
+    }
+    setUsuario((actual) => (actual ? { ...actual, ...datos } : actual));
   }
 
   const value = {

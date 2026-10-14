@@ -393,20 +393,22 @@ export default function Buscar() {
             )}
           </div></>}
         </div>
-        {locationSource === "loading" && (
-          <div className="map-loading map-loading-location">Buscando tu ubicación...</div>
-        )}
-        {locationSource === "default" && (
-          <div className="map-notice">
-            No pudimos obtener tu ubicación. Podés mover el mapa manualmente.
-          </div>
-        )}
-        {mode === "profesores" && searchingProfessors && (
-          <div className="map-loading map-loading-search">Buscando profesores en esta zona.</div>
-        )}
-        {mode === "clases" && searchingClasses && (
-          <div className="map-loading map-loading-search">Buscando clases en esta zona.</div>
-        )}
+        <div className="map-status-stack" aria-live="polite">
+          {locationSource === "loading" && (
+            <div className="map-loading">Buscando tu ubicación...</div>
+          )}
+          {locationSource === "default" && (
+            <div className="map-notice">
+              No pudimos obtener tu ubicación. Podés mover el mapa manualmente.
+            </div>
+          )}
+          {mode === "profesores" && searchingProfessors && (
+            <div className="map-loading">Buscando profesores en esta zona.</div>
+          )}
+          {mode === "clases" && searchingClasses && (
+            <div className="map-loading">Buscando clases en esta zona.</div>
+          )}
+        </div>
         {mode === "clases" && classResults.length > 0 && (
           <div className="map-class-results" aria-label="Resultados de clases">
             {classResults.map((clase) => (
