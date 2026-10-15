@@ -111,7 +111,9 @@ export default function DetalleClase() {
                     ))}
                   </ul>
                 ) : (
-                  <p>El profesor todavía no cargó el material.</p>
+                  <p className="mis-clases-sin-material">
+                    El profesor todavía no subió material.
+                  </p>
                 )}
               </div>
 

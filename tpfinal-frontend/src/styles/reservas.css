@@ -4,6 +4,10 @@
   padding: 8px clamp(20px, 4vw, 64px) 56px;
 }
 
+.res-contenedor-lista {
+  max-width: 880px;
+}
+
 .res-centrado { max-width: 640px; }
 
 .res-volver {
@@ -394,7 +398,15 @@
 }
 
 .mis-clases-detalle-contenido p { margin: 0; }
+
 .mis-clases-material { width: fit-content; }
+
+.mis-clases-sin-material {
+  color: #778195;
+  font-size: 14px;
+  margin: 4px 0 0;
+}
+
 .mis-clases-pdf-lista,
 .detalle-clase-pdf-lista {
   display: grid;
@@ -514,7 +526,12 @@
   gap: 8px;
 }
 
-.res-item-lado .res-boton { width: auto; margin-top: 0; }
+.res-item-lado .res-boton {
+  width: auto;
+  max-width: 180px;
+  white-space: nowrap;
+}
+
 .res-item-lado small { color: #778195; }
 
 .clase-horario-edicion {

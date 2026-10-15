@@ -292,4 +292,10 @@ export async function verificarPago(idPago) {
     body: JSON.stringify({ payment_id: String(idPago) }),
   });
 }
+
+export async function subirChunkTranscripcion(idClase, audio) {
+  const formData = new FormData();
+  formData.append("audio", audio, "chunk.webm");
+  return request(`/clases/${idClase}/transcribir-chunk`, { method: "POST", body: formData });
+}
  

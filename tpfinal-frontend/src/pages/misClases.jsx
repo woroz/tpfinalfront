@@ -54,7 +54,7 @@ export default function MisClases() {
   return (
     <main className="app-page">
       <Navbar />
-      <section className="res-contenedor">
+      <section className="res-contenedor res-contenedor-lista">
         <header className="res-encabezado">
           <h1>Mis clases</h1>
           <p>Consultá tus clases agendadas y completá los pagos pendientes.</p>
