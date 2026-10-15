@@ -65,7 +65,7 @@ export default function PerfilProfesor() {
   }, [id, hoy]);
 
   const esAlumno = usuario?.rol === "alumno";
-  
+
   const franjasPorDia = useMemo(() => {
     const mapa = new Map();
     (perfil?.disponibilidad || []).forEach((franja) => {

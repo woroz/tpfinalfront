@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { obtenerMisInscripciones } from "../services/api";
 import { formatearFecha, formatearHora, formatearPrecio } from "../utils/fechas";
+import ChatClase from "../components/chatClase";
+import { useAuth } from "../context/authContext";
 
 const ETIQUETAS = {
   confirmada: "Confirmada",
@@ -20,11 +22,13 @@ function obtenerMaterialesPdf(clase) {
 }
 
 export default function MisClases() {
+  const { usuario } = useAuth();
   const [historial, setHistorial] = useState(false);
   const [inscripciones, setInscripciones] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [chatClaseAbierto, setChatClaseAbierto] = useState(null);
 
   useEffect(() => {
     let activo = true;
@@ -148,6 +152,19 @@ export default function MisClases() {
               >
                 {claseEstaActiva ? "Unirse a Videollamada" : "Videollamada inactiva"}
               </button>
+              <button
+              type="button"
+              className="res-boton res-boton-chico"
+              style={{
+                backgroundColor: "#007bff",
+                color: "white",
+                border: "none",
+                cursor: "pointer",
+                fontWeight: "bold"
+              }}
+              onClick={() => setChatClaseAbierto(chatClaseAbierto === item.clase.id_clase ? null : item.clase.id_clase)}
+              >
+                {chatClaseAbierto === item.clase.id_clase ? "Cerrar Chat ✕" : "💬 Chat de la clase"}</button>
               {item.pago && (
                 <Link className="perfil-enlace" to={`/mis-clases/${item.id_inscripcion}/pagar`}>
                   Ver comprobante
@@ -156,6 +173,14 @@ export default function MisClases() {
             </div>
           )}
               </div>
+              {chatClaseAbierto === item.clase.id_clase && (
+                <div style={{ width: "100%", marginTop: "15px", paddingTop: "15px", borderTop: "1px dashed #ccc" }}>
+                  <ChatClase 
+                    idClase={item.clase.id_clase} 
+                    idUsuarioActual={usuario?.id_usuario} 
+                  />
+                </div>
+              )}
             </li>
               );
               })}
