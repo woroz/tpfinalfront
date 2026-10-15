@@ -95,6 +95,8 @@ export function AuthProvider({ children }) {
   function cerrarSesion() {
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("rol");
     setToken(null);
     setUsuario(null);
   }

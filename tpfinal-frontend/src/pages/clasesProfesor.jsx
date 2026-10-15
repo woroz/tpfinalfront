@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import ChatClase from "../components/chatClase";
 import {
   actualizarPerfil,
   cambiarHorarioClase,
@@ -11,6 +12,7 @@ import {
   subirMaterialClase,
 } from "../services/api";
 import { formatearFecha, formatearHora, formatearPrecio } from "../utils/fechas";
+import { useAuth } from "../context/authContext";
 
 const MAX_PDF = 4 * 1024 * 1024;
 const MAX_PDFS = 3;
@@ -136,6 +138,7 @@ function SolicitudUbicacionProfesor({ onComplete }) {
 }
 
 export default function ClasesProfesor() {
+  const { usuario } = useAuth();
   const [historial, setHistorial] = useState(false);
   const [clases, setClases] = useState([]);
   const [claseEditando, setClaseEditando] = useState(null);
@@ -146,6 +149,7 @@ export default function ClasesProfesor() {
   const [actualizandoMaterial, setActualizandoMaterial] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  const [chatClaseAbierto, setChatClaseAbierto] = useState(null);
 
   useEffect(() => {
     let activo = true;
@@ -432,6 +436,22 @@ export default function ClasesProfesor() {
                     Iniciar Clase Virtual
                   </Link>
                 )}
+                <button
+                  type="button"
+                  className="res-boton res-boton-chico"
+                  style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    border: "none",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                    width: "100%",
+                    marginBottom: "8px"
+                  }}
+                  onClick={() => setChatClaseAbierto(chatClaseAbierto === clase.id_clase ? null : clase.id_clase)}
+                >
+                  {chatClaseAbierto === clase.id_clase ? "Cerrar Chat ✕" : "💬 Chat"}
+                </button>
                 {!historial && (
                   <button
                     type="button"
@@ -513,6 +533,14 @@ export default function ClasesProfesor() {
                     </button>
                   </div>
                 </form>
+              )}
+              {chatClaseAbierto === clase.id_clase && (
+                <div style={{ width: "100%", marginTop: "15px", paddingTop: "15px", borderTop: "1px dashed #ccc" }}>
+                  <ChatClase 
+                    idClase={clase.id_clase} 
+                    idUsuarioActual={usuario?.id_usuario} 
+                  />
+                </div>
               )}
             </li>
           ))}

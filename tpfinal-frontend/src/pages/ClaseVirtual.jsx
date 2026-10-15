@@ -4,8 +4,43 @@ import { LiveKitRoom, VideoConference } from "@livekit/components-react";
 import { useAuth } from "../context/authContext";
 import { useGrabadorClase } from "../hooks/grabadorClase";
 import "@livekit/components-styles";
+import { useRoomContext } from "@livekit/components-react";
+import "../styles/claseVirtual.css";
+
+export const BotonFinalizarProfesor = ({ nombre_sala }) => {
+  const navigate = useNavigate();
+  const room = useRoomContext();
+
+  const handleFinalizar = async () => {
+    const confirmar = window.confirm("¿Seguro que quiere finalizar la clase? Esto desconectará a todos.");
+    if (!confirmar) return;
+    try {
+      const tokenAuth = localStorage.getItem("token") || localStorage.getItem("authToken");
+      const res = await fetch(`http://localhost:3000/sala-videollamada/finalizar/${nombre_sala}`, {
+        method: "DELETE",
+        headers: {
+          "authorization": `Bearer ${tokenAuth?.trim()}`,
+          "content-Type": "application/json"
+        }
+      });
+
+      if (res.ok) {
+        await room.disconnect();
+        navigate("/mis-clases");
+      }
+    } catch (err) {
+      console.error("Error al finalizar la clase:", err);
+    }
+  };
+  return (
+    <button onClick={handleFinalizar} className="btn-finalizar-clase">
+      Finalizar Clase
+    </button>
+  );
+};
 
 export const ClaseVirtual = () => {
+  const [nombreSala, setNombreSala] = useState("");
   const { id_clase } = useParams();
   const navigate = useNavigate();
   const [token, setToken] = useState(null);
@@ -51,6 +86,7 @@ export const ClaseVirtual = () => {
         }
 
         setToken(data.token);
+        setNombreSala(data.nombre_sala);
       } catch (err) {
         setError(err.message);
       }
@@ -82,7 +118,7 @@ export const ClaseVirtual = () => {
     );
   }
 
-  return (
+   return (
     <div style={{ height: "100vh", width: "100vw" }} data-lk-theme="default">
       <LiveKitRoom
         video={true}
@@ -100,7 +136,23 @@ export const ClaseVirtual = () => {
           }
         }}
       >
-        <VideoConference />
+        <div className="lk-video-conference">
+          <div className="lk-video-conference-inner">
+            <VideoConference />
+          </div>
+          {nombreSala && (() => {
+            try {
+              const userRaw = localStorage.getItem("user");
+              if (!userRaw) return false;
+              const userObj = JSON.parse(userRaw);
+              return userObj.rol === "profesor";
+            } catch (error) {
+              return false;
+            }
+          })() && (
+            <BotonFinalizarProfesor nombre_sala={nombreSala} />
+          )}
+        </div>
       </LiveKitRoom>
 
       {progreso && (

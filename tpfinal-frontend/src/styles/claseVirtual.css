@@ -1,0 +1,23 @@
+.btn-finalizar-clase {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 99999;
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-finalizar-clase:hover {
+  background-color: #bd2130;
+}
+
+.btn-finalizar-clase:active {
+  transform: scale(0.98);
+}

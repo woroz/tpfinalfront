@@ -298,4 +298,8 @@ export async function subirChunkTranscripcion(idClase, audio) {
   formData.append("audio", audio, "chunk.webm");
   return request(`/clases/${idClase}/transcribir-chunk`, { method: "POST", body: formData });
 }
+
+export async function obtenerHistorialMensajes(id_clase) {
+  return request(`/clases/${id_clase}/mensajes`);
+}
  
