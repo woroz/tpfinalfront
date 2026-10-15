@@ -13,6 +13,7 @@ import {
 } from "../services/api";
 import { formatearFecha, formatearHora, formatearPrecio } from "../utils/fechas";
 import { useAuth } from "../context/authContext";
+import TranscripcionClase from "../components/TranscripcionClase";
 
 const MAX_PDF = 4 * 1024 * 1024;
 const MAX_PDFS = 3;
@@ -413,6 +414,7 @@ export default function ClasesProfesor() {
                     </label>
                   )}
                 </div>
+                <TranscripcionClase idClase={clase.id_clase} esProfesor />
               </div>
               <div className="res-item-lado">
                 <span className={`res-estado ${clase.estado}`}>{clase.estado}</span>

@@ -6,6 +6,7 @@ import { obtenerMisInscripciones } from "../services/api";
 import { formatearFecha, formatearHora, formatearPrecio } from "../utils/fechas";
 import ChatClase from "../components/chatClase";
 import { useAuth } from "../context/authContext";
+import TranscripcionClase from "../components/TranscripcionClase";
 
 const ETIQUETAS = {
   confirmada: "Confirmada",
@@ -122,6 +123,8 @@ export default function MisClases() {
                     )}
                   </div>
                 </details>
+                
+                <TranscripcionClase idClase={item.clase.id_clase} />
               </div>
               <div className="res-item-lado">
                 <span className={`res-estado ${item.estado}`}>{ETIQUETAS[item.estado] || item.estado}</span>
