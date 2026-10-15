@@ -29,6 +29,7 @@ export default function Login() {
       const data = await login(email, password);
       guardarSesion(data);
       const payload = JSON.parse(atob(data.token.split(".")[1]));
+      localStorage.setItem("user", JSON.stringify(payload));
       navigate(payload.rol === "alumno" ? "/buscar" : "/profesor");
     } catch (err) {
       setError(err.message);

@@ -292,4 +292,8 @@ export async function verificarPago(idPago) {
     body: JSON.stringify({ payment_id: String(idPago) }),
   });
 }
+
+export async function obtenerHistorialMensajes(id_clase) {
+  return request(`/clases/${id_clase}/mensajes`);
+}
  
