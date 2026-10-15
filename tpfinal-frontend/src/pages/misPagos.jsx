@@ -37,7 +37,7 @@ export default function MisPagos() {
   return (
     <main className="app-page">
       <Navbar />
-      <section className="res-contenedor">
+      <section className="res-contenedor res-contenedor-lista">
         <header className="res-encabezado">
           <h1>Mis pagos</h1>
           <p>Acá queda el registro de cada operación asociada a tus clases.</p>

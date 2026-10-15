@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { LiveKitRoom, VideoConference } from "@livekit/components-react";
+import { useAuth } from "../context/authContext";
+import { useGrabadorClase } from "../hooks/grabadorClase";
 import "@livekit/components-styles";
 import { useRoomContext } from "@livekit/components-react";
 import "../styles/claseVirtual.css";
@@ -43,17 +45,30 @@ export const ClaseVirtual = () => {
   const navigate = useNavigate();
   const [token, setToken] = useState(null);
   const [error, setError] = useState("");
-  
+  const { usuario } = useAuth();
+  const esProfesor = usuario?.rol === "profesor";
+  const { iniciar, finalizar, progreso } = useGrabadorClase(id_clase);
+
+  useEffect(() => {
+    if (!progreso) return undefined;
+    const avisar = (e) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", avisar);
+    return () => window.removeEventListener("beforeunload", avisar);
+  }, [progreso]);
+
   useEffect(() => {
     const solicitarAccesoSala = async () => {
       try {
-        const tokenAuth = 
-          localStorage.getItem("token") || 
-          localStorage.getItem("authToken") || 
-          localStorage.getItem("accessToken"); 
+        const tokenAuth =
+          localStorage.getItem("token") ||
+          localStorage.getItem("authToken") ||
+          localStorage.getItem("accessToken");
 
         if (!tokenAuth) {
-          throw new Error("No se encontró ninguna sesión activa en el navegador. Por favor, vuelve a iniciar sesión.");
+          throw new Error("No se encontró ninguna sesion activa en el navegador. Por favor, vuelve a iniciar sesion.");
         }
 
         const response = await fetch(`http://localhost:3000/sala-videollamada/token/${id_clase}`, {
@@ -84,8 +99,8 @@ export const ClaseVirtual = () => {
       <div style={{ padding: "50px", textAlign: "center", color: "#dc3545", fontFamily: "sans-serif" }}>
         <h2>No es posible unirse</h2>
         <p style={{ color: "#333", margin: "15px 0" }}>{error}</p>
-        <button 
-          onClick={() => navigate("/mis-clases")} 
+        <button
+          onClick={() => navigate("/mis-clases")}
           style={{ padding: "10px 20px", cursor: "pointer", background: "#007bff", color: "white", border: "none", borderRadius: "5px" }}
         >
           Volver a Mis Clases
@@ -97,7 +112,7 @@ export const ClaseVirtual = () => {
   if (!token) {
     return (
       <div style={{ padding: "100px", textAlign: "center", fontFamily: "sans-serif", color: "#666" }}>
-        <h3>Conectando con los servidores de mentorAr...</h3>
+        <h3>Conectando con el servidor de mentorAr...</h3>
         <p>Por favor, aguarde un momento.</p>
       </div>
     );
@@ -110,7 +125,16 @@ export const ClaseVirtual = () => {
         audio={true}
         token={token}
         serverUrl="wss://mentorar-video-syfwrkrz.livekit.cloud"
-        onDisconnected={() => navigate("/mis-clases")}
+        onConnected={() => {
+          if (esProfesor) iniciar();
+        }}
+        onDisconnected={async () => {
+          try {
+            if (esProfesor) await finalizar();
+          } finally {
+            navigate("/mis-clases");
+          }
+        }}
       >
         <div className="lk-video-conference">
           <div className="lk-video-conference-inner">
@@ -122,7 +146,7 @@ export const ClaseVirtual = () => {
               if (!userRaw) return false;
               const userObj = JSON.parse(userRaw);
               return userObj.rol === "profesor";
-            } catch (e) {
+            } catch (error) {
               return false;
             }
           })() && (
@@ -130,6 +154,21 @@ export const ClaseVirtual = () => {
           )}
         </div>
       </LiveKitRoom>
+
+      {progreso && (
+        <div
+          style={{
+            position: "fixed", inset: 0, zIndex: 10000, display: "grid",
+            placeItems: "center", background: "rgba(255,255,255,.95)",
+            textAlign: "center", fontFamily: "sans-serif", color: "#333",
+          }}
+        >
+          <div>
+            <h3>Transcribiendo la clase…</h3>
+            <p>{progreso.enviados} de {progreso.total} fragmentos. No cierres esta pestaña.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

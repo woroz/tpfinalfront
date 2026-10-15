@@ -293,6 +293,23 @@ export async function verificarPago(idPago) {
   });
 }
 
+export async function subirChunkTranscripcion(idClase, audio) {
+  const formData = new FormData();
+  formData.append("audio", audio, "chunk.webm");
+  return request(`/transcripcion/${idClase}/transcribir-chunk`, { method: "POST", body: formData });
+}
+
+export async function obtenerTranscripcion(idClase) {
+  return request(`/transcripcion/${idClase}/transcripcion`);
+}
+
+export async function cambiarVisibilidadTranscripcion(idClase, visible) {
+  return request(`/transcripcion/${idClase}/transcripcion/visibilidad`, {
+    method: "PATCH",
+    body: JSON.stringify({ visible }),
+  });
+}
+
 export async function obtenerHistorialMensajes(id_clase) {
   return request(`/clases/${id_clase}/mensajes`);
 }
