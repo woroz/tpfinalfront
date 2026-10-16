@@ -7,6 +7,7 @@ import { formatearFecha, formatearHora, formatearPrecio } from "../utils/fechas"
 import ChatClase from "../components/chatClase";
 import { useAuth } from "../context/authContext";
 import TranscripcionClase from "../components/TranscripcionClase";
+import ResenaClase from "../components/ResenaClase";
 
 const ETIQUETAS = {
   confirmada: "Confirmada",
@@ -30,6 +31,23 @@ export default function MisClases() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [chatClaseAbierto, setChatClaseAbierto] = useState(null);
+  const [ahora, setAhora] = useState(() => Date.now());
+  const inscripcionesVisibles = historial
+    ? inscripciones.filter((item) => (
+      item.estado === "cancelada"
+      || item.estado === "expirada"
+      || (
+        Number.isFinite(Date.parse(item.clase.fin))
+        && Date.parse(item.clase.fin) <= ahora
+        && (item.asistio || item.profesor.resenaHecha)
+      )
+    ))
+    : inscripciones;
+
+  useEffect(() => {
+    const temporizador = window.setInterval(() => setAhora(Date.now()), 60_000);
+    return () => window.clearInterval(temporizador);
+  }, []);
 
   useEffect(() => {
     let activo = true;
@@ -77,15 +95,22 @@ export default function MisClases() {
         {error && <p className="res-error" role="alert">{error}</p>}
         {cargando && <p className="res-mensaje">Cargando clases…</p>}
 
-        {!cargando && !inscripciones.length && (
+        {!cargando && !inscripcionesVisibles.length && (
           <p className="res-mensaje">
-            No tenés clases {historial ? "registradas" : "próximas"}. <Link to="/buscar">Buscar profesores</Link>
+            {historial ? "Todavía no tenés clases realizadas o canceladas." : "No tenés clases próximas."}{" "}
+            <Link to="/buscar">Buscar profesores</Link>
           </p>
         )}
 
         <ul className="res-lista">
-          {inscripciones.map((item) => {
+          {inscripcionesVisibles.map((item) => {
            const materialesPdf = obtenerMaterialesPdf(item.clase);
+           const claseFinalizada = Number.isFinite(Date.parse(item.clase.fin))
+             && Date.parse(item.clase.fin) <= ahora;
+           const puedeResenar = historial
+             && item.estado === "confirmada"
+             && claseFinalizada
+             && (item.asistio || item.profesor.resenaHecha);
            //const ahora = new Date();
            //const inicioClase = new Date(item.clase.inicio);
            //const finClase = new Date(item.clase.fin);
@@ -96,7 +121,7 @@ export default function MisClases() {
             <li key={item.id_inscripcion} className="res-item">
               <div>
                 <h2>{item.clase.titulo}</h2>
-                <p>Con {item.profesor.nombre}</p>
+                <p>Con <Link className="mis-clases-profesor-link" to={`/profesores/${item.profesor.id_profesor}`}>{item.profesor.nombre}</Link></p>
                 <p>{formatearFecha(item.clase.inicio)}, de {formatearHora(item.clase.inicio)} a {formatearHora(item.clase.fin)}</p>
                 <p>{formatearPrecio(item.clase.precio)}</p>
                 <details className="mis-clases-detalle">
@@ -125,9 +150,44 @@ export default function MisClases() {
                 </details>
                 
                 <TranscripcionClase idClase={item.clase.id_clase} />
+                <section className="mis-clases-registros">
+                  <h3>Seguimiento de tu desempeño</h3>
+                  {item.clase.registrosActividad?.length ? (
+                    <ul className="registro-actividad-lista">
+                      {item.clase.registrosActividad.map((registro) => (
+                        <li key={registro.id_registro}>
+                          <div>
+                            <strong>{registro.actividad || "Registro de la clase"}</strong>
+                            {registro.calificacion !== null && <span>Calificación: {registro.calificacion}</span>}
+                            {registro.nota && <p>{registro.nota}</p>}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>Tu profesor todavía no registró calificaciones o notas para esta clase.</p>
+                  )}
+                </section>
               </div>
               <div className="res-item-lado">
                 <span className={`res-estado ${item.estado}`}>{ETIQUETAS[item.estado] || item.estado}</span>
+                {puedeResenar && (
+                  <div className="mis-clases-resena">
+                    <ResenaClase
+                      idProfesor={item.profesor.id_profesor}
+                      idClase={item.clase.id_clase}
+                      resena={item.profesor.resena}
+                      onCreada={(resena) => setInscripciones((actuales) => actuales.map((inscripcion) => (
+                        inscripcion.profesor.id_profesor === item.profesor.id_profesor
+                          ? {
+                            ...inscripcion,
+                            profesor: { ...inscripcion.profesor, resenaHecha: true, resena }
+                          }
+                          : inscripcion
+                      )))}
+                    />
+                  </div>
+                )}
                 {item.estado === "pendiente_pago" && (
                   <>
                     <Link className="res-boton res-enlace res-boton-chico" to={`/mis-clases/${item.id_inscripcion}/pagar`}>

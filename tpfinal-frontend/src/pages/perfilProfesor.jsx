@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Calendario from "../components/Calendario";
 import Navbar from "../components/Navbar";
+import Estrellas from "../components/Estrellas";
 import professorImage from "../assets/profesor.png";
 import { useAuth } from "../context/authContext";
 import { obtenerHorariosProfesor, obtenerPerfilProfesor } from "../services/api";
@@ -112,7 +113,7 @@ export default function PerfilProfesor() {
   const nombre = perfil.usuario?.nombre || "Profesor";
   const materias = (perfil.materias || []).map((item) => item.materia?.nombreMateria).filter(Boolean);
   const clases = perfil.clases || [];
-  const resenas = (perfil.resenas || []).slice(0, 5);
+  const resenas = perfil.resenas || [];
   const promedio = perfil.promedioResenas;
 
   return (
@@ -130,7 +131,12 @@ export default function PerfilProfesor() {
             </p>
             <p className="perfil-linea">
               {promedio != null
-                ? `${promedio.toFixed(1).replace(".", ",")} de 5 según ${perfil.resenas.length} ${perfil.resenas.length === 1 ? "reseña" : "reseñas"}`
+                ? (
+                  <>
+                    <Estrellas puntaje={promedio} />
+                    {" "}{promedio.toFixed(1).replace(".", ",")} de 5 según {resenas.length} {resenas.length === 1 ? "reseña" : "reseñas"}
+                  </>
+                )
                 : "Todavía no tiene reseñas"}
             </p>
             {materias.length > 0 && (
@@ -204,33 +210,55 @@ export default function PerfilProfesor() {
             )}
           </div>
 
-          <div className="res-tarjeta">
-            <h2>Horario de atención</h2>
-            <ul className="perfil-semana">
-              {DIAS_SEMANA.map((dia) => {
-                const franjas = franjasPorDia.get(dia.valor);
-                return (
-                  <li key={dia.valor}>
-                    <span className="perfil-semana-dia">{dia.nombre}</span>
-                    <div className={`perfil-semana-franjas${franjas ? "" : " perfil-sin-atencion"}`}>
-                      {franjas
-                        ? franjas.map((franja, indice) => {
-                            const materia = franja.id_materia
-                              ? nombresMaterias.get(franja.id_materia) || "Materia"
-                              : "Todas las materias";
-                            return (
-                              <span className="perfil-semana-franja" key={`${franja.id_materia || "todas"}-${franja.desde}-${indice}`}>
-                                <span className="perfil-semana-materia">{materia}</span>
-                                <span className="perfil-semana-horario">{franja.desde}–{franja.hasta}</span>
-                              </span>
-                            );
-                          })
-                        : "No atiende"}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+          <div className="perfil-columna-horario">
+            <div className="res-tarjeta">
+              <h2>Horario de atención</h2>
+              <ul className="perfil-semana">
+                {DIAS_SEMANA.map((dia) => {
+                  const franjas = franjasPorDia.get(dia.valor);
+                  return (
+                    <li key={dia.valor}>
+                      <span className="perfil-semana-dia">{dia.nombre}</span>
+                      <div className={`perfil-semana-franjas${franjas ? "" : " perfil-sin-atencion"}`}>
+                        {franjas
+                          ? franjas.map((franja, indice) => {
+                              const materia = franja.id_materia
+                                ? nombresMaterias.get(franja.id_materia) || "Materia"
+                                : "Todas las materias";
+                              return (
+                                <span className="perfil-semana-franja" key={`${franja.id_materia || "todas"}-${franja.desde}-${indice}`}>
+                                  <span className="perfil-semana-materia">{materia}</span>
+                                  <span className="perfil-semana-horario">{franja.desde}–{franja.hasta}</span>
+                                </span>
+                              );
+                            })
+                          : "No atiende"}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            <div className="res-tarjeta perfil-resenas-tarjeta">
+              <h2>Reseñas de alumnos</h2>
+              {resenas.length ? (
+                <ul className="perfil-resenas">
+                  {resenas.map((resena) => (
+                    <li key={resena.id_resena}>
+                      <strong>{resena.alumno?.usuario?.nombre || "Alumno"}</strong>
+                      <div className="perfil-resena-puntaje">
+                        <Estrellas puntaje={resena.puntaje} />
+                        <span>{resena.puntaje} de 5</span>
+                      </div>
+                      {resena.comentario && <p>{resena.comentario}</p>}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="perfil-resenas-vacias">Todavía no hay reseñas.</p>
+              )}
+            </div>
           </div>
         </div>
 
@@ -260,21 +288,6 @@ export default function PerfilProfesor() {
             ))}
           </ul>
         </div>
-
-        {resenas.length > 0 && (
-          <div className="res-tarjeta perfil-bloque">
-            <h2>Reseñas de alumnos</h2>
-            <ul className="perfil-resenas">
-              {resenas.map((resena) => (
-                <li key={resena.id_resena}>
-                  <strong>{resena.alumno?.usuario?.nombre || "Alumno"}</strong>
-                  <span>{resena.puntaje} de 5</span>
-                  {resena.comentario && <p>{resena.comentario}</p>}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </section>
     </main>
   );

@@ -174,7 +174,21 @@ export async function cambiarHorarioClase(idClase, fechaHoraInicio, fechaHoraFin
 export async function obtenerPerfilProfesor(idProfesor) {
   return request(`/profesores/${idProfesor}`);
 }
- 
+
+export async function crearResenaProfesor(idProfesor, datos) {
+  return request(`/profesores/${idProfesor}/resenas`, {
+    method: "POST",
+    body: JSON.stringify(datos),
+  });
+}
+
+export async function actualizarResenaProfesor(idProfesor, datos) {
+  return request(`/profesores/${idProfesor}/resenas`, {
+    method: "PATCH",
+    body: JSON.stringify(datos),
+  });
+}
+
 export async function actualizarPerfil(datos) {
   return request("/perfil", {
     method: "PATCH",
@@ -269,6 +283,24 @@ export async function pagarInscripcion(idInscripcion) {
  
 export async function obtenerClasesProgramadas(historial = false) {
   return request(`/clases/programadas?historial=${historial}`);
+}
+
+export async function obtenerActividadAlumnoDeClase(idClase) {
+  return request(`/actividad-alumno/clases/${encodeURIComponent(idClase)}`);
+}
+
+export async function crearRegistroActividadAlumno(datos) {
+  return request("/actividad-alumno", {
+    method: "POST",
+    body: JSON.stringify(datos),
+  });
+}
+
+export async function actualizarRegistroActividadAlumno(idRegistro, datos) {
+  return request(`/actividad-alumno/${encodeURIComponent(idRegistro)}`, {
+    method: "PATCH",
+    body: JSON.stringify(datos),
+  });
 }
  
 export async function obtenerMiDisponibilidad() {
