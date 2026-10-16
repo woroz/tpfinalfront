@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Estrellas from "../components/Estrellas";
 import { useAuth } from "../context/authContext";
-import { actualizarPerfil, obtenerPerfil, subirAvatar } from "../services/api";
+import { actualizarPerfil, obtenerPerfil, obtenerPerfilProfesor, subirAvatar } from "../services/api";
 import { formatearPrecio } from "../utils/fechas";
+import professorImage from "../assets/profesor.png";
 
 function perfilInicial(usuario, datos) {
   const perfil = datos.perfil || {};
@@ -35,6 +37,9 @@ export default function MiPerfil() {
   const [mensaje, setMensaje] = useState("");
   const [archivoAvatar, setArchivoAvatar] = useState(null);
   const [previewAvatar, setPreviewAvatar] = useState("");
+  const [perfilProfesor, setPerfilProfesor] = useState(null);
+  const [cargandoPerfilProfesor, setCargandoPerfilProfesor] = useState(() => usuario?.rol === "profesor");
+  const [errorPerfilProfesor, setErrorPerfilProfesor] = useState("");
   const archivoRef = useRef(null);
 
   useEffect(() => {
@@ -55,9 +60,43 @@ export default function MiPerfil() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [usuario?.id_usuario]);
 
+  useEffect(() => {
+    if (usuario?.rol !== "profesor" || !usuario.id_rol) {
+      return undefined;
+    }
+
+    let activo = true;
+    obtenerPerfilProfesor(usuario.id_rol)
+      .then((data) => {
+        if (activo) {
+          setPerfilProfesor(data.perfil);
+          setErrorPerfilProfesor("");
+        }
+      })
+      .catch((err) => {
+        if (activo) setErrorPerfilProfesor(err.message || "No se pudo cargar la vista previa del perfil.");
+      })
+      .finally(() => {
+        if (activo) setCargandoPerfilProfesor(false);
+      });
+    return () => {
+      activo = false;
+    };
+  }, [usuario?.id_rol, usuario?.rol]);
+
   useEffect(() => () => {
     if (previewAvatar) URL.revokeObjectURL(previewAvatar);
   }, [previewAvatar]);
+
+  function refrescarVistaPreviaProfesor() {
+    if (usuario?.rol !== "profesor" || !usuario.id_rol) return;
+    obtenerPerfilProfesor(usuario.id_rol)
+      .then((data) => {
+        setPerfilProfesor(data.perfil);
+        setErrorPerfilProfesor("");
+      })
+      .catch((err) => setErrorPerfilProfesor(err.message || "No se pudo actualizar la vista previa del perfil."));
+  }
 
   function cambiar(campo, valor) {
     setForm((actual) => ({ ...actual, [campo]: valor }));
@@ -95,6 +134,7 @@ export default function MiPerfil() {
         setPreviewAvatar("");
         setCampoEditando(null);
         setMensaje("Foto de perfil actualizada.");
+        refrescarVistaPreviaProfesor();
       } catch (err) {
         setError(err.message || "No se pudo actualizar la foto de perfil.");
       } finally {
@@ -127,6 +167,7 @@ export default function MiPerfil() {
       if (campo === "nombre") actualizarUsuario({ nombre: texto });
       setCampoEditando(null);
       setMensaje("Cambios guardados.");
+      refrescarVistaPreviaProfesor();
     } catch (err) {
       setError(err.message || "No se pudieron guardar los cambios.");
     } finally {
@@ -223,6 +264,7 @@ export default function MiPerfil() {
 
         {cargando && <p className="res-mensaje">Cargando perfil…</p>}
         {!cargando && form && (
+          <>
           <section className="res-tarjeta mi-perfil-card">
             <div className="mi-perfil-resumen">
               <div className="mi-perfil-avatar-wrap">
@@ -294,6 +336,78 @@ export default function MiPerfil() {
             {error && <p className="res-error" role="alert">{error}</p>}
             {mensaje && <p className="res-ok" role="status">{mensaje}</p>}
           </section>
+          {usuario?.rol === "profesor" && (
+            <section className="mi-perfil-profesor-seccion" aria-label="Reseñas y vista previa de tu perfil">
+              <div className="res-tarjeta mi-perfil-resenas">
+                <h2>Reseñas recibidas</h2>
+                {errorPerfilProfesor && <p className="res-error" role="alert">{errorPerfilProfesor}</p>}
+                {cargandoPerfilProfesor && <p className="res-mensaje">Cargando reseñas…</p>}
+                {!cargandoPerfilProfesor && perfilProfesor && (
+                  <>
+                    {perfilProfesor.promedioResenas != null && (
+                      <p className="mi-perfil-promedio">
+                        <Estrellas puntaje={perfilProfesor.promedioResenas} />
+                        <strong>{perfilProfesor.promedioResenas.toFixed(1).replace(".", ",")} de 5</strong>
+                        <span>{perfilProfesor.resenas.length} {perfilProfesor.resenas.length === 1 ? "reseña" : "reseñas"}</span>
+                      </p>
+                    )}
+                    {perfilProfesor.resenas.length ? (
+                      <ul className="mi-perfil-lista-resenas">
+                        {perfilProfesor.resenas.map((resena) => (
+                          <li key={resena.id_resena}>
+                            <div className="mi-perfil-resena-cabecera">
+                              <strong>{resena.alumno?.usuario?.nombre || "Alumno"}</strong>
+                              <span><Estrellas puntaje={resena.puntaje} /> {resena.puntaje} de 5</span>
+                            </div>
+                            {resena.comentario && <p>{resena.comentario}</p>}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="res-mensaje">Todavía no recibiste reseñas.</p>
+                    )}
+                  </>
+                )}
+              </div>
+
+              <div className="res-tarjeta mi-perfil-vista-previa">
+                <h2>Vista previa de tu perfil</h2>
+                {perfilProfesor && (
+                  <div className="mi-perfil-preview-contenido">
+                    <img
+                      src={perfilProfesor.usuario?.perfil?.avatarURL || professorImage}
+                      alt=""
+                      className="mi-perfil-preview-avatar"
+                    />
+                    <div>
+                      <h3>{perfilProfesor.usuario?.nombre || form.nombre}</h3>
+                      <p>{perfilProfesor.tarifa != null ? `${formatearPrecio(perfilProfesor.tarifa)} por hora` : "Tarifa no informada"}</p>
+                      {perfilProfesor.promedioResenas != null && (
+                        <p className="mi-perfil-preview-rating">
+                          <Estrellas puntaje={perfilProfesor.promedioResenas} />
+                          {perfilProfesor.promedioResenas.toFixed(1).replace(".", ",")} de 5
+                        </p>
+                      )}
+                      <p className="mi-perfil-preview-descripcion">
+                        {perfilProfesor.descripcion || perfilProfesor.usuario?.perfil?.biografia || "Todavía no agregaste una presentación."}
+                      </p>
+                      <ul className="mi-perfil-preview-materias">
+                        {(perfilProfesor.materias || []).map((item) => (
+                          <li key={item.materia?.id_materia || item.id_materia}>
+                            {item.materia?.nombreMateria || item.nombreMateria}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+                <Link className="res-boton res-enlace mi-perfil-preview-enlace" to={`/profesores/${usuario.id_rol}`}>
+                  Abrir perfil público
+                </Link>
+              </div>
+            </section>
+          )}
+          </>
         )}
         {!cargando && !form && error && <p className="res-error" role="alert">{error}</p>}
       </section>
