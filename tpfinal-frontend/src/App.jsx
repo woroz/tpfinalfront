@@ -18,6 +18,8 @@ import MateriasProfesor from "./pages/materiasProfesor";
 import MiPerfil from "./pages/miPerfil";
 import { ClaseVirtual } from "./pages/ClaseVirtual";
 import "./styles/reservas.css";
+import "./styles/layout.css";
+import "./styles/perfil.css"
 
 function PagePlaceholder({ title, description }) {
   return (

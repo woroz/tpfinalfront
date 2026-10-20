@@ -237,7 +237,7 @@ export default function MiPerfil() {
         <div className="mi-perfil-campo-cabecera">
           <span>{titulo}</span>
           <button type="button" className="mi-perfil-lapiz" aria-label={`Editar ${titulo.toLowerCase()}`} onClick={() => editar(campo)}>
-            ✎
+            Editar
           </button>
         </div>
         {campoEditando === campo ? renderEditor(campo, tipo, props) : <p>{contenido || "No agregaste información todavía."}</p>}
@@ -305,7 +305,7 @@ export default function MiPerfil() {
               <div className="mi-perfil-campo">
                 <div className="mi-perfil-campo-cabecera">
                   <span>Visibilidad</span>
-                  <button type="button" className="mi-perfil-lapiz" aria-label="Editar visibilidad" onClick={() => editar("visibilidad")}>✎</button>
+                  <button type="button" className="mi-perfil-lapiz" aria-label="Editar visibilidad" onClick={() => editar("visibilidad")}>Editar</button>
                 </div>
                 {campoEditando === "visibilidad"
                   ? (
