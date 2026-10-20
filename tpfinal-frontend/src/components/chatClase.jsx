@@ -13,26 +13,57 @@ export default function ChatClase({ idClase, idUsuarioActual }) {
       socket.connect();
     }
 
-    const cargarHistorial = async () => {
+    const unirseALaSala = () => {
+      socket.emit('unirse_clase', { 
+        id_clase: idClase, 
+        id_usuario_actual: idUsuarioActual 
+      });
+      socket.emit('marcar_mensajes_leidos', { id_clase: idClase, id_usuario: idUsuarioActual });
+    };
+
+     const inicializarChat = async () => {
       try {
         const response = await obtenerHistorialMensajes(idClase);
         if (response && response.mensajes) {
           setMensajes(response.mensajes);
         }
+
+        unirseALaSala();
+
       } catch (error) {
-        console.error('Error al cargar el historial del chat:', error.message);
+        console.error('Error al inicializar el chat:', error.message);
       }
     };
 
-    cargarHistorial();
+    inicializarChat();
 
-    socket.emit('unirse_clase', { 
-      id_clase: idClase, 
-      id_usuario_actual: idUsuarioActual 
+    socket.on('connect', () => {
+      unirseALaSala();
+    });
+
+    socket.on('error_socket', (error) => {
+      console.error('Error de Socket desde el Servidor:', error.mensaje);
     });
 
     socket.on('recibir_mensaje', (nuevoMensaje) => {
-      setMensajes((prev) => [...prev, nuevoMensaje]);
+      if (nuevoMensaje.id_usuario_remitente !== idUsuarioActual) {
+        socket.emit('marcar_mensajes_leidos', { id_clase: idClase, id_usuario: idUsuarioActual });
+      }
+      setMensajes((prev) => {
+        const indexTemporal = prev.findIndex(msg => msg.id_usuario_remitente === nuevoMensaje.id_usuario_remitente && msg.contenido === nuevoMensaje.contenido && String(msg.id_mensaje).startsWith('temp-'));
+        if (indexTemporal !== -1) {
+          const copiaMensajes = [...prev];
+          copiaMensajes[indexTemporal] = nuevoMensaje;
+          return copiaMensajes;
+        }
+        if (nuevoMensaje.id_usuario_remitente !== idUsuarioActual) {
+          return [
+            ...prev.map(msg => msg.id_usuario_remitente === idUsuarioActual ? { ...msg, leido: true } : msg),
+            nuevoMensaje
+          ];
+        }
+        return [...prev, nuevoMensaje];
+      });
     });
 
     socket.on('mensajes_leidos_actualizados', (data) => {
@@ -44,6 +75,8 @@ export default function ChatClase({ idClase, idUsuarioActual }) {
     });
 
     return () => {
+      socket.off('connect');
+      socket.off('error_socket');
       socket.off('recibir_mensaje');
       socket.off('mensajes_leidos_actualizados');
     };
@@ -56,14 +89,24 @@ export default function ChatClase({ idClase, idUsuarioActual }) {
   const manejarEnvio = (e) => {
     e.preventDefault();
     if (!textoMensaje.trim()) return;
+    const contenidoMensaje = textoMensaje;
+    setTextoMensaje('');
 
     socket.emit('enviar_mensaje', {
       id_clase: idClase,
       id_usuario_remitente: idUsuarioActual,
-      contenido: textoMensaje
+      contenido: contenidoMensaje
     });
 
-    setTextoMensaje('');
+    const mensajeTemporal = {
+      id_mensaje: `temp-${Date.now()}`,
+      id_usuario_remitente: idUsuarioActual,
+      contenido: contenidoMensaje,
+      fecha_envio: new Date().toISOString(),
+      leido: false
+    };
+
+    setMensajes((prev) => [...prev, mensajeTemporal]);
   };
 
   return (

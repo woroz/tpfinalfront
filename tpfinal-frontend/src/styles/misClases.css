@@ -1,0 +1,278 @@
+.mis-clases-pagina .res-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 24px;
+}
+
+.mis-clases-pagina .res-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  align-items: start;
+  gap: 24px;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+
+.mis-clases-pagina .res-item > div:first-child {
+  min-width: 0;
+}
+
+.mis-clases-pagina .res-item h2 {
+  margin: 0 0 12px;
+  color: #172033;
+  font-size: 1.4rem;
+  line-height: 1.3;
+}
+
+.mis-clases-pagina .res-item > div:first-child > p {
+  color: #64748b;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  margin: 6px 0;
+}
+
+.mis-clases-pagina .mis-clases-profesor-link {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.mis-clases-pagina .mis-clases-profesor-link:hover {
+  text-decoration: underline;
+}
+
+.mis-clases-pagina .res-item-lado {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding-left: 20px;
+  border-left: 1px solid #e2e8f0;
+}
+
+.mis-clases-pagina .res-item-lado small {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.mis-clases-pagina .res-estado {
+  align-self: flex-start;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #e8edf6;
+  color: #536078;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.mis-clases-pagina .res-estado.confirmada {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.mis-clases-pagina .res-estado.pendiente_pago {
+  color: #a16207;
+  background: #fef3c7;
+}
+
+.mis-clases-pagina .res-estado.expirada,
+.mis-clases-pagina .res-estado.cancelada {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.mis-clases-pagina .res-item-lado > a,
+.mis-clases-pagina .res-item-lado > button,
+.mis-clases-pagina .mis-clases-resena > button {
+  box-sizing: border-box;
+  max-width: 100%;
+  font-family: inherit;
+}
+
+.mis-clases-pagina .res-item-lado > button {
+  width: 100%;
+}
+
+.mis-clases-pagina .res-item-lado .res-boton {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.mis-clases-pagina .res-item-lado .res-boton:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+.mis-clases-pagina .res-item-lado .res-boton:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+.mis-clases-pagina .res-item-lado .res-enlace {
+  background: #2563eb;
+  color: #fff;
+}
+
+.mis-clases-pagina .res-item-lado .perfil-enlace {
+  display: inline-flex;
+  justify-content: center;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  color: #334155;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.mis-clases-pagina .res-item-lado .perfil-enlace:hover {
+  background: #f1f5f9;
+}
+
+.mis-clases-pagina .mis-clases-resena {
+  min-width: 0;
+  width: 100%;
+}
+
+.mis-clases-pagina .mis-clases-pdf-lista {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mis-clases-pagina .mis-clases-pdf-lista li {
+  min-width: 0;
+}
+
+.mis-clases-pagina .mis-clases-pdf-lista a {
+  display: inline-block;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition: background-color 0.2s ease;
+}
+
+.mis-clases-pagina .mis-clases-pdf-lista a:hover {
+  background: #dbeafe;
+}
+
+.mis-clases-pagina .mis-clases-registros {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.mis-clases-pagina .mis-clases-registros h3 {
+  margin: 0 0 12px;
+  color: #334155;
+  font-size: 1rem;
+}
+
+.mis-clases-pagina .mis-clases-registros > p {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.mis-clases-pagina .registro-actividad-lista {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mis-clases-pagina .registro-actividad-lista > li {
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.mis-clases-pagina .registro-actividad-lista strong {
+  display: block;
+  color: #172033;
+  margin-bottom: 6px;
+}
+
+.mis-clases-pagina .registro-actividad-lista span {
+  display: inline-block;
+  color: #2563eb;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.mis-clases-pagina .registro-actividad-lista p {
+  color: #64748b;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.mis-clases-pagina .res-item > div[style*="border-top"] {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 760px) {
+  .mis-clases-pagina .res-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding: 18px;
+  }
+
+  .mis-clases-pagina .res-item-lado {
+    padding: 16px 0 0;
+    border-top: 1px solid #e2e8f0;
+    border-left: none;
+  }
+
+  .mis-clases-pagina .res-item > div[style*="border-top"] {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 520px) {
+  .mis-clases-pagina .res-item {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .mis-clases-pagina .mis-clases-detalle-contenido,
+  .mis-clases-pagina .mis-clases-registros {
+    padding: 12px;
+  }
+}

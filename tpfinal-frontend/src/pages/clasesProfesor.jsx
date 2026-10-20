@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ChatClase from "../components/chatClase";
+import "../styles/clasesProfesor.css";
 import {
   actualizarPerfil,
   cambiarHorarioClase,
@@ -329,7 +330,7 @@ export default function ClasesProfesor() {
   }
 
   return (
-    <main className="app-page">
+    <main className="app-page clases-profesor-pagina">
       <Navbar />
       <SolicitudUbicacionProfesor onComplete={() => {}} />
       <section className="res-contenedor">
@@ -424,37 +425,18 @@ export default function ClasesProfesor() {
                 {!historial && (
                   <Link
                     to={`/clase-virtual/${clase.id_clase}`}
-                    style={{
-                      display: "block",
-                      textAlign: "center",
-                      backgroundColor: "#10b981",
-                      color: "white",
-                      padding: "8px 12px",
-                      borderRadius: "6px",
-                      fontWeight: "500",
-                      marginBottom: "8px",
-                      textDecoration: "none",
-                      fontSize: "13px"
-                    }}
+                    className="clases-profesor-btn clases-profesor-btn--virtual"
                   >
                     Iniciar Clase Virtual
                   </Link>
                 )}
                 <button
                   type="button"
-                  className="res-boton res-boton-chico"
-                  style={{
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    border: "none",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                    width: "100%",
-                    marginBottom: "8px"
-                  }}
+                  className="clases-profesor-btn clases-profesor-btn--chat"
                   onClick={() => setChatClaseAbierto(chatClaseAbierto === clase.id_clase ? null : clase.id_clase)}
                 >
-                  {chatClaseAbierto === clase.id_clase ? "Cerrar Chat ✕" : "💬 Chat"}
+                  <span>💬</span>
+                  {chatClaseAbierto === clase.id_clase ? "Cerrar Chat" : "Abrir chat"}
                 </button>
                 {!historial && (
                   <button
