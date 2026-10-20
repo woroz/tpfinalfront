@@ -1,11 +1,7 @@
-/* Mi perfil: diseño de tarjetas con cabecera e información en dos columnas.
-   Se carga después de layout.css. */
-
 .mi-perfil-page {
   max-width: 1040px;
 }
 
-/* ---------- Tarjeta principal: cabecera con foto y datos ---------- */
 .mi-perfil-card,
 .mi-perfil-resenas,
 .mi-perfil-vista-previa {
@@ -72,7 +68,6 @@
   background: var(--brand-soft);
 }
 
-/* ---------- Campos en dos columnas ---------- */
 .mi-perfil-campos {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -105,7 +100,6 @@
   overflow-wrap: anywhere;
 }
 
-/* Botón "Editar" con borde, en lugar del lápiz suelto */
 .mi-perfil-lapiz {
   display: inline-flex;
   width: auto;
@@ -129,7 +123,6 @@
   background: var(--brand-soft);
 }
 
-/* Las notas, errores y mensajes ocupan las dos columnas */
 .mi-perfil-campos > .res-nota {
   grid-column: 1 / -1;
   margin: 16px 0 0;
@@ -140,7 +133,6 @@
   margin-top: 16px;
 }
 
-/* ---------- Sección de reseñas y vista previa ---------- */
 .mi-perfil-profesor-seccion {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -156,7 +148,6 @@
   font-weight: 700;
 }
 
-/* ---------- Móvil ---------- */
 @media (max-width: 760px) {
   .mi-perfil-card,
   .mi-perfil-resenas,
