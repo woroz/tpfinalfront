@@ -142,7 +142,10 @@ export default function Navbar() {
             type="button"
             aria-label={`Notificaciones${noLeidas ? `, ${noLeidas} sin leer` : ""}`}
             aria-expanded={notificacionesOpen}
-            onClick={() => setNotificacionesOpen((open) => !open)}
+            onClick={() => {
+              setNotificacionesOpen((open) => !open);
+              setMenuOpen(false);
+            }}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
@@ -180,7 +183,10 @@ export default function Navbar() {
             style={{ backgroundColor: getAvatarColor(usuario) }}
             aria-label="Abrir menú de usuario"
             aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
+            onClick={() => {
+              setMenuOpen((open) => !open);
+              setNotificacionesOpen(false);
+            }}
           >
             {getAvatarUrl(usuario)
               ? <img src={getAvatarUrl(usuario)} alt="" />
@@ -188,6 +194,10 @@ export default function Navbar() {
           </button>
           {menuOpen && (
             <div className="navbar-user-menu">
+              <div className="navbar-user-menu-cabecera">
+                <strong>{getUserName(usuario)}</strong>
+                {usuario?.email && <span>{usuario.email}</span>}
+              </div>
               <NavLink to="/perfil" onClick={() => setMenuOpen(false)}>
                 Mi perfil
               </NavLink>
