@@ -1,0 +1,213 @@
+.clases-profesor-pagina .res-lista {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        gap: 24px;
+      }
+
+      .clases-profesor-pagina .clases-profesor-item {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 24px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 220px;
+        gap: 24px;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+      }
+
+      .clases-profesor-pagina .res-item-lado {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+        border-left: 1px solid #e2e8f0;
+        padding-left: 20px;
+      }
+
+      .clases-profesor-pagina .clases-profesor-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 16px;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.2s, filter 0.2s;
+      }
+
+      .clases-profesor-pagina .clases-profesor-btn:hover {
+        filter: brightness(0.94);
+        transform: translateY(-1px);
+      }
+
+      .clases-profesor-pagina .clases-profesor-btn--virtual {
+        background: #059669;
+      }
+
+      .clases-profesor-pagina .clases-profesor-btn--chat {
+        background: #2563eb;
+      }
+
+      .clases-profesor-pagina .clases-profesor-item h2 {
+        color: #172033;
+        margin-top: 0;
+        margin-bottom: 8px;
+      }
+
+      .clases-profesor-pagina .clases-profesor-materiales {
+        margin-top: 20px;
+        padding: 16px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+      }
+
+      .clases-profesor-pagina .clases-profesor-materiales > strong {
+        display: block;
+        margin-bottom: 12px;
+        color: #334155;
+      }
+
+      .clases-profesor-pagina .clases-profesor-material-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px 0;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .clases-profesor-pagina .clases-profesor-material-link {
+        color: #2563eb;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .clases-profesor-pagina .clases-profesor-material-acciones {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .clases-profesor-pagina .clases-profesor-accion-pdf,
+      .clases-profesor-pagina .clases-profesor-eliminar-pdf {
+        padding: 8px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: white;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .clases-profesor-pagina .clases-profesor-accion-pdf input,
+      .clases-profesor-pagina .clases-profesor-subir-pdf input {
+        display: none;
+      }
+
+      .clases-profesor-pagina .clases-profesor-eliminar-pdf {
+        color: #dc2626;
+        border-color: #fecaca;
+      }
+
+      .clases-profesor-pagina .clases-profesor-subir-pdf {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 12px;
+        padding: 10px 14px;
+        border: 1px dashed #94a3b8;
+        border-radius: 8px;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .clases-profesor-pagina .clases-profesor-subir-pdf:hover {
+        background: #eff6ff;
+        border-color: #2563eb;
+      }
+
+      @media (max-width: 760px) {
+        .clases-profesor-pagina .clases-profesor-item {
+          grid-template-columns: 1fr;
+          padding: 18px;
+        }
+
+        .clases-profesor-pagina .res-item-lado {
+          border-left: none;
+          border-top: 1px solid #e2e8f0;
+          padding: 16px 0 0;
+        }
+      }
+
+
+.clases-profesor-pagina .clases-profesor-item > div:first-child {
+  min-width: 0;
+}
+
+.clases-profesor-pagina .clases-profesor-item > div:first-child > p {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.clases-profesor-pagina .res-item-lado small {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.clases-profesor-pagina .res-estado {
+  align-self: flex-start;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.clases-profesor-pagina .res-boton-secundario {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  color: #334155;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.clases-profesor-pagina .res-boton-secundario:hover {
+  background: #f1f5f9;
+}
+
+.clases-profesor-pagina .clases-profesor-item > div:first-child > h2 {
+  font-size: 1.4rem;
+  line-height: 1.3;
+}
+
+.clases-profesor-pagina .clase-horario-edicion,
+.clases-profesor-pagina .chat-clase-contenedor {
+  grid-column: 1 / -1;
+}
+
+.clases-profesor-pagina .clases-profesor-item > div[style*="border-top"] {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.clases-profesor-pagina .res-item-lado > a,
+.clases-profesor-pagina .res-item-lado > button {
+  flex-shrink: 0;
+}

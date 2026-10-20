@@ -8,6 +8,7 @@ import ChatClase from "../components/chatClase";
 import { useAuth } from "../context/authContext";
 import TranscripcionClase from "../components/TranscripcionClase";
 import ResenaClase from "../components/ResenaClase";
+import "../styles/misClases.css";
 
 const ETIQUETAS = {
   confirmada: "Confirmada",
@@ -75,7 +76,7 @@ export default function MisClases() {
   }
 
   return (
-    <main className="app-page">
+    <main className="app-page mis-clases-pagina">
       <Navbar />
       <section className="res-contenedor res-contenedor-lista">
         <header className="res-encabezado">
@@ -148,8 +149,6 @@ export default function MisClases() {
                     )}
                   </div>
                 </details>
-                
-                <TranscripcionClase idClase={item.clase.id_clase} />
                 <section className="mis-clases-registros">
                   <h3>Seguimiento de tu desempeño</h3>
                   {item.clase.registrosActividad?.length ? (
@@ -168,6 +167,8 @@ export default function MisClases() {
                     <p>Tu profesor todavía no registró calificaciones o notas para esta clase.</p>
                   )}
                 </section>
+                <br></br>
+                <TranscripcionClase idClase={item.clase.id_clase} />
               </div>
               <div className="res-item-lado">
                 <span className={`res-estado ${item.estado}`}>{ETIQUETAS[item.estado] || item.estado}</span>
