@@ -7,6 +7,8 @@ import "@livekit/components-styles";
 import { useRoomContext } from "@livekit/components-react";
 import "../styles/claseVirtual.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const BotonFinalizarProfesor = ({ nombre_sala }) => {
   const navigate = useNavigate();
   const room = useRoomContext();
@@ -16,7 +18,7 @@ export const BotonFinalizarProfesor = ({ nombre_sala }) => {
     if (!confirmar) return;
     try {
       const tokenAuth = localStorage.getItem("token") || localStorage.getItem("authToken");
-      const res = await fetch(`http://localhost:3000/sala-videollamada/finalizar/${nombre_sala}`, {
+      const res = await fetch(`${API_URL}/sala-videollamada/finalizar/${nombre_sala}`, {
         method: "DELETE",
         headers: {
           "authorization": `Bearer ${tokenAuth?.trim()}`,
@@ -71,7 +73,7 @@ export const ClaseVirtual = () => {
           throw new Error("No se encontró ninguna sesion activa en el navegador. Por favor, vuelve a iniciar sesion.");
         }
 
-        const response = await fetch(`http://localhost:3000/sala-videollamada/token/${id_clase}`, {
+        const response = await fetch(`${API_URL}/sala-videollamada/token/${id_clase}`, {
           method: "GET",
           headers: {
             "authorization": `Bearer ${tokenAuth.trim()}`,
