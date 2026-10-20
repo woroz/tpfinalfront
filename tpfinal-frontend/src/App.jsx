@@ -20,6 +20,8 @@ import { ClaseVirtual } from "./pages/ClaseVirtual";
 import "./styles/reservas.css";
 import "./styles/layout.css";
 import "./styles/perfil.css"
+import "./styles/menu.css";
+
 
 function PagePlaceholder({ title, description }) {
   return (
