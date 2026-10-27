@@ -346,3 +346,34 @@ export async function obtenerHistorialMensajes(id_clase) {
   return request(`/clases/${id_clase}/mensajes`);
 }
  
+export async function obtenerSolicitudesTablon(pagina = 1) {
+  return request(`/tablon/solicitudes?pagina=${pagina}`);
+}
+
+export async function obtenerMisSolicitudes() {
+  return request("/tablon/solicitudes/mias");
+}
+
+export async function crearSolicitudTablon(datos) {
+  return request("/tablon/solicitudes", { method: "POST", body: JSON.stringify(datos) });
+}
+
+export async function editarSolicitudTablon(idSolicitud, datos) {
+  return request(`/tablon/solicitudes/${idSolicitud}`, { method: "PATCH", body: JSON.stringify(datos) });
+}
+
+export async function cerrarSolicitudTablon(idSolicitud) {
+  return request(`/tablon/solicitudes/${idSolicitud}/cerrar`, { method: "PATCH" });
+}
+
+export async function eliminarSolicitudTablon(idSolicitud) {
+  return request(`/tablon/solicitudes/${idSolicitud}`, { method: "DELETE" });
+}
+
+export async function crearOfertaTablon(idSolicitud, datos) {
+  return request(`/tablon/solicitudes/${idSolicitud}/ofertas`, { method: "POST", body: datos });
+}
+
+export async function aceptarOfertaTablon(idSolicitud, idOferta) {
+  return request(`/tablon/solicitudes/${idSolicitud}/ofertas/${idOferta}/aceptar`, { method: "PATCH" });
+}

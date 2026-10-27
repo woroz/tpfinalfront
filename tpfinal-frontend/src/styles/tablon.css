@@ -1,0 +1,54 @@
+.tablon-lista { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.tablon-card, .tablon-form { display: grid; gap: 12px; }
+.tablon-form { margin-bottom: 18px; }
+.tablon-form .res-etiqueta { margin: 4px 0 0; }
+
+.tablon-card-cabecera { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.tablon-titulo { margin: 0; color: var(--text, #172235); font-size: 16px; font-weight: 600; }
+.tablon-tema { margin: 2px 0 0; color: var(--text-2, #536078); font-size: 14px; }
+.tablon-desc { margin: 0; color: var(--text, #394559); font-size: 14px; line-height: 1.55; white-space: pre-wrap; }
+.tablon-nota { margin: 0; color: var(--text-2, #536078); font-size: 13px; line-height: 1.5; }
+.tablon-nota a { color: var(--primary, #3b6fd6); font-weight: 600; }
+
+.tablon-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.tablon-chips li { padding: 3px 10px; border-radius: 999px; color: var(--primary-text, #2e62d2); background: var(--primary-soft, #e6eeff); font-size: 12px; font-weight: 600; }
+
+.tablon-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; padding: 0; list-style: none; color: var(--text-2, #536078); font-size: 13px; }
+.tablon-meta li { display: inline-flex; align-items: center; gap: 6px; }
+.tablon-meta svg { width: 16px; height: 16px; flex: none; color: var(--text-3, #8a94a8); }
+
+.tablon-acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.tablon-acciones .res-boton { width: auto; margin-top: 0; }
+.tablon-acciones button, .tablon-acciones .res-boton { display: inline-flex; align-items: center; gap: 6px; }
+.tablon-peligro { color: #c03945; }
+.tablon-precio { margin-right: auto; color: var(--text, #172235); font-size: 16px; font-weight: 600; }
+
+.tablon-ofertas { display: grid; gap: 10px; padding-top: 12px; border-top: 1px solid var(--border, #e3e8f1); }
+.tablon-ofertas h4 { margin: 0; color: var(--text, #172235); font-size: 14px; font-weight: 600; }
+.tablon-oferta { display: grid; gap: 10px; padding: 14px 16px; border: 1px solid var(--border, #e3e8f1); border-radius: 12px; background: var(--bg, #f6f8fc); }
+
+.tablon-cabecera-acciones { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.tablon-cabecera-acciones p { margin: 0; }
+.tablon-cabecera-acciones .res-boton { display: inline-flex; align-items: center; gap: 6px; width: auto; margin-top: 0; flex: none; }
+
+.tablon-aviso { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 14px; padding: 12px 16px; border-radius: 12px; font-size: 14px; }
+.tablon-aviso .res-boton { width: auto; margin-top: 0; }
+.tablon-aviso-ok { color: #1f8a5b; background: #e1f5ec; }
+.tablon-aviso-error { color: #c03945; background: #fbe6e8; }
+
+.tablon-mas { display: flex; justify-content: center; margin-top: 18px; }
+.tablon-fieldset { margin: 4px 0 0; padding: 0; border: 0; }
+.tablon-materias { display: flex; flex-wrap: wrap; gap: 8px; max-height: 168px; margin-top: 6px; padding: 2px; overflow-y: auto; }
+.tablon-check { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--border-strong, #d3d9e6); border-radius: 999px; color: var(--text-2, #536078); font-size: 13px; cursor: pointer; }
+.tablon-check input { margin: 0; }
+.tablon-check:has(input:checked) { border-color: var(--primary, #3b6fd6); color: var(--primary-text, #2e62d2); background: var(--primary-soft, #e6eeff); }
+
+.ubicacion-dialog.tablon-dialog { width: min(100%, 560px); max-height: calc(100vh - 40px); overflow-y: auto; }
+.tablon-dialog .res-etiqueta { margin: 14px 0 6px; }
+.tablon-resumen { margin: 10px 0 0; padding: 12px 14px; border-radius: 10px; color: var(--text-2, #536078); background: var(--bg, #f6f8fc); font-size: 13px; line-height: 1.5; }
+.tablon-dos-columnas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+
+@media (max-width: 600px) {
+  .tablon-cabecera-acciones { flex-direction: column; align-items: stretch; }
+  .tablon-dos-columnas { grid-template-columns: 1fr; }
+}
