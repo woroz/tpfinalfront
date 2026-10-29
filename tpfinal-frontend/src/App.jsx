@@ -21,6 +21,7 @@ import "./styles/reservas.css";
 import "./styles/layout.css";
 import "./styles/perfil.css"
 import "./styles/menu.css";
+import Tablon from "./pages/tablon";
 
 
 function PagePlaceholder({ title, description }) {
@@ -68,8 +69,8 @@ function AppRoutes() {
       <Route
         path="/tablon"
         element={
-          <ProtectedRoute>
-            <PagePlaceholder title="Tablon de anuncios" description="Aca vas a poder publicar y consultar anuncios." />
+          <ProtectedRoute roles={["alumno", "profesor"]}>
+            <Tablon />
           </ProtectedRoute>
         }
       />
