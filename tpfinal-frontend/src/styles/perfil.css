@@ -4,7 +4,8 @@
 
 .mi-perfil-card,
 .mi-perfil-resenas,
-.mi-perfil-vista-previa {
+.mi-perfil-vista-previa,
+.mi-perfil-estadisticas {
   padding: 28px 32px;
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
@@ -141,22 +142,75 @@
 }
 
 .mi-perfil-resenas h2,
-.mi-perfil-vista-previa h2 {
+.mi-perfil-vista-previa h2,
+.mi-perfil-estadisticas h2 {
   margin: 0 0 16px;
   color: var(--text);
   font-size: 17px;
   font-weight: 700;
 }
 
+.mi-perfil-estadisticas {
+  margin-top: 24px;
+}
+
+.mi-perfil-estadisticas-miembro {
+  margin: 0 0 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.mi-perfil-estadisticas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.mi-perfil-estadisticas-grid--dos {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mi-perfil-estadistica {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: #f8fafc;
+}
+
+.mi-perfil-estadistica-titulo,
+.mi-perfil-estadistica-detalle {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.mi-perfil-estadistica-valor {
+  color: var(--text);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.mi-perfil-estadistica-vacio {
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 600;
+}
+
 @media (max-width: 760px) {
   .mi-perfil-card,
   .mi-perfil-resenas,
-  .mi-perfil-vista-previa {
+  .mi-perfil-vista-previa,
+  .mi-perfil-estadisticas {
     padding: 20px;
   }
 
   .mi-perfil-campos,
-  .mi-perfil-profesor-seccion {
+  .mi-perfil-profesor-seccion,
+  .mi-perfil-estadisticas-grid {
     grid-template-columns: 1fr;
   }
 
