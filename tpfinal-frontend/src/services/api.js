@@ -78,6 +78,10 @@ export async function register(email, password, nombre, rol, direccion, ubicacio
 export async function obtenerPerfil() {
   return request("/perfil");
 }
+
+export async function obtenerEstadisticas() {
+  return request("/perfil/estadisticas");
+}
  
 export async function buscarProfesores(latitud, longitud, radio = 100, filtros = {}) {
   const query = new URLSearchParams({

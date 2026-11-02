@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Estrellas from "../components/Estrellas";
+import EstadisticasPerfil from "../components/EstadisticasPerfil";
 import { useAuth } from "../context/authContext";
 import { actualizarPerfil, obtenerPerfil, obtenerPerfilProfesor, subirAvatar } from "../services/api";
 import { formatearPrecio } from "../utils/fechas";
@@ -336,6 +337,9 @@ export default function MiPerfil() {
             {error && <p className="res-error" role="alert">{error}</p>}
             {mensaje && <p className="res-ok" role="status">{mensaje}</p>}
           </section>
+
+          <EstadisticasPerfil rol={usuario?.rol} />
+
           {usuario?.rol === "profesor" && (
             <section className="mi-perfil-profesor-seccion" aria-label="Reseñas y vista previa de tu perfil">
               <div className="res-tarjeta mi-perfil-resenas">
@@ -344,13 +348,6 @@ export default function MiPerfil() {
                 {cargandoPerfilProfesor && <p className="res-mensaje">Cargando reseñas…</p>}
                 {!cargandoPerfilProfesor && perfilProfesor && (
                   <>
-                    {perfilProfesor.promedioResenas != null && (
-                      <p className="mi-perfil-promedio">
-                        <Estrellas puntaje={perfilProfesor.promedioResenas} />
-                        <strong>{perfilProfesor.promedioResenas.toFixed(1).replace(".", ",")} de 5</strong>
-                        <span>{perfilProfesor.resenas.length} {perfilProfesor.resenas.length === 1 ? "reseña" : "reseñas"}</span>
-                      </p>
-                    )}
                     {perfilProfesor.resenas.length ? (
                       <ul className="mi-perfil-lista-resenas">
                         {perfilProfesor.resenas.map((resena) => (

@@ -14,6 +14,7 @@ import {
   hoyLocal,
   sumarDias,
 } from "../utils/fechas";
+import TarjetaEstadisticas from "../components/TarjetaEstadisticas";
 
 const DIAS_SEMANA = [
   { valor: 1, nombre: "Lunes" },
@@ -121,45 +122,49 @@ export default function PerfilProfesor() {
       <Navbar />
       <section className="res-contenedor">
         <Link className="res-volver" to="/buscar">Volver al mapa</Link>
-
-        <header className="res-tarjeta perfil-cabecera">
-          <img className="perfil-avatar" src={perfil.usuario?.perfil?.avatarURL || professorImage} alt="" />
-          <div className="perfil-datos">
-            <h1>{nombre}</h1>
-            <p className="perfil-linea">
-              {perfil.tarifa != null ? `${formatearPrecio(perfil.tarifa)} por hora` : "Tarifa no informada"}
-            </p>
-            <p className="perfil-linea">
-              {promedio != null
-                ? (
-                  <>
-                    <Estrellas puntaje={promedio} />
-                    {" "}{promedio.toFixed(1).replace(".", ",")} de 5 según {resenas.length} {resenas.length === 1 ? "reseña" : "reseñas"}
-                  </>
-                )
-                : "Todavía no tiene reseñas"}
-            </p>
-            {materias.length > 0 && (
-              <ul className="perfil-chips">
-                {materias.map((materia) => (
-                  <li key={materia}>{materia}</li>
-                ))}
-              </ul>
+          <header className="res-tarjeta perfil-cabecera">
+            <img className="perfil-avatar" src={perfil.usuario?.perfil?.avatarURL || professorImage} alt="" />
+            <div className="perfil-datos">
+              <h1>{nombre}</h1>
+              <p className="perfil-linea">
+                {perfil.tarifa != null ? `${formatearPrecio(perfil.tarifa)} por hora` : "Tarifa no informada"}
+              </p>
+              <p className="perfil-linea">
+                {promedio != null
+                  ? (
+                    <>
+                      <Estrellas puntaje={promedio} />
+                      {" "}{promedio.toFixed(1).replace(".", ",")} de 5 según {resenas.length} {resenas.length === 1 ? "reseña" : "reseñas"}
+                    </>
+                  )
+                  : "Todavía no tiene reseñas"}
+              </p>
+              {materias.length > 0 && (
+                <ul className="perfil-chips">
+                  {materias.map((materia) => (
+                    <li key={materia}>{materia}</li>
+                  ))}
+                </ul>
+              )}
+              <p className="perfil-descripcion">
+                {perfil.descripcion || perfil.usuario?.perfil?.biografia || "Este profesor todavía no agregó una descripción."}
+              </p>
+            </div>
+            {esAlumno && (
+              <button
+                type="button"
+                className="res-boton perfil-reservar"
+                onClick={() => navigate(`/profesores/${id}/reservar`)}
+              >
+                Reservar clase
+              </button>
             )}
-            <p className="perfil-descripcion">
-              {perfil.descripcion || perfil.usuario?.perfil?.biografia || "Este profesor todavía no agregó una descripción."}
-            </p>
-          </div>
-          {esAlumno && (
-            <button
-              type="button"
-              className="res-boton perfil-reservar"
-              onClick={() => navigate(`/profesores/${id}/reservar`)}
-            >
-              Reservar clase
-            </button>
-          )}
-        </header>
+          </header>
+          <TarjetaEstadisticas
+            rol="profesor"
+            fechaAlta={perfil.usuario?.createdAt}
+            estadisticas={perfil.estadisticas}
+          />
 
         <div className="res-layout perfil-grilla perfil-calendario-grilla">
           <div className="res-tarjeta perfil-calendario-card">
