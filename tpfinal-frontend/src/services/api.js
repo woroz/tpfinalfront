@@ -82,6 +82,10 @@ export async function obtenerPerfil() {
 export async function obtenerEstadisticas() {
   return request("/perfil/estadisticas");
 }
+
+export async function obtenerLogros() {
+  return request("/logros");
+}
  
 export async function buscarProfesores(latitud, longitud, radio = 100, filtros = {}) {
   const query = new URLSearchParams({
