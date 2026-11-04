@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Estrellas from "../components/Estrellas";
 import EstadisticasPerfil from "../components/EstadisticasPerfil";
+import LogrosPerfil from "../components/LogrosPerfil";
 import { useAuth } from "../context/authContext";
 import { actualizarPerfil, obtenerPerfil, obtenerPerfilProfesor, subirAvatar } from "../services/api";
 import { formatearPrecio } from "../utils/fechas";
@@ -339,6 +340,7 @@ export default function MiPerfil() {
           </section>
 
           <EstadisticasPerfil rol={usuario?.rol} />
+          <LogrosPerfil rol={usuario?.rol} />
 
           {usuario?.rol === "profesor" && (
             <section className="mi-perfil-profesor-seccion" aria-label="Reseñas y vista previa de tu perfil">
