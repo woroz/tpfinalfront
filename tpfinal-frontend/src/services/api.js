@@ -295,6 +295,28 @@ export async function crearInscripcion(datos) {
 export async function obtenerMisInscripciones(historial = false) {
   return request(`/inscripciones/mias?historial=${historial}`);
 }
+
+export async function crearReclamo(datos) {
+  return request("/reclamos", {
+    method: "POST",
+    body: JSON.stringify(datos),
+  });
+}
+
+export async function obtenerMisReclamos() {
+  return request("/reclamos/mios");
+}
+
+export async function obtenerReclamosAdmin() {
+  return request("/reclamos/admin");
+}
+
+export async function actualizarEstadoReclamo(idReclamo, estado) {
+  return request(`/reclamos/${encodeURIComponent(idReclamo)}/estado`, {
+    method: "PATCH",
+    body: JSON.stringify({ estado }),
+  });
+}
  
 export async function obtenerInscripcion(idInscripcion) {
   return request(`/inscripciones/${idInscripcion}`);

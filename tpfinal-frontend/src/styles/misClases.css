@@ -48,6 +48,7 @@
 
 .mis-clases-pagina .res-item-lado {
   display: flex;
+  box-sizing: border-box;
   min-width: 0;
   flex-direction: column;
   align-items: stretch;
@@ -79,6 +80,163 @@
 .mis-clases-pagina .res-estado.pendiente_pago {
   color: #a16207;
   background: #fef3c7;
+}
+
+.mis-clases-reclamo {
+  margin-top: 14px;
+}
+
+.mis-clases-reclamo-boton {
+  padding: 9px 13px;
+  border: 1px solid #d5deed;
+  border-radius: 9px;
+  color: #b05b16;
+  background: #fff8ed;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mis-clases-reclamo-boton:hover {
+  border-color: #e4b274;
+  background: #fff3df;
+}
+
+.mis-clases-reclamo-form {
+  display: grid;
+  gap: 10px;
+  width: min(460px, calc(100vw - 32px));
+  padding: 14px;
+  border: 1px solid #d5deed;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 20px 55px rgba(20, 34, 58, .2);
+}
+
+.mis-clases-reclamo-modal {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(15, 27, 48, .48);
+}
+
+.mis-clases-reclamo-modal-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mis-clases-reclamo-modal-encabezado h2 {
+  margin: 0;
+  color: #172235;
+  font-size: 19px;
+}
+
+.mis-clases-reclamo-cerrar {
+  border: 0;
+  color: #536078;
+  background: transparent;
+  cursor: pointer;
+  font-size: 27px;
+  line-height: 1;
+}
+
+.mis-clases-reclamo-cerrar:hover {
+  color: #172235;
+}
+
+.mis-clases-reclamo-form label {
+  color: #536078;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mis-clases-reclamo-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d6deec;
+  border-radius: 9px;
+  color: #172235;
+  resize: vertical;
+}
+
+.mis-clases-reclamo-form textarea:focus {
+  border-color: #3b6fd6;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(59, 111, 214, .12);
+}
+
+.mis-clases-reclamo-acciones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mis-clases-reclamo-acciones .res-boton {
+  width: auto;
+  margin-top: 0;
+}
+
+.mis-clases-reclamo-acciones .perfil-enlace {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.mis-clases-reclamo-acciones .perfil-enlace:disabled,
+.mis-clases-reclamo-cerrar:disabled {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.mis-clases-reclamo-error {
+  margin: 0;
+  color: #c03945;
+  font-size: 13px;
+}
+
+.mis-clases-reclamo-estado {
+  margin-top: 12px;
+  color: #536078;
+  font-size: 13px;
+}
+
+.mis-reclamo-item {
+  align-items: flex-start;
+}
+
+.mis-reclamo-item small {
+  display: block;
+  margin-top: 10px;
+  color: #778195;
+}
+
+.mis-reclamo-motivo {
+  max-width: 70ch;
+  margin-top: 10px !important;
+}
+
+.res-estado.reclamo-pendiente {
+  color: #a8690f;
+  background: #fdf0d9;
+}
+
+.res-estado.reclamo-en_revision {
+  color: #2e62d2;
+  background: #e6eeff;
+}
+
+.res-estado.reclamo-resuelto {
+  color: #1f8a5b;
+  background: #e1f5ec;
+}
+
+.res-estado.reclamo-rechazado {
+  color: #c03945;
+  background: #fbe6e8;
 }
 
 .mis-clases-pagina .res-estado.expirada,
@@ -153,6 +311,71 @@
 .mis-clases-pagina .mis-clases-resena {
   min-width: 0;
   width: 100%;
+}
+
+.mis-clases-pagina .mis-clases-acciones {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.mis-clases-pagina .mis-clases-acciones > button,
+.mis-clases-pagina .mis-clases-acciones > a,
+.mis-clases-pagina .mis-clases-acciones > .mis-clases-reclamo,
+.mis-clases-pagina .mis-clases-acciones > .mis-clases-resena {
+  display: block;
+  width: 100% !important;
+  max-width: none;
+  min-width: 0;
+  align-self: stretch;
+  box-sizing: border-box;
+}
+
+.mis-clases-pagina .mis-clases-resena,
+.mis-clases-pagina .mis-clases-resena-form,
+.mis-clases-pagina .mis-clases-resena-actual {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.mis-clases-pagina .mis-clases-resena-form > *,
+.mis-clases-pagina .mis-clases-resena-actual > * {
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.mis-clases-pagina .mis-clases-resena-form button,
+.mis-clases-pagina .mis-clases-resena-actual .mis-clases-resena-editar {
+  width: 100% !important;
+  max-width: none;
+  box-sizing: border-box;
+  justify-self: stretch;
+}
+
+.mis-clases-pagina .mis-clases-resena-actual {
+  align-items: stretch;
+}
+
+.mis-clases-pagina .mis-clases-resena-actual .mis-clases-resena-lista {
+  overflow-wrap: anywhere;
+}
+
+.mis-clases-pagina .mis-clases-acciones .mis-clases-reclamo {
+  margin-top: 0;
+}
+
+.mis-clases-pagina .mis-clases-acciones .mis-clases-reclamo-boton {
+  width: 100%;
+}
+
+.mis-clases-pagina .mis-clases-acciones .perfil-enlace {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .mis-clases-pagina .mis-clases-pdf-lista {

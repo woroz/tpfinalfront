@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import ReservarClase from "./pages/reservarClase";
 import PagoResultado from "./pages/pagoResultado";
 import MisClases from "./pages/misClases";
+import MisReclamos from "./pages/misReclamos";
 import ClasesProfesor from "./pages/clasesProfesor";
 import DisponibilidadProfesor from "./pages/disponibilidadProfesor";
 import PerfilProfesor from "./pages/perfilProfesor";
@@ -160,6 +161,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute roles={["alumno"]}>
             <MisClases />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mis-reclamos"
+        element={
+          <ProtectedRoute roles={["alumno"]}>
+            <MisReclamos />
           </ProtectedRoute>
         }
       />

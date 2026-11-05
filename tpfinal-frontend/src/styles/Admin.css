@@ -234,6 +234,59 @@
   text-align: center;
 }
 
+.admin-reclamo-profesor {
+  display: block;
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.admin-reclamo-motivo {
+  max-width: 280px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.admin-reclamo-ids {
+  max-width: 220px;
+}
+
+.admin-reclamo-ids small {
+  display: block;
+  margin-bottom: 4px;
+  color: #64748b;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.admin-asistencia {
+  display: inline-block;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-asistencia.presente {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.admin-asistencia.ausente {
+  color: #b42318;
+  background: #fee2e2;
+}
+
+.admin-reclamos select {
+  min-width: 125px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #334155;
+  background: #fff;
+  font: inherit;
+}
+
 .admin-proximamente h2 {
   color: #29264d;
   margin-bottom: 10px;

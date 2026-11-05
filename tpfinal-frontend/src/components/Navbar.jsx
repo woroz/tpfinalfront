@@ -113,6 +113,9 @@ export default function Navbar() {
             <NavLink className={claseLink} to="/mis-pagos">
               Mis pagos
             </NavLink>
+            <NavLink className={claseLink} to="/mis-reclamos">
+              Mis reclamos
+            </NavLink>
           </>
         )}
         {usuario?.rol === "profesor" && (
