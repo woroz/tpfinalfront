@@ -1,0 +1,266 @@
+.admin-page {
+  padding: 40px 24px;
+}
+
+.admin-contenido {
+  width: 100%;
+  max-width: 1150px;
+  margin: 0 auto;
+}
+
+.admin-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.admin-encabezado h1 {
+  font-size: 30px;
+  color: #24233f;
+  margin-bottom: 8px;
+}
+
+.admin-encabezado p {
+  color: #77768b;
+  font-size: 15px;
+}
+
+.admin-tarjeta-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: #efedff;
+  border-radius: 12px;
+  font-size: 25px;
+}
+
+.admin-seccion-usuarios {
+  background: white;
+  border: 1px solid #ecebf3;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 3px 12px rgba(35, 30, 70, 0.04);
+}
+
+.admin-seccion-encabezado {
+  margin-bottom: 22px;
+}
+
+.admin-seccion-encabezado h2 {
+  color: #29264d;
+  font-size: 21px;
+  margin-bottom: 6px;
+}
+
+.admin-seccion-encabezado p {
+  color: #858397;
+  font-size: 14px;
+}
+
+.admin-tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-tabla thead {
+  background: #f7f6fc;
+}
+
+.admin-tabla th {
+  padding: 16px;
+  color: #77758e;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-tabla td {
+  padding: 17px 16px;
+  color: #626176;
+  font-size: 14px;
+  border-bottom: 1px solid #f0eff5;
+}
+
+.admin-tabla tbody tr:hover {
+  background: #faf9ff;
+}
+
+.admin-tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-tabla .admin-nombre {
+  color: #302d50;
+  font-weight: 600;
+}
+
+.admin-rol {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.admin-rol-alumno {
+  background: #eaf2ff;
+  color: #3972c6;
+}
+
+.admin-rol-profesor {
+  background: #e8f8f0;
+  color: #25845a;
+}
+
+.admin-rol-admin {
+  background: #f1eaff;
+  color: #8051bd;
+}
+
+.admin-error {
+  color: #d64545;
+  padding: 12px;
+}
+
+@media (max-width: 768px) {
+  .admin-page {
+    padding: 25px 14px;
+  }
+
+  .admin-encabezado h1 {
+    font-size: 25px;
+  }
+
+  .admin-tarjeta {
+    width: 100%;
+  }
+
+  .admin-seccion-usuarios {
+    padding: 16px;
+  }
+
+  .admin-tabla th,
+  .admin-tabla td {
+    padding: 13px 12px;
+  }
+}
+
+
+.admin-navegacion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 30px 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e8e7ef;
+}
+
+.admin-nav-boton {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 17px;
+  color: #77768b;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-nav-boton:hover {
+  background: #f0eff9;
+  color: #51418b;
+}
+
+.admin-nav-boton.activo {
+  background: #e9e7fb;
+  color: #51418b;
+  font-weight: 600;
+}
+
+
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.admin-estadisticas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.admin-estadistica {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: white;
+  border: 1px solid #ecebf3;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 3px 12px rgba(35, 30, 70, 0.04);
+}
+
+.admin-estadistica p {
+  color: #77768b;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.admin-estadistica h2 {
+  color: #29264d;
+  font-size: 27px;
+  margin: 0;
+}
+
+
+.admin-proximamente {
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.admin-proximamente h2 {
+  color: #29264d;
+  margin-bottom: 10px;
+}
+
+.admin-proximamente p {
+  color: #858397;
+}
+
+
+@media (max-width: 900px) {
+  .admin-estadisticas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-navegacion {
+    gap: 6px;
+  }
+
+  .admin-nav-boton {
+    padding: 9px 11px;
+    font-size: 12px;
+  }
+
+  .admin-estadisticas {
+    grid-template-columns: 1fr;
+  }
+}

@@ -93,6 +93,13 @@ export default function Navbar() {
         <NavLink className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"} to="/inicio">
           Inicio
         </NavLink>
+
+        {usuario?.rol === "admin" && (
+          <NavLink className={claseLink} to="/admin">
+            Administración
+            </NavLink>
+        )}
+
         {usuario?.rol !== "profesor" && (
           <NavLink className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"} to="/buscar">
             Buscar profesores

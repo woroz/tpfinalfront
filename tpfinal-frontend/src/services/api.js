@@ -79,6 +79,24 @@ export async function obtenerPerfil() {
   return request("/perfil");
 }
 
+export async function obtenerUsuarios(filtros = {}) {
+  const query = new URLSearchParams();
+  if (filtros.busqueda) {
+    query.set("busqueda", filtros.busqueda);
+  }
+  if (filtros.rol) {
+    query.set("rol", filtros.rol);
+  }
+  query.set("pagina", String(filtros.pagina ?? 1));
+  query.set("limite", String(filtros.limite ?? 10));
+
+  return request(`/admin/usuarios?${query}`);
+}
+
+export async function obtenerEstadisticasAdmin() {
+  return request("/admin/estadisticas");
+}
+
 export async function obtenerEstadisticas() {
   return request("/perfil/estadisticas");
 }
