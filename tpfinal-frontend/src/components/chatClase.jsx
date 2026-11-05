@@ -14,12 +14,10 @@ export default function ChatClase({ idClase, idUsuarioActual }) {
     }
 
     const unirseALaSala = () => {
-      socket.emit('unirse_clase', { 
-        id_clase: idClase, 
-        id_usuario_actual: idUsuarioActual 
-      });
-      socket.emit('marcar_mensajes_leidos', { id_clase: idClase, id_usuario: idUsuarioActual });
-    };
+  socket.emit('unirse_clase', {
+    id_clase: idClase
+  });
+};
 
      const inicializarChat = async () => {
       try {
@@ -47,7 +45,9 @@ export default function ChatClase({ idClase, idUsuarioActual }) {
 
     socket.on('recibir_mensaje', (nuevoMensaje) => {
       if (nuevoMensaje.id_usuario_remitente !== idUsuarioActual) {
-        socket.emit('marcar_mensajes_leidos', { id_clase: idClase, id_usuario: idUsuarioActual });
+        socket.emit('marcar_mensajes_leidos', { 
+          id_clase: idClase 
+        });
       }
       setMensajes((prev) => {
         const indexTemporal = prev.findIndex(msg => msg.id_usuario_remitente === nuevoMensaje.id_usuario_remitente && msg.contenido === nuevoMensaje.contenido && String(msg.id_mensaje).startsWith('temp-'));
@@ -94,7 +94,6 @@ export default function ChatClase({ idClase, idUsuarioActual }) {
 
     socket.emit('enviar_mensaje', {
       id_clase: idClase,
-      id_usuario_remitente: idUsuarioActual,
       contenido: contenidoMensaje
     });
 

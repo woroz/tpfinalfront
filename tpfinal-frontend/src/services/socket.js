@@ -1,13 +1,15 @@
 import { io } from 'socket.io-client';
 
 const SOCKET_URL = import.meta.env.DEV
-  ? 'http://localhost:3000'
-  : import.meta.env.VITE_API_URL;
+  ? 'http://localhost:3001'
+  : import.meta.env.VITE_SOCKET_URL;
 
-  export const socket = io(SOCKET_URL, {
+export const socket = io(SOCKET_URL, {
   autoConnect: false,
   withCredentials: true,
-  extraHeaders: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`
+  auth: (callback) => {
+    callback({
+      token: localStorage.getItem('token')
+    });
   }
 });

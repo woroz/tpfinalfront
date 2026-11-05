@@ -17,6 +17,7 @@ import DetalleClase from "./pages/detalleClase";
 import MateriasProfesor from "./pages/materiasProfesor";
 import MiPerfil from "./pages/miPerfil";
 import { ClaseVirtual } from "./pages/ClaseVirtual";
+import Admin from "./pages/admin";
 import "./styles/reservas.css";
 import "./styles/layout.css";
 import "./styles/perfil.css"
@@ -193,6 +194,14 @@ function AppRoutes() {
             <ClaseVirtual />
           </ProtectedRoute>
         }
+      />
+      <Route
+      path="/admin"
+      element={
+      <ProtectedRoute roles={["admin"]}>
+        <Admin />
+        </ProtectedRoute>
+      }
       />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
