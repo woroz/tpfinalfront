@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { obtenerUsuarios, obtenerEstadisticasAdmin } from "../services/api";
+import {
+  actualizarEstadoReclamo,
+  obtenerEstadisticasAdmin,
+  obtenerReclamosAdmin,
+  obtenerUsuarios,
+} from "../services/api";
 import "../styles/Admin.css";
 import Navbar from "../components/Navbar";
 
@@ -11,6 +16,46 @@ export default function Admin() {
   const [estadisticas, setEstadisticas] = useState(null);
   const [cargandoEstadisticas, setCargandoEstadisticas] = useState(true);
   const [errorEstadisticas, setErrorEstadisticas] = useState("");
+  const [reclamos, setReclamos] = useState([]);
+  const [cargandoReclamos, setCargandoReclamos] = useState(false);
+  const [errorReclamos, setErrorReclamos] = useState("");
+  const [actualizandoReclamo, setActualizandoReclamo] = useState("");
+
+  useEffect(() => {
+    if (seccionActiva !== "reportes") return undefined;
+    let activo = true;
+    setCargandoReclamos(true);
+    obtenerReclamosAdmin()
+      .then((data) => {
+        if (activo) {
+          setReclamos(data.reclamos || []);
+          setErrorReclamos("");
+        }
+      })
+      .catch((err) => {
+        if (activo) setErrorReclamos(err.message || "No se pudieron cargar los reclamos.");
+      })
+      .finally(() => {
+        if (activo) setCargandoReclamos(false);
+      });
+    return () => {
+      activo = false;
+    };
+  }, [seccionActiva]);
+
+  async function cambiarEstadoReclamo(idReclamo, estado) {
+    setActualizandoReclamo(idReclamo);
+    try {
+      const data = await actualizarEstadoReclamo(idReclamo, estado);
+      setReclamos((actuales) => actuales.map((reclamo) => (
+        reclamo.id_reclamo === idReclamo ? { ...reclamo, ...data.reclamo } : reclamo
+      )));
+    } catch (err) {
+      setErrorReclamos(err.message || "No se pudo actualizar el reclamo.");
+    } finally {
+      setActualizandoReclamo("");
+    }
+  }
 
   useEffect(() => {
     let activo = true;
@@ -187,7 +232,89 @@ export default function Admin() {
           </section>
         )}
 
-        {["perfiles", "clases", "reportes"].includes(seccionActiva) && (
+        {seccionActiva === "reportes" && (
+          <section className="admin-seccion-usuarios admin-reclamos">
+            <div className="admin-seccion-encabezado">
+              <h2>Reportes y reclamos</h2>
+              <p>Revisá los reclamos de clases y actualizá su estado.</p>
+            </div>
+            {cargandoReclamos && <p>Cargando reclamos...</p>}
+            {errorReclamos && <p className="admin-error">{errorReclamos}</p>}
+            {!cargandoReclamos && !errorReclamos && !reclamos.length && (
+              <p>No hay reclamos registrados.</p>
+            )}
+            {!!reclamos.length && (
+              <div className="admin-tabla-contenedor">
+                <table className="admin-tabla">
+                  <thead>
+                    <tr>
+                      <th>Tipo</th>
+                      <th>Clase</th>
+                      <th>IDs</th>
+                      <th>Alumno</th>
+                      <th>Motivo</th>
+                      <th>Fecha</th>
+                      <th>Asistencia profesor</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {reclamos.map((reclamo) => (
+                      <tr key={reclamo.id_reclamo}>
+                        <td>Reclamo</td>
+                        <td>
+                          <strong>{reclamo.clase.titulo}</strong>
+                          <small className="admin-reclamo-profesor">
+                            Profesor: {reclamo.clase.profesor.usuario.nombre}
+                          </small>
+                        </td>
+                        <td className="admin-reclamo-ids">
+                          <small>Reclamo: {reclamo.id_reclamo}</small>
+                          <small>Clase: {reclamo.id_clase}</small>
+                          <small>Profesor: {reclamo.clase.id_profesor}</small>
+                        </td>
+                        <td>
+                          {reclamo.alumno.usuario.nombre}
+                          <small className="admin-reclamo-profesor">{reclamo.alumno.usuario.email}</small>
+                        </td>
+                        <td className="admin-reclamo-motivo">{reclamo.motivo}</td>
+                        <td>{new Date(reclamo.createdAt).toLocaleString("es-AR")}</td>
+                        <td>
+                          <span className={`admin-asistencia ${reclamo.clase.profesorAsistio ? "presente" : "ausente"}`}>
+                            {reclamo.clase.profesorAsistio ? "Presente" : "Ausente"}
+                          </span>
+                          <small className="admin-reclamo-profesor">
+                            {reclamo.clase.profesorIngreso
+                              ? `Ingreso: ${new Date(reclamo.clase.profesorIngreso).toLocaleString("es-AR")}`
+                              : "Sin ingreso registrado"}
+                          </small>
+                        </td>
+                        <td>
+                          <select
+                            value={reclamo.estado}
+                            disabled={
+                              actualizandoReclamo === reclamo.id_reclamo
+                              || reclamo.estado === "resuelto"
+                              || reclamo.estado === "rechazado"
+                            }
+                            onChange={(event) => cambiarEstadoReclamo(reclamo.id_reclamo, event.target.value)}
+                          >
+                            <option value="pendiente">Pendiente</option>
+                            <option value="en_revision">En revisión</option>
+                            <option value="resuelto">Resuelto</option>
+                            <option value="rechazado">Rechazado</option>
+                          </select>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        )}
+
+        {["perfiles", "clases"].includes(seccionActiva) && (
           <section className="admin-seccion-usuarios admin-proximamente">
             <h2>
               {secciones.find((seccion) => seccion.id === seccionActiva).nombre}

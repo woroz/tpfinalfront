@@ -8,6 +8,7 @@ import ChatClase from "../components/chatClase";
 import { useAuth } from "../context/authContext";
 import TranscripcionClase from "../components/TranscripcionClase";
 import ResenaClase from "../components/ResenaClase";
+import ReclamoClase from "../components/ReclamoClase";
 import "../styles/misClases.css";
 
 const ETIQUETAS = {
@@ -172,8 +173,9 @@ export default function MisClases() {
               </div>
               <div className="res-item-lado">
                 <span className={`res-estado ${item.estado}`}>{ETIQUETAS[item.estado] || item.estado}</span>
-                {puedeResenar && (
-                  <div className="mis-clases-resena">
+                <div className="mis-clases-acciones">
+                  {puedeResenar && (
+                    <div className="mis-clases-resena">
                     <ResenaClase
                       idProfesor={item.profesor.id_profesor}
                       idClase={item.clase.id_clase}
@@ -187,20 +189,34 @@ export default function MisClases() {
                           : inscripcion
                       )))}
                     />
-                  </div>
-                )}
-                {item.estado === "pendiente_pago" && (
-                  <>
-                    <Link className="res-boton res-enlace res-boton-chico" to={`/mis-clases/${item.id_inscripcion}/pagar`}>
-                      Pagar clase
-                    </Link>
-                    {item.expira_en && (
-                      <small>Disponible hasta las {formatearHora(item.expira_en)}</small>
-                    )}
-                  </>
-                )}
-                {item.estado === "confirmada" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px", alignItems: "flex-end" }}>
+                    </div>
+                  )}
+                  {item.puede_reclamar && (
+                    <ReclamoClase
+                      idClase={item.clase.id_clase}
+                      reclamo={item.reclamo}
+                      onCreado={(reclamo) => setInscripciones((actuales) => actuales.map((inscripcion) => (
+                        inscripcion.id_inscripcion === item.id_inscripcion
+                          ? { ...inscripcion, puede_reclamar: false, reclamo }
+                          : inscripcion
+                      )))}
+                    />
+                  )}
+                  {item.reclamo && !item.puede_reclamar && (
+                    <ReclamoClase idClase={item.clase.id_clase} reclamo={item.reclamo} onCreado={() => {}} />
+                  )}
+                  {item.estado === "pendiente_pago" && (
+                    <>
+                      <Link className="res-boton res-enlace res-boton-chico" to={`/mis-clases/${item.id_inscripcion}/pagar`}>
+                        Pagar clase
+                      </Link>
+                      {item.expira_en && (
+                        <small>Disponible hasta las {formatearHora(item.expira_en)}</small>
+                      )}
+                    </>
+                  )}
+                  {item.estado === "confirmada" && (
+                    <>
               <button
                 disabled={!claseEstaActiva}
                 onClick={() => navigate(`/clase-virtual/${item.clase.id_clase}`)}
@@ -234,8 +250,9 @@ export default function MisClases() {
                   Ver comprobante
                 </Link>
               )}
-            </div>
-          )}
+                    </>
+                  )}
+                </div>
               </div>
               {chatClaseAbierto === item.clase.id_clase && (
                 <div style={{ width: "100%", marginTop: "15px", paddingTop: "15px", borderTop: "1px dashed #ccc" }}>
