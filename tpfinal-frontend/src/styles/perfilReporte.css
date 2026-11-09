@@ -1,0 +1,40 @@
+.perfil-cabecera {
+  position: relative; 
+}
+
+.perfil-acciones-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.perfil-reportar-bandera {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb; 
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 12px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.1s;
+  height: 42px;
+  width: 42px;
+}
+
+.perfil-reportar-bandera svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2px;
+}
+
+.perfil-reportar-bandera:hover {
+  background-color: #fef2f2;
+  border-color: #fca5a5;
+  color: #ef4444;
+}
+
+.perfil-reportar-bandera:active {
+  transform: scale(0.95);
+}

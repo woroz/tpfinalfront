@@ -317,3 +317,63 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Bloqueo y desbloqueo de profesores */
+.admin-acciones-bloqueo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 110px;
+}
+
+.admin-estado {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-estado.habilitado {
+  background: #e8f8f0;
+  color: #25845a;
+}
+
+.admin-estado.bloqueado {
+  background: #fee2e2;
+  color: #b42318;
+}
+
+.admin-boton-bloqueo {
+  padding: 7px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.admin-boton-bloqueo.bloquear {
+  background: #fee2e2;
+  color: #b42318;
+}
+
+.admin-boton-bloqueo.bloquear:hover {
+  background: #fecaca;
+}
+
+.admin-boton-bloqueo.desbloquear {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.admin-boton-bloqueo.desbloquear:hover {
+  background: #bbf7d0;
+}
+
+.admin-boton-bloqueo:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

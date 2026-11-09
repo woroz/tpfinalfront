@@ -93,6 +93,13 @@ export async function obtenerUsuarios(filtros = {}) {
   return request(`/admin/usuarios?${query}`);
 }
 
+export async function cambiarEstadoBloqueoProfesor(idUsuario, bloqueado) {
+  return request(`/admin/usuarios/${encodeURIComponent(idUsuario)}/bloqueo`, {
+    method: "PATCH",
+    body: JSON.stringify({ bloqueado }),
+  });
+}
+
 export async function obtenerEstadisticasAdmin() {
   return request("/admin/estadisticas");
 }
@@ -424,4 +431,24 @@ export async function crearOfertaTablon(idSolicitud, datos) {
 
 export async function aceptarOfertaTablon(idSolicitud, idOferta) {
   return request(`/tablon/solicitudes/${idSolicitud}/ofertas/${idOferta}/aceptar`, { method: "PATCH" });
+}
+
+export async function obtenerReportesAdmin() {
+  const token = localStorage.getItem('token');
+  
+  const response = await fetch('/admin/reportes', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Error al obtener los reportes.');
+  }
+
+  return data;
 }
