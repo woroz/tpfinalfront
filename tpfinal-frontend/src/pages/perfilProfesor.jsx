@@ -15,6 +15,8 @@ import {
   sumarDias,
 } from "../utils/fechas";
 import TarjetaEstadisticas from "../components/TarjetaEstadisticas";
+import { ModalReportar } from "../components/ModalReporte";
+import "../styles/perfilReporte.css";
 
 const DIAS_SEMANA = [
   { valor: 1, nombre: "Lunes" },
@@ -38,7 +40,7 @@ export default function PerfilProfesor() {
   const [fechaSeleccionada, setFechaSeleccionada] = useState(hoyLocal());
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
-
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const hoy = useMemo(() => hoyLocal(), []);
 
   useEffect(() => {
@@ -116,7 +118,12 @@ export default function PerfilProfesor() {
   const clases = perfil.clases || [];
   const resenas = perfil.resenas || [];
   const promedio = perfil.promedioResenas;
-
+  const handleReporteExitoso = () => {
+    alert("¡Muchas gracias! Tu reporte ha sido enviado confidencialmente al equipo de administración.");
+  };
+console.log("Perfil completo:", perfil);
+console.log("ID usuario:", perfil.usuario?.id_usuario);
+console.log("ID profesor:", perfil.id_profesor);
   return (
     <main className="app-page">
       <Navbar />
@@ -151,6 +158,18 @@ export default function PerfilProfesor() {
               </p>
             </div>
             {esAlumno && (
+              <div className="perfil-acciones-cabecera">
+              <button
+                type="button"
+                className="perfil-reportar-bandera"
+                title="Reportar este perfil"
+                onClick={() => setIsReportModalOpen(true)}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                  <line x1="4" y1="22" x2="4" y2="15"></line>
+                </svg>
+              </button>
               <button
                 type="button"
                 className="res-boton perfil-reservar"
@@ -158,8 +177,9 @@ export default function PerfilProfesor() {
               >
                 Reservar clase
               </button>
-            )}
-          </header>
+            </div>
+          )}
+        </header>
           <TarjetaEstadisticas
             rol="profesor"
             fechaAlta={perfil.usuario?.createdAt}
@@ -294,6 +314,13 @@ export default function PerfilProfesor() {
           </ul>
         </div>
       </section>
+      <ModalReportar
+        idProfesor={perfil.usuario?.id_usuario}
+        nombreProfesor={nombre}
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        onSuccess={handleReporteExitoso}
+        />
     </main>
   );
 }

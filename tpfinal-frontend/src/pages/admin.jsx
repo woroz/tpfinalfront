@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import {
   actualizarEstadoReclamo,
+  cambiarEstadoBloqueoProfesor,
   obtenerEstadisticasAdmin,
   obtenerReclamosAdmin,
+  obtenerReportesAdmin,
   obtenerUsuarios,
 } from "../services/api";
 import "../styles/Admin.css";
 import Navbar from "../components/Navbar";
+import { TablaReportesAdmin } from "../components/tablaReportesAdmin";
 
 export default function Admin() {
   const [usuarios, setUsuarios] = useState([]);
@@ -20,6 +23,11 @@ export default function Admin() {
   const [cargandoReclamos, setCargandoReclamos] = useState(false);
   const [errorReclamos, setErrorReclamos] = useState("");
   const [actualizandoReclamo, setActualizandoReclamo] = useState("");
+  const [actualizandoBloqueo, setActualizandoBloqueo] = useState("");
+  const [errorBloqueo, setErrorBloqueo] = useState("");
+  const [reportes, setReportes] = useState([]);
+  const [cargandoReportes, setCargandoReportes] = useState(true);
+  const [errorReportes, setErrorReportes] = useState("");
 
   useEffect(() => {
     if (seccionActiva !== "reportes") return undefined;
@@ -42,6 +50,35 @@ export default function Admin() {
       activo = false;
     };
   }, [seccionActiva]);
+
+
+  async function cambiarBloqueoProfesor(usuario) {
+  const nuevoEstado = !usuario.bloqueado;
+
+  setActualizandoBloqueo(usuario.id_usuario);
+  setErrorBloqueo("");
+
+  try {
+    const data = await cambiarEstadoBloqueoProfesor(
+      usuario.id_usuario,
+      nuevoEstado
+    );
+
+    setUsuarios((actuales) =>
+      actuales.map((u) =>
+        u.id_usuario === usuario.id_usuario
+          ? { ...u, ...data.usuario }
+          : u
+      )
+    );
+  } catch (err) {
+    setErrorBloqueo(
+      err.message || "No se pudo cambiar el estado del profesor."
+    );
+  } finally {
+    setActualizandoBloqueo("");
+  }
+}
 
   async function cambiarEstadoReclamo(idReclamo, estado) {
     setActualizandoReclamo(idReclamo);
@@ -106,6 +143,31 @@ export default function Admin() {
     activo = false;
   };
 }, []);
+
+useEffect(() => {
+    let activo = true;
+
+    obtenerReportesAdmin()
+      .then((data) => {
+        if (activo) {
+          setReportes(data.reportes);
+        }
+      })
+      .catch((err) => {
+        if (activo) {
+          setErrorReportes(err.message);
+        }
+      })
+      .finally(() => {
+        if (activo) {
+          setCargandoReportes(false);
+        }
+      });
+
+    return () => {
+      activo = false;
+    };
+  }, []);
 
   const secciones = [
     { id: "dashboard", nombre: "Dashboard" },
@@ -189,6 +251,7 @@ export default function Admin() {
             {cargando && <p>Cargando usuarios...</p>}
 
             {error && <p className="admin-error">{error}</p>}
+            {errorBloqueo && <p className="admin-error">{errorBloqueo}</p>}
 
             {!cargando && !error && usuarios.length === 0 && (
               <p>No hay usuarios registrados.</p>
@@ -223,27 +286,64 @@ export default function Admin() {
                             "es-AR"
                           )}
                         </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
-        )}
+                      <td>
+                      {usuario.rol === "profesor" ? (
+                        <div className="admin-acciones-bloqueo">
+                          <span
+                            className={`admin-estado ${
+                              usuario.bloqueado ? "bloqueado" : "habilitado"
+                            }`}
+                          >
+                            {usuario.bloqueado ? "Bloqueado" : "Habilitado"}
+                          </span>
 
-        {seccionActiva === "reportes" && (
-          <section className="admin-seccion-usuarios admin-reclamos">
-            <div className="admin-seccion-encabezado">
-              <h2>Reportes y reclamos</h2>
-              <p>Revisá los reclamos de clases y actualizá su estado.</p>
+                          <button
+                            className={`admin-boton-bloqueo ${
+                              usuario.bloqueado ? "desbloquear" : "bloquear"
+                            }`}
+                            onClick={() => cambiarBloqueoProfesor(usuario)}
+                            disabled={actualizandoBloqueo === usuario.id_usuario}
+                          >
+                            {actualizandoBloqueo === usuario.id_usuario
+                              ? "Actualizando..."
+                              : usuario.bloqueado
+                                ? "Desbloquear"
+                                : "Bloquear"}
+                          </button>
+                        </div>
+                      ) : (
+                        <span>—</span>
+                      )}
+                    </td>
+                   </tr>
+                  ))}
+                  </tbody>
+                  </table>
+                  </div>
+                   )}
+                  </section>
+                 )}
+
+              {seccionActiva === "reportes" && (
+              <section className="admin-seccion-usuarios admin-reclamos">
+              <div className="admin-seccion-encabezado">
+               <h2>Reportes de usuarios</h2>
+              <p>Revisá las denuncias realizadas por los usuarios.</p>
             </div>
+            <TablaReportesAdmin
+            reportes={reportes}
+            cargando={cargandoReportes}
+            error={errorReportes}/>
+            <div className="admin-seccion-encabezado">
+              <h2>Reclamos de clases</h2>
+              <p>Revisá los reclamos de clases y actualizá su estado.</p>
+              </div>
             {cargandoReclamos && <p>Cargando reclamos...</p>}
             {errorReclamos && <p className="admin-error">{errorReclamos}</p>}
             {!cargandoReclamos && !errorReclamos && !reclamos.length && (
               <p>No hay reclamos registrados.</p>
             )}
-            {!!reclamos.length && (
+            {!cargandoReclamos && !errorReclamos && reclamos.length > 0 && (
               <div className="admin-tabla-contenedor">
                 <table className="admin-tabla">
                   <thead>

@@ -1,0 +1,171 @@
+/* Contenedores de Estado (Carga y Errores) */
+.admin-status-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: #4b5563;
+  font-size: 0.937rem;
+}
+
+.admin-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f4f6;
+  border-top-color: #2563eb;
+  border-radius: 9999px;
+  animation: adminSpin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+.admin-error-card {
+  background-color: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 12px;
+  padding: 16px 24px;
+}
+
+.admin-error-text {
+  color: #dc2626;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Contenedor Principal de la Tabla */
+.admin-table-wrapper {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  margin-top: 16px;
+  overflow: hidden;
+}
+
+.admin-table-header-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.admin-table-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.admin-badge-count {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+}
+
+/* Estado Vacío */
+.admin-empty-state {
+  padding: 48px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.937rem;
+}
+
+/* Estructura de la Tabla */
+.admin-responsive-scroll {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.admin-main-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-main-table th {
+  background-color: #f9fafb;
+  padding: 14px 24px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.admin-main-table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.875rem;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.admin-main-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Celdas Específicas */
+.admin-td-date {
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.admin-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-user-name {
+  font-weight: 500;
+  color: #111827;
+}
+
+.admin-user-email {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.admin-td-motivo {
+  max-width: 260px;
+}
+
+.admin-motivo-text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #4b5563;
+}
+
+/* Badges de Estado */
+.admin-badge-status {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.status-pendiente {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.status-resuelto {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+/* Animación del Spinner */
+@keyframes adminSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
