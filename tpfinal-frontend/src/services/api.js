@@ -390,6 +390,10 @@ export async function obtenerTranscripcion(idClase) {
   return request(`/transcripcion/${idClase}/transcripcion`);
 }
 
+export async function resumirTranscripcion(idClase) {
+  return request(`/transcripcion/${idClase}/transcripcion/resumen`, { method: "POST" });
+}
+
 export async function cambiarVisibilidadTranscripcion(idClase, visible) {
   return request(`/transcripcion/${idClase}/transcripcion/visibilidad`, {
     method: "PATCH",

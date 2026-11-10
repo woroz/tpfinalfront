@@ -1,25 +1,29 @@
 import { useState } from "react";
-import { cambiarVisibilidadTranscripcion, obtenerTranscripcion } from "../services/api";
+import { cambiarVisibilidadTranscripcion, obtenerTranscripcion, resumirTranscripcion } from "../services/api";
 
 export default function TranscripcionClase({ idClase, esProfesor = false }) {
-  const [abierta, setAbierta] = useState(false);
+  const [vista, setVista] = useState(null); // null | "transcripcion" | "resumen"
   const [cargando, setCargando] = useState(false);
   const [transcripcion, setTranscripcion] = useState(null);
   const [mensaje, setMensaje] = useState("");
 
-  async function alternar() {
-    if (abierta) {
-      setAbierta(false);
+  async function abrir(nuevaVista) {
+    if (vista === nuevaVista) {
+      setVista(null);
       return;
     }
-    setAbierta(true);
-    setCargando(true);
+    setVista(nuevaVista);
     setMensaje("");
+    if (nuevaVista === "resumen" && transcripcion?.resumen) return;
+
+    setCargando(true);
     try {
-      const data = await obtenerTranscripcion(idClase);
+      // el back devuelve el resumen guardado si ya existe, sin volver a generarlo
+      const data = nuevaVista === "resumen"
+        ? await resumirTranscripcion(idClase)
+        : await obtenerTranscripcion(idClase);
       setTranscripcion(data.transcripcion);
     } catch (err) {
-      setTranscripcion(null);
       setMensaje(err.message);
     } finally {
       setCargando(false);
@@ -37,16 +41,30 @@ export default function TranscripcionClase({ idClase, esProfesor = false }) {
 
   return (
     <div>
-      <button type="button" className="res-boton-secundario" onClick={alternar}>
-        {abierta ? "Ocultar transcripcion" : "Ver transcripcion"}
+      <button type="button" className="res-boton-secundario" onClick={() => abrir("transcripcion")}>
+        {vista === "transcripcion" ? "Ocultar transcripcion" : "Ver transcripcion"}
+      </button>{" "}
+      <button type="button" className="res-boton-secundario" onClick={() => abrir("resumen")} disabled={cargando}>
+        {vista === "resumen" ? "Ocultar resumen" : "Resumir clase"}
       </button>
 
-      {abierta && (
+      {vista && (
         <div>
-          {cargando && <p className="res-mensaje">Cargando transcripcion…</p>}
+          {cargando && (
+            <p className="res-mensaje">
+              {vista === "resumen" ? "Generando resumen…" : "Cargando transcripcion…"}
+            </p>
+          )}
           {mensaje && <p className="res-mensaje">{mensaje}</p>}
 
-          {transcripcion && (
+          {!cargando && transcripcion && vista === "resumen" && transcripcion.resumen && (
+            <>
+              <p className="res-nota">Resumen generado automaticamente a partir de la transcripcion.</p>
+              <p style={{ whiteSpace: "pre-wrap" }}>{transcripcion.resumen}</p>
+            </>
+          )}
+
+          {!cargando && transcripcion && vista === "transcripcion" && (
             <>
               <p className="res-nota">
                 Transcripcion automatica: puede contener errores propios del reconocimiento de voz.
