@@ -35,7 +35,7 @@ async function request(path, options = {}) {
   }
   const data = await readResponse(res);
   if (!res.ok) {
-    throw new Error(data.message);
+    throw new Error(data.message || data.error || "Ocurrió un error en el servidor.");
   }
  
   return data;
@@ -455,4 +455,28 @@ export async function obtenerReportesAdmin() {
   }
 
   return data;
+}
+
+export async function iniciarGrabacionClase(idClase) {
+  return request(`/sala-videollamada/grabacion/iniciar/${encodeURIComponent(idClase)}`, {
+    method: "POST",
+  });
+}
+
+export async function detenerGrabacionClase(idClase) {
+  return request(`/sala-videollamada/grabacion/detener/${encodeURIComponent(idClase)}`, {
+    method: "POST",
+  });
+}
+
+export async function obtenerEstadoGrabacionClase(idClase) {
+  return request(
+    `/sala-videollamada/grabacion/estado/${encodeURIComponent(idClase)}`
+  );
+}
+
+export async function obtenerUrlGrabacionClase(idClase) {
+  return request(
+    `/sala-videollamada/grabacion/url/${encodeURIComponent(idClase)}`
+  );
 }

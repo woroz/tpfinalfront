@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { obtenerMisInscripciones } from "../services/api";
+import { obtenerMisInscripciones, obtenerUrlGrabacionClase } from "../services/api";
 import { formatearFecha, formatearHora, formatearPrecio } from "../utils/fechas";
 import ChatClase from "../components/chatClase";
 import { useAuth } from "../context/authContext";
@@ -33,6 +33,9 @@ export default function MisClases() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [chatClaseAbierto, setChatClaseAbierto] = useState(null);
+  const [grabacionUrl, setGrabacionUrl] = useState(null);
+  const [grabacionCargando, setGrabacionCargando] = useState(null);
+  const [errorGrabacion, setErrorGrabacion] = useState(null);
   const [ahora, setAhora] = useState(() => Date.now());
   const inscripcionesVisibles = historial
     ? inscripciones.filter((item) => (
@@ -74,6 +77,25 @@ export default function MisClases() {
     if (valor === historial) return;
     setCargando(true);
     setHistorial(valor);
+  }
+
+  async function verGrabacion(idClase) {
+  setGrabacionCargando(idClase);
+  setErrorGrabacion(null);
+  try {
+    const resultado = await obtenerUrlGrabacionClase(idClase);
+    setGrabacionUrl({
+      idClase,
+      url: resultado.url
+    });
+  } catch (error) {
+    setErrorGrabacion({
+      idClase,
+      mensaje: error.message || "No se pudo cargar la grabación."
+    });
+  } finally {
+    setGrabacionCargando(null);
+  }
   }
 
   return (
@@ -174,6 +196,53 @@ export default function MisClases() {
               <div className="res-item-lado">
                 <span className={`res-estado ${item.estado}`}>{ETIQUETAS[item.estado] || item.estado}</span>
                 <div className="mis-clases-acciones">
+                  {historial
+                  && claseFinalizada
+                   && item.estado === "confirmada"
+                   && ["finalizando", "completada"].includes(item.clase.grabacion?.estado) && (
+                    <div className="mis-clases-grabacion">
+                      <button
+                        type="button"
+                        className="res-boton res-boton-chico"
+                        disabled={grabacionCargando === item.clase.id_clase}
+                        onClick={() => {
+                          if (grabacionUrl?.idClase === item.clase.id_clase) {
+                            setGrabacionUrl(null);
+                          } else {
+                            verGrabacion(item.clase.id_clase);
+                          }
+                        }}
+                      >
+                        {grabacionCargando === item.clase.id_clase
+                          ? "Cargando grabación..."
+                          : grabacionUrl?.idClase === item.clase.id_clase
+                            ? "Ocultar grabación"
+                            : "▶ Ver grabación"}
+                      </button>
+
+                      {grabacionUrl?.idClase === item.clase.id_clase && (
+                        <video
+                          controls
+                          preload="metadata"
+                          src={grabacionUrl.url}
+                          style={{
+                            width: "100%",
+                            maxWidth: "600px",
+                            marginTop: "12px",
+                            borderRadius: "8px"
+                          }}
+                        >
+                          Tu navegador no admite la reproducción de videos.
+                        </video>
+                      )}
+
+                      {errorGrabacion?.idClase === item.clase.id_clase && (
+                        <p className="res-error" role="alert">
+                          {errorGrabacion.mensaje}
+                        </p>
+                      )}
+                    </div>
+                  )}
                   {puedeResenar && (
                     <div className="mis-clases-resena">
                     <ResenaClase
