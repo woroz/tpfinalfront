@@ -6,8 +6,11 @@ import { useGrabadorClase } from "../hooks/grabadorClase";
 import "@livekit/components-styles";
 import { useRoomContext } from "@livekit/components-react";
 import "../styles/claseVirtual.css";
+import { useGrabacionServidor } from "../hooks/useGrabacionServidor";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.DEV
+  ? "/api"
+  : import.meta.env.VITE_API_URL;
 
 export const BotonFinalizarProfesor = ({ nombre_sala }) => {
   const navigate = useNavigate();
@@ -49,7 +52,8 @@ export const ClaseVirtual = () => {
   const [error, setError] = useState("");
   const { usuario } = useAuth();
   const esProfesor = usuario?.rol === "profesor";
-  const { iniciar, finalizar, progreso } = useGrabadorClase(id_clase);
+  const { iniciar: iniciarTranscripcion, finalizar, progreso,} = useGrabadorClase(id_clase);
+  const { iniciar: iniciarGrabacionServidor, error: errorGrabacion,} = useGrabacionServidor(id_clase);
 
   useEffect(() => {
     if (!progreso) return undefined;
@@ -128,7 +132,10 @@ export const ClaseVirtual = () => {
         token={token}
         serverUrl="wss://mentorar-video-syfwrkrz.livekit.cloud"
         onConnected={() => {
-          if (esProfesor) iniciar();
+          if (esProfesor) {
+            iniciarTranscripcion();
+            iniciarGrabacionServidor();
+          }
         }}
         onDisconnected={async () => {
           try {
@@ -156,7 +163,25 @@ export const ClaseVirtual = () => {
           )}
         </div>
       </LiveKitRoom>
-
+      {errorGrabacion && (
+        <div
+          style={{
+            position: "fixed",
+            top: 15,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 10001,
+            padding: "12px 20px",
+            background: "#dc3545",
+            color: "white",
+            borderRadius: "8px",
+            fontFamily: "sans-serif",
+          }}
+        >
+          No se pudo iniciar la grabación de la clase: {errorGrabacion}
+        </div>
+      )}
+      
       {progreso && (
         <div
           style={{
