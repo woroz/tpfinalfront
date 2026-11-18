@@ -18,7 +18,7 @@ import TranscripcionClase from "../components/TranscripcionClase";
 import RegistroActividadClase from "../components/RegistroActividadClase";
 
 const MAX_PDF = 4 * 1024 * 1024;
-const MAX_PDFS = 3;
+const MAX_PDFS = 10;
 
 function obtenerMaterialesPdf(clase) {
   if (clase.materialesPdf?.length) return clase.materialesPdf;
@@ -248,7 +248,7 @@ export default function ClasesProfesor() {
       return;
     }
     if (obtenerMaterialesPdf(clase).length >= MAX_PDFS) {
-      setError("Esta clase ya tiene el máximo de 3 archivos PDF.");
+      setError("Esta clase ya tiene el máximo de 10 archivos PDF.");
       return;
     }
 
@@ -416,7 +416,9 @@ export default function ClasesProfesor() {
                     </label>
                   )}
                 </div>
-                <TranscripcionClase idClase={clase.id_clase} esProfesor />
+                <div className="clases-profesor-transcripcion">
+                  <TranscripcionClase idClase={clase.id_clase} esProfesor />
+                </div>
                 {historial && <RegistroActividadClase idClase={clase.id_clase} />}
               </div>
               <div className="res-item-lado">

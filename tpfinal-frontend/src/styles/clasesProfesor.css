@@ -70,6 +70,16 @@
         border-radius: 12px;
       }
 
+      .clases-profesor-pagina .clases-profesor-transcripcion {
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .clases-profesor-pagina .clases-profesor-transcripcion > div > button + button {
+        margin-top: 12px;
+      }
+
       .clases-profesor-pagina .clases-profesor-materiales > strong {
         display: block;
         margin-bottom: 12px;

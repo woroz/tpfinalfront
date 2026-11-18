@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { Moon, Sun } from "lucide-react";
 import logo from "../assets/mentorar.png";
 import { useAuth } from "../context/authContext";
+import { useTema } from "../context/temaContext";
 import { marcarNotificacionLeida, obtenerNotificaciones } from "../services/api";
 
 function getUserName(user) {
@@ -40,6 +42,7 @@ export default function Navbar() {
   const [notificaciones, setNotificaciones] = useState([]);
   const [errorNotificaciones, setErrorNotificaciones] = useState("");
   const { usuario, cerrarSesion } = useAuth();
+  const { tema, error: errorTema, cambiarTema } = useTema();
   const navigate = useNavigate();
   const idUsuario = usuario?.id_usuario;
   
@@ -146,6 +149,19 @@ export default function Navbar() {
       </div>
 
       <div className="navbar-actions">
+        <div className="navbar-tema">
+          <button
+            className="navbar-tema-button"
+            type="button"
+            onClick={cambiarTema}
+            aria-label={tema === "oscuro" ? "Activar tema claro" : "Activar tema oscuro"}
+            aria-pressed={tema === "oscuro"}
+            title={tema === "oscuro" ? "Activar tema claro" : "Activar tema oscuro"}
+          >
+            {tema === "oscuro" ? <Sun size={21} aria-hidden="true" /> : <Moon size={21} aria-hidden="true" />}
+          </button>
+          {errorTema && <span className="navbar-tema-error" role="alert">{errorTema}</span>}
+        </div>
         <div className="navbar-notifications">
           <button
             className="navbar-notifications-button"
@@ -190,7 +206,7 @@ export default function Navbar() {
           <button
             className="navbar-avatar"
             type="button"
-            style={{ backgroundColor: getAvatarColor(usuario) }}
+            style={{ backgroundColor: tema === "oscuro" ? "#315db5" : getAvatarColor(usuario) }}
             aria-label="Abrir menú de usuario"
             aria-expanded={menuOpen}
             onClick={() => {
