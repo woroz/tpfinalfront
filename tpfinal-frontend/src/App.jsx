@@ -1,5 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/authContext";
+import { TemaProvider } from "./context/temaContext";
+import Inicio from "./pages/inicio";
 import Buscar from "./pages/buscar";
 import Login from "./pages/login";
 import Register from "./pages/register";
@@ -24,6 +26,8 @@ import "./styles/layout.css";
 import "./styles/perfil.css"
 import "./styles/menu.css";
 import Tablon from "./pages/tablon";
+import Biblioteca from "./pages/biblioteca";
+import "./styles/tema.css";
 
 
 function PagePlaceholder({ title, description }) {
@@ -64,7 +68,7 @@ function AppRoutes() {
         path="/inicio"
         element={
           <ProtectedRoute>
-            <PagePlaceholder title="Inicio" description="Bienvenido a MentorAr." />
+            <Inicio />
           </ProtectedRoute>
         }
       />
@@ -79,8 +83,8 @@ function AppRoutes() {
       <Route
         path="/biblioteca"
         element={
-          <ProtectedRoute>
-            <PagePlaceholder title="Biblioteca" description="Aca vas a encontrar recursos para aprender." />
+          <ProtectedRoute roles={["alumno", "profesor"]}>
+            <Biblioteca />
           </ProtectedRoute>
         }
       />
@@ -220,9 +224,11 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <TemaProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </TemaProvider>
     </BrowserRouter>
   );
 }

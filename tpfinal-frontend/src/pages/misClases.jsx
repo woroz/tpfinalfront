@@ -291,7 +291,7 @@ export default function MisClases() {
                 onClick={() => navigate(`/clase-virtual/${item.clase.id_clase}`)}
                 className={`res-boton res-boton-chico`}
                 style={{
-                  backgroundColor: claseEstaActiva ? "#28a745" : "#6c757d",
+                  backgroundColor: claseEstaActiva ? "var(--clase-video-bg, #28a745)" : "#6c757d",
                   color: "white",
                   border: "none",
                   cursor: claseEstaActiva ? "pointer" : "not-allowed",
@@ -305,7 +305,7 @@ export default function MisClases() {
               type="button"
               className="res-boton res-boton-chico"
               style={{
-                backgroundColor: "#007bff",
+                backgroundColor: "var(--clase-chat-bg, #007bff)",
                 color: "white",
                 border: "none",
                 cursor: "pointer",

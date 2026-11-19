@@ -111,6 +111,75 @@ export async function obtenerEstadisticas() {
 export async function obtenerLogros() {
   return request("/logros");
 }
+
+export async function obtenerClasesBiblioteca() {
+  return request("/biblioteca/clases");
+}
+
+export async function obtenerMaterialesBiblioteca() {
+  return request("/biblioteca/materiales");
+}
+
+export async function obtenerPdfClasesBiblioteca() {
+  return request("/biblioteca/materiales/pdf-clases");
+}
+
+export async function obtenerMaterialesProfesorBiblioteca() {
+  return request("/biblioteca/materiales/profesor");
+}
+
+export async function subirMaterialBiblioteca(idClase, destinatarios, idAlumno, archivo) {
+  const datos = new FormData();
+  datos.append("id_clase", idClase);
+  datos.append("destinatarios", destinatarios);
+  if (idAlumno) datos.append("id_alumno", idAlumno);
+  datos.append("nombre_archivo", archivo.name);
+  datos.append("archivo", archivo);
+  return request("/biblioteca/materiales", { method: "POST", body: datos });
+}
+
+export async function reemplazarMaterialBiblioteca(idMaterial, archivo) {
+  const datos = new FormData();
+  datos.append("nombre_archivo", archivo.name);
+  datos.append("archivo", archivo);
+  return request(`/biblioteca/materiales/${encodeURIComponent(idMaterial)}`, { method: "PUT", body: datos });
+}
+
+export async function eliminarMaterialBiblioteca(idMaterial) {
+  return request(`/biblioteca/materiales/${encodeURIComponent(idMaterial)}`, { method: "DELETE" });
+}
+
+export async function obtenerVistaTextoBiblioteca(idMaterial) {
+  return request(`/biblioteca/materiales/${encodeURIComponent(idMaterial)}/vista`);
+}
+
+export async function obtenerArchivoBiblioteca(material, vista = false) {
+  const token = localStorage.getItem("token");
+  const respuesta = await fetch(`${API_URL}/biblioteca/materiales/${encodeURIComponent(material.id_material)}/archivo${vista ? "?vista=1" : ""}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    credentials: "include",
+  });
+  if (!respuesta.ok) {
+    if (respuesta.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+    }
+    const datos = await readResponse(respuesta);
+    throw new Error(datos.message || datos.error || `No se pudo descargar el material (HTTP ${respuesta.status}).`);
+  }
+  return respuesta.blob();
+}
+
+export async function descargarMaterialBiblioteca(material) {
+  const url = URL.createObjectURL(await obtenerArchivoBiblioteca(material));
+  const enlace = document.createElement("a");
+  enlace.href = url;
+  enlace.download = material.titulo;
+  document.body.appendChild(enlace);
+  enlace.click();
+  enlace.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
  
 export async function buscarProfesores(latitud, longitud, radio = 100, filtros = {}) {
   const query = new URLSearchParams({
@@ -173,6 +242,15 @@ export async function subirMaterialClase(idClase, archivo) {
   const formData = new FormData();
   formData.append("pdf", archivo);
   return request(`/clases/${idClase}/material`, {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export async function subirMaterialInicialClase(idClase, archivo) {
+  const formData = new FormData();
+  formData.append("pdf", archivo);
+  return request(`/clases/${encodeURIComponent(idClase)}/material-inicial`, {
     method: "POST",
     body: formData,
   });

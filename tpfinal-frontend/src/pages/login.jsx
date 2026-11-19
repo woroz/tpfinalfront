@@ -30,7 +30,7 @@ export default function Login() {
       guardarSesion(data);
       const payload = JSON.parse(atob(data.token.split(".")[1]));
       localStorage.setItem("user", JSON.stringify(payload));
-      navigate(payload.rol === "alumno" ? "/buscar" : "/profesor");
+      navigate("/inicio");
     } catch (err) {
       setError(err.message);
     } finally {

@@ -8,7 +8,7 @@ import {
   asociarMateriaProfesor,
   obtenerAreas,
   obtenerMaterias,
-  subirMaterialClase,
+  subirMaterialInicialClase,
 } from "../services/api";
 
 const MAX_PDF = 4 * 1024 * 1024;
@@ -192,7 +192,7 @@ export default function CrearClaseProfesor() {
       if (idClase) {
         for (const archivo of archivosPdf) {
           try {
-            await subirMaterialClase(idClase, archivo);
+            await subirMaterialInicialClase(idClase, archivo);
           } catch (errPdf) {
             erroresPdf.push(`${archivo.name}: ${errPdf.message}`);
           }
@@ -201,7 +201,7 @@ export default function CrearClaseProfesor() {
 
       setMensaje(
         erroresPdf.length
-          ? `La clase se creó y se subieron ${archivosPdf.length - erroresPdf.length} de ${archivosPdf.length} PDF. No se pudieron subir: ${erroresPdf.join("; ")}. Podés completar los archivos desde Clases programadas.`
+          ? `La clase se creó y se subieron ${archivosPdf.length - erroresPdf.length} de ${archivosPdf.length} PDF. No se pudieron subir: ${erroresPdf.join("; ")}. Podés completar hasta 10 desde Clases programadas.`
           : "La clase se creó correctamente.",
       );
       setForm(INITIAL_FORM);

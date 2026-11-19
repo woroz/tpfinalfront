@@ -1,0 +1,242 @@
+.navbar-tema { position: relative; }
+.navbar-tema-button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface, #fff);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.navbar-tema-button:hover { color: var(--brand); background: var(--brand-soft); }
+.navbar-tema-button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.navbar-tema-error {
+  position: absolute;
+  z-index: 1301;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 240px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--text);
+  box-shadow: var(--card-shadow);
+  font-size: 13px;
+}
+@media (max-width: 900px) {
+  .app-navbar { flex-wrap: wrap; gap: 12px; }
+  .navbar-logo img { width: 140px; }
+  .navbar-actions { margin-left: auto; gap: 8px; }
+  .navbar-links { order: 3; flex: 0 0 100%; gap: 12px; overflow-x: auto; }
+}
+
+:root[data-tema="oscuro"] {
+  color-scheme: dark;
+  --sidebar-bg: #1b2230;
+  --header-bg: #1b2230;
+  --page-bg: #10141d;
+  --surface: #1b2230;
+  --surface-soft: #252e3d;
+  --brand: #9ab9ff;
+  --brand-hover: #729cef;
+  --brand-soft: #263b5f;
+  --text: #f1f5fb;
+  --text-muted: #b7c2d4;
+  --text-2: #b7c2d4;
+  --text-3: #a2b1c8;
+  --primary: #9ab9ff;
+  --primary-text: #bbceff;
+  --primary-soft: #263b5f;
+  --bg: #252e3d;
+  --border: #3a465a;
+  --border-strong: #536078;
+  --card-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+  --clase-video-bg: #177b40;
+  --clase-chat-bg: #005fc4;
+}
+
+[data-tema="oscuro"] :is(body, .app-page, .map-page) { background: var(--page-bg); color: var(--text); }
+[data-tema="oscuro"] .navbar-logo img { filter: brightness(0) invert(1); }
+[data-tema="oscuro"] .navbar-link { color: var(--text-muted); }
+[data-tema="oscuro"] .navbar-link.active { color: var(--brand); }
+[data-tema="oscuro"] .navbar-link:hover { background: var(--surface-soft); color: var(--text); }
+[data-tema="oscuro"] :is(.navbar-notifications-button, .navbar-tema-button) {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+[data-tema="oscuro"] :is(.navbar-notifications-panel, .navbar-user-menu) { background: var(--surface); }
+[data-tema="oscuro"] .navbar-notifications-panel li.sin-leer { background: var(--brand-soft); }
+[data-tema="oscuro"] :is(.navbar-user-menu a, .navbar-user-menu button):hover { background: var(--surface-soft); }
+
+[data-tema="oscuro"] :is(
+  .auth-card, .res-tarjeta, .res-item, .clases-profesor-pagina .clases-profesor-item,
+  .mi-perfil-card, .mi-perfil-resenas, .mi-perfil-vista-previa, .mi-perfil-estadisticas,
+  .biblioteca-tarjeta, .biblioteca-dialogo, .biblioteca-menu-opciones,
+  .mis-clases-reclamo-form, .admin-seccion-usuarios, .admin-table-wrapper,
+  .map-mode-switch, .map-class-search, .map-class-results, .map-class-empty,
+  .map-class-result, .map-filter-button, .map-filter-menu, .map-loading, .map-notice
+) {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+[data-tema="oscuro"] :is(
+  .res-contenedor, .biblioteca, .mi-perfil-page, .admin-contenido, .map-page,
+  .auth-form-panel
+) :is(h1, h2, h3, h4) { color: var(--text); }
+[data-tema="oscuro"] :is(
+  .res-item p, .res-encabezado p, .res-nota, .res-mensaje, .res-etiqueta,
+  .clases-profesor-pagina .clases-profesor-item > div:first-child > p,
+  .clases-profesor-pagina .res-item-lado small, .clases-profesor-pagina .clases-profesor-materiales > strong,
+  .mis-clases-pagina .res-item > div:first-child > p, .mis-clases-pagina .res-item-lado small,
+  .biblioteca-material .biblioteca-material-clase, .map-class-search label,
+  .map-class-result strong, .auth-form label, .role-picker legend
+) { color: var(--text-muted); }
+[data-tema="oscuro"] :is(
+  .res-contenedor, .biblioteca, .mi-perfil-page, .admin-contenido, .map-page, .auth-page
+) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea) {
+  background-color: var(--surface-soft);
+  border-color: var(--border);
+  color: var(--text);
+}
+[data-tema="oscuro"] :is(
+  .res-pestanias, .res-resumen, .clase-horario-edicion, .clase-horario-actual,
+  .clases-profesor-pagina .clases-profesor-materiales, .mis-clases-resena-form,
+  .mi-perfil-logro, .mi-perfil-estadistica, .biblioteca-vista-texto section,
+  .mis-clases-pagina .registro-actividad-lista > li, .chat-contenedor,
+  .disponibilidad-materias, .disponibilidad-ayuda, .disponibilidad-materias-lista li,
+  .mis-clases-pagina .mis-clases-registros
+) { background: var(--surface-soft); border-color: var(--border); color: var(--text); }
+[data-tema="oscuro"] :is(.res-boton, .biblioteca-tarjeta button) {
+  background: #315db5;
+  color: #fff;
+}
+[data-tema="oscuro"] :is(.res-boton, .biblioteca-tarjeta button):hover { background: #416fca; }
+[data-tema="oscuro"] :is(
+  .res-boton-secundario, .clases-profesor-pagina .res-boton-secundario,
+  .clases-profesor-pagina .clases-profesor-accion-pdf,
+  .biblioteca-filtros button, .biblioteca-material .biblioteca-material-acciones button,
+  .biblioteca-material .biblioteca-menu-opciones button, .mi-perfil-lapiz,
+  .map-filter-menu button, .map-mode-switch button
+) { background: var(--surface-soft); border-color: var(--border); color: var(--text); }
+[data-tema="oscuro"] :is(
+  .res-boton-secundario, .clases-profesor-pagina .res-boton-secundario,
+  .biblioteca-filtros button, .biblioteca-material .biblioteca-material-acciones button,
+  .biblioteca-material .biblioteca-menu-opciones button, .map-filter-menu button
+):hover { background: var(--brand-soft); color: var(--text); }
+[data-tema="oscuro"] :is(.res-pestanias button.activo, .map-mode-switch button.active) {
+  background: #315db5;
+  color: #fff;
+}
+[data-tema="oscuro"] :is(.biblioteca-menu summary, .biblioteca-cerrar) { color: var(--text); }
+[data-tema="oscuro"] :is(
+  .res-pestanias button, .res-dia-semana-cabecera, .res-franja,
+  .disponibilidad-materias p, .disponibilidad-ayuda, .materias-profesor-agregar > p,
+  .crear-clase-ayuda, .mi-perfil-resena-cabecera > span, .mi-perfil-lista-resenas p,
+  .mi-perfil-preview-contenido p, .map-results, .mis-clases-detalle summary,
+  .mis-clases-pagina .mis-clases-registros > p, .clases-profesor-pagina .clases-profesor-subir-pdf
+) { color: var(--text-muted); }
+[data-tema="oscuro"] :is(
+  .disponibilidad-ayuda strong, .mi-perfil-resena-cabecera strong,
+  .mis-clases-pagina .mis-clases-registros h3, .mis-clases-pagina .registro-actividad-lista strong
+) { color: var(--text); }
+[data-tema="oscuro"] :is(
+  .mis-clases-pagina .mis-clases-profesor-link, .perfil-enlace,
+  .disponibilidad-materias p a, .mis-clases-pagina .registro-actividad-lista span
+) { color: var(--brand); }
+[data-tema="oscuro"] .chat-formulario { background: var(--surface); border-color: var(--border); }
+[data-tema="oscuro"] .chat-burbuja.otro { background: #3a465a; color: var(--text); }
+[data-tema="oscuro"] .auth-page { background: var(--page-bg); }
+[data-tema="oscuro"] .auth-heading p { color: var(--text-muted); }
+
+[data-tema="oscuro"] .navbar-notifications-panel li {
+  background: var(--surface-soft);
+  border-color: var(--border);
+}
+[data-tema="oscuro"] .navbar-notifications-panel li.sin-leer {
+  background: var(--brand-soft);
+}
+[data-tema="oscuro"] .ubicacion-dialog {
+  background: var(--surface);
+  color: var(--text);
+}
+[data-tema="oscuro"] .ubicacion-dialog h2 { color: var(--text); }
+[data-tema="oscuro"] .ubicacion-dialog > p { color: var(--text-muted); }
+[data-tema="oscuro"] .crear-clase-panel {
+  background: var(--surface-soft);
+  border-color: var(--border);
+}
+[data-tema="oscuro"] .res-contenedor .res-pestanias button.activo {
+  color: #fff;
+}
+[data-tema="oscuro"] .mis-clases-resena-form label,
+[data-tema="oscuro"] .mis-clases-resena-valor,
+[data-tema="oscuro"] .pago-detalle dt,
+[data-tema="oscuro"] .perfil-resenas p,
+[data-tema="oscuro"] .perfil-resenas-vacias,
+[data-tema="oscuro"] .perfil-resena-puntaje > span:last-child {
+  color: var(--text-muted);
+}
+[data-tema="oscuro"] .pago-detalle dd,
+[data-tema="oscuro"] .pago-detalle .pago-total dt,
+[data-tema="oscuro"] .pago-detalle .pago-total dd {
+  color: var(--text);
+}
+[data-tema="oscuro"] .mis-clases-pagina .res-item-lado .perfil-enlace {
+  background: var(--surface-soft);
+  border-color: var(--border);
+  color: var(--text);
+}
+[data-tema="oscuro"] .mis-clases-pagina .res-item-lado .perfil-enlace:hover {
+  background: var(--brand-soft);
+}
+[data-tema="oscuro"] .clases-profesor-pagina .clases-profesor-subir-pdf {
+  background: var(--surface-soft);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+[data-tema="oscuro"] .clases-profesor-pagina .clases-profesor-subir-pdf:hover {
+  background: var(--brand-soft);
+}
+[data-tema="oscuro"] .res-contenedor :is(input, textarea)::placeholder {
+  color: #a2b1c8;
+  opacity: 1;
+}
+[data-tema="oscuro"] .navbar-notifications-count { background: #b82e3b; }
+[data-tema="oscuro"] .res-volver,
+[data-tema="oscuro"] .res-encabezado a,
+[data-tema="oscuro"] .clases-profesor-material-link { color: var(--brand); }
+[data-tema="oscuro"] .clases-profesor-pagina .clases-profesor-btn--virtual {
+  background: #087a55;
+}
+[data-tema="oscuro"] .res-estado.aprobado,
+[data-tema="oscuro"] .res-estado.confirmada { color: #12653e; }
+[data-tema="oscuro"] .perfil-linea,
+[data-tema="oscuro"] .perfil-descripcion,
+[data-tema="oscuro"] .perfil-calendario-ayuda,
+[data-tema="oscuro"] .perfil-clase small {
+  color: var(--text-muted);
+}
+[data-tema="oscuro"] .res-calendario-cabecera,
+[data-tema="oscuro"] .perfil-semana li { color: var(--text); }
+[data-tema="oscuro"] .materias-profesor-item-info span { color: #536078; }
+[data-tema="oscuro"] .mi-perfil-logro-icono { color: #536078; }
+[data-tema="oscuro"] .perfil-estrella-base {
+  color: #a2b1c8;
+  -webkit-text-fill-color: #a2b1c8;
+}
+[data-tema="oscuro"] .file-upload {
+  background: var(--surface-soft);
+  border-color: var(--border);
+  box-shadow: none;
+}
+[data-tema="oscuro"] .file-upload-trigger {
+  background: var(--brand-soft);
+  border-color: var(--border);
+  color: var(--text);
+}
+[data-tema="oscuro"] .file-upload-name { color: var(--text-muted); }
