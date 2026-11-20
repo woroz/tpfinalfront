@@ -1,3 +1,4 @@
+import Tareas from "../components/Tareas";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -107,6 +108,7 @@ export default function MisClases() {
           <p>Consultá tus clases agendadas y completá los pagos pendientes.</p>
         </header>
 
+        <Tareas />
         <div className="res-pestanias" role="tablist">
           <button type="button" role="tab" aria-selected={!historial} className={!historial ? "activo" : ""} onClick={() => cambiarVista(false)}>
             Próximas

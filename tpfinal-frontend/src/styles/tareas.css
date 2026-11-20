@@ -1,0 +1,45 @@
+.panel-tareas { margin-block: 1rem; overflow-wrap: anywhere; }
+.panel-tareas > fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.panel-tareas fieldset, .panel-tareas form, .panel-tareas article, .panel-tareas article section { display: grid; gap: .75rem; }
+.panel-tareas label { display: block; }
+.panel-tareas .res-campo, .panel-tareas input[type=file] { display: block; max-width: 100%; width: 100%; }
+.panel-tareas button { justify-self: start; }
+.panel-tareas summary { cursor: pointer; font-weight: 600; margin-block: .5rem; }
+.panel-tareas article p { white-space: pre-wrap; }
+
+.panel-tareas .tarea-editor {
+  background: var(--surface, white);
+  border: 1px solid var(--border, #d4dfeb);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.panel-tareas .tarea-editor > summary {
+  padding: .9rem 1.1rem;
+  margin: 0;
+  color: var(--primary-text, #235697);
+  background: var(--brand-soft, #edf4ff);
+}
+.panel-tareas .tarea-editor form { padding: clamp(.85rem, 3vw, 1.5rem); gap: 1.1rem; }
+.panel-tareas .tarea-editor label, .panel-tareas legend { font-weight: 600; }
+.panel-tareas .tarea-editor .res-campo { margin-top: .35rem; box-sizing: border-box; }
+.panel-tareas textarea { min-height: 5.5rem; resize: vertical; }
+.panel-tareas .tarea-adjuntos, .panel-tareas .tarea-plazo, .panel-tareas .tarea-alumnos {
+  min-width: 0; margin: 0; padding: .85rem 1rem; border-radius: 12px;
+  border: 1px solid var(--border, #d4dfeb); background: var(--surface-soft, #f7f9fc);
+}
+.panel-tareas .tarea-adjuntos { border-style: dashed; }
+.panel-tareas .tarea-adjuntos small { display: block; margin: .25rem 0 .65rem; font-weight: 400; color: var(--text-muted); }
+.panel-tareas input::file-selector-button, .panel-tareas .tarea-plazo-fila button {
+  padding: .55rem .85rem; border: 1px solid var(--border, #ccd8e5); border-radius: 9px;
+  color: var(--primary-text, #235697); background: var(--surface, white); font: inherit; cursor: pointer;
+}
+.panel-tareas .tarea-plazo-fila, .panel-tareas .tarea-alumnos { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; }
+.panel-tareas .tarea-plazo-fila label { display: flex; align-items: center; gap: .5rem; }
+.panel-tareas .tarea-plazo-fila input { width: 5rem; margin: 0; text-align: center; font-variant-numeric: tabular-nums; }
+.panel-tareas .tarea-plazo .res-calendario { margin-inline: auto; justify-self: center; width: min(100%, 22rem); box-sizing: border-box; }
+.panel-tareas .res-calendario-grilla button { justify-self: stretch; }
+.panel-tareas .tarea-alumnos label { padding: .4rem .7rem; border-radius: 8px; background: var(--surface, white); }
+.panel-tareas .tarea-alumnos label:has(:checked) { background: var(--brand-soft, #edf4ff); }
+.panel-tareas input[type=checkbox] { accent-color: var(--brand); }
+.panel-tareas article { border-inline-start: 3px solid var(--brand, #5284c4); }
+.panel-tareas article section + section { border-top: 1px solid var(--border, #d4dfeb); padding-top: .9rem; }
