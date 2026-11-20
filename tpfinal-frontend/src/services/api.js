@@ -558,3 +558,9 @@ export async function obtenerUrlGrabacionClase(idClase) {
     `/sala-videollamada/grabacion/url/${encodeURIComponent(idClase)}`
   );
 }
+export function solicitarTareas(ruta, method = "GET", datos) {
+  return request("/tareas" + ruta, {
+    method,
+    body: datos instanceof FormData ? datos : JSON.stringify(datos),
+  });
+}
