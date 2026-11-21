@@ -1,3 +1,4 @@
+import Tareas from "../components/Tareas";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -419,6 +420,7 @@ export default function ClasesProfesor() {
                 <div className="clases-profesor-transcripcion">
                   <TranscripcionClase idClase={clase.id_clase} esProfesor />
                 </div>
+                <Tareas clase={clase} />
                 {historial && <RegistroActividadClase idClase={clase.id_clase} />}
               </div>
               <div className="res-item-lado">
