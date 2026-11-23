@@ -11,6 +11,7 @@ import TranscripcionClase from "../components/TranscripcionClase";
 import ResenaClase from "../components/ResenaClase";
 import ReclamoClase from "../components/ReclamoClase";
 import "../styles/misClases.css";
+import QuizzesAlumno from "../components/QuizzesAlumno";
 
 const ETIQUETAS = {
   confirmada: "Confirmada",
@@ -194,6 +195,7 @@ export default function MisClases() {
                 </section>
                 <br></br>
                 <TranscripcionClase idClase={item.clase.id_clase} />
+                <QuizzesAlumno idClase={item.clase.id_clase} />
               </div>
               <div className="res-item-lado">
                 <span className={`res-estado ${item.estado}`}>{ETIQUETAS[item.estado] || item.estado}</span>

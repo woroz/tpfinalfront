@@ -137,15 +137,21 @@ export default function Navbar() {
             </NavLink>
           </>
         )}
-        <NavLink className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"} to="/tablon">
-          Tablón de anuncios
-        </NavLink>
-        <NavLink className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"} to="/biblioteca">
-          Biblioteca
-        </NavLink>
-        <NavLink className={({ isActive }) => isActive ? "navbar-link active" : "navbar-link"} to="/reportar">
-          Reportar
-        </NavLink>
+        {usuario?.rol !== "admin" && (
+          <>
+            <NavLink className={claseLink} to="/tablon">
+              Tablón de anuncios
+            </NavLink>
+
+            <NavLink className={claseLink} to="/biblioteca">
+              Biblioteca
+            </NavLink>
+
+            <NavLink className={claseLink} to="/reportar">
+              Reportar
+            </NavLink>
+          </>
+        )}
       </div>
 
       <div className="navbar-actions">
