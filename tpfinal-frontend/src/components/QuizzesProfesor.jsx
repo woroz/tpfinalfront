@@ -46,23 +46,16 @@ export default function QuizzesProfesor({ clase }) {
   const [intentoDetalle, setIntentoDetalle] = useState(null);
   const [cargandoDetalle, setCargandoDetalle] = useState(false);
 
+  const [revision, recargar] = useState(0);
   useEffect(() => {
-    if (idClase) cargarQuizzes();
-  }, [idClase]);
-
-  async function cargarQuizzes() {
-    try {
-      setCargando(true);
-      setError("");
-
-      const data = await obtenerQuizzesClase(idClase);
-      setQuizzes(data.quizzes || []);
-    } catch (err) {
-      setError(err.message || "No se pudieron cargar los quizzes.");
-    } finally {
-      setCargando(false);
-    }
-  }
+    if (!idClase) return;
+    let activo = true;
+    obtenerQuizzesClase(idClase)
+      .then(data => { if (activo) setQuizzes(data.quizzes || []); })
+      .catch(err => { if (activo) setError(err.message || "No se pudieron cargar los quizzes."); })
+      .finally(() => { if (activo) setCargando(false); });
+    return () => { activo = false; };
+  }, [idClase, revision]);
 
   function abrirModal() {
     setTitulo("");
@@ -215,7 +208,8 @@ export default function QuizzesProfesor({ clase }) {
       setGuardando(true);
       await crearQuiz(datos);
       setModalAbierto(false);
-      await cargarQuizzes();
+      setCargando(true);
+      recargar(n => n + 1);
     } catch (err) {
       setError(err.message || "No se pudo crear el quiz.");
     } finally {

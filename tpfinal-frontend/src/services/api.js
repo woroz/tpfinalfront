@@ -551,6 +551,10 @@ export async function crearOfertaTablon(idSolicitud, datos) {
   return request(`/tablon/solicitudes/${idSolicitud}/ofertas`, { method: "POST", body: datos });
 }
 
+export function rechazarOfertaTablon(idSolicitud, idOferta) {
+  return request(`/tablon/solicitudes/${idSolicitud}/ofertas/${idOferta}/rechazar`, { method: "PATCH" });
+}
+
 export async function aceptarOfertaTablon(idSolicitud, idOferta) {
   return request(`/tablon/solicitudes/${idSolicitud}/ofertas/${idOferta}/aceptar`, { method: "PATCH" });
 }

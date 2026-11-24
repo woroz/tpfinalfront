@@ -1,3 +1,4 @@
+import { confirmarAccion } from "../utils/confirmarAccion";
 import { useRef, useState } from "react";
 import {
   calificarTarea,
@@ -342,12 +343,12 @@ export function TareaAlumno({ item, actualizar, deshabilitado }) {
       {item.nota == null ? (
         <div className="tareas-form">
           <label>Tu respuesta<textarea maxLength={5000} value={editado ? texto : item.entregaTexto || ""} disabled={ocupado || deshabilitado} onChange={(event) => { setTexto(event.target.value); setEditado(true); }} /></label>
-          <Archivos archivos={item.archivos} etiqueta="Tu archivo" deshabilitado={ocupado || deshabilitado} quitar={(archivo) => {
+          <Archivos archivos={item.archivos} etiqueta="Tu archivo" deshabilitado={ocupado || deshabilitado} quitar={async (archivo) => {
             if (!archivo.id_archivo) { setError("No se puede identificar el archivo."); return; }
             if (item.entregadaEn && !item.entregaTexto?.trim() && item.archivos.length === 1) {
               setError("Para quitar el último archivo, primero actualizá la entrega con una respuesta o adjuntá otro archivo."); return;
             }
-            if (window.confirm(`¿Querés quitar ${archivo.nombre} de tu entrega?`)) void ejecutar(() => quitarArchivoEntrega(id, archivo.id_archivo), "Archivo quitado.");
+            if (await confirmarAccion(`¿Querés quitar ${archivo.nombre} de tu entrega?`, "Quitar archivo")) void ejecutar(() => quitarArchivoEntrega(id, archivo.id_archivo), "Archivo quitado.");
           }} />
           {item.archivos.length < 3 && <div className="tareas-campo-archivo"><span>Adjuntar archivo</span><label className="tareas-selector-archivo"><span className="tareas-selector-boton">Elegir archivo</span><span className="tareas-selector-nombre">PDF, JPG o PNG</span><input aria-label="Adjuntar archivo" type="file" accept=".pdf,.jpg,.jpeg,.png" disabled={ocupado || deshabilitado} onChange={(event) => {
             const archivo = event.target.files[0]; event.target.value = "";

@@ -1,35 +1,40 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/authContext";
 import { TemaProvider } from "./context/temaContext";
 import Inicio from "./pages/inicio";
-import Buscar from "./pages/buscar";
+
 import Login from "./pages/login";
-import Register from "./pages/register";
+
 import Navbar from "./components/Navbar";
-import ReservarClase from "./pages/reservarClase";
-import PagoResultado from "./pages/pagoResultado";
-import MisClases from "./pages/misClases";
-import Tareas from "./pages/tareas";
-import MisReclamos from "./pages/misReclamos";
-import ClasesProfesor from "./pages/clasesProfesor";
-import DisponibilidadProfesor from "./pages/disponibilidadProfesor";
-import PerfilProfesor from "./pages/perfilProfesor";
-import PagarClase from "./pages/pagarClase";
-import MisPagos from "./pages/misPagos";
-import CrearClaseProfesor from "./pages/crearClaseProfesor";
-import DetalleClase from "./pages/detalleClase";
-import MateriasProfesor from "./pages/materiasProfesor";
-import MiPerfil from "./pages/miPerfil";
-import { ClaseVirtual } from "./pages/ClaseVirtual";
-import Admin from "./pages/admin";
+
 import "./styles/reservas.css";
 import "./styles/layout.css";
 import "./styles/perfil.css"
 import "./styles/menu.css";
-import Tablon from "./pages/tablon";
-import Biblioteca from "./pages/biblioteca";
 import "./styles/tema.css";
 
+
+const ReservarClase = lazy(() => import("./pages/reservarClase"));
+const PagoResultado = lazy(() => import("./pages/pagoResultado"));
+const MisClases = lazy(() => import("./pages/misClases"));
+const Tareas = lazy(() => import("./pages/tareas"));
+const MisReclamos = lazy(() => import("./pages/misReclamos"));
+const ClasesProfesor = lazy(() => import("./pages/clasesProfesor"));
+const DisponibilidadProfesor = lazy(() => import("./pages/disponibilidadProfesor"));
+const PerfilProfesor = lazy(() => import("./pages/perfilProfesor"));
+const PagarClase = lazy(() => import("./pages/pagarClase"));
+const MisPagos = lazy(() => import("./pages/misPagos"));
+const CrearClaseProfesor = lazy(() => import("./pages/crearClaseProfesor"));
+const DetalleClase = lazy(() => import("./pages/detalleClase"));
+const MateriasProfesor = lazy(() => import("./pages/materiasProfesor"));
+const MiPerfil = lazy(() => import("./pages/miPerfil"));
+const Admin = lazy(() => import("./pages/admin"));
+const Tablon = lazy(() => import("./pages/tablon"));
+const Biblioteca = lazy(() => import("./pages/biblioteca"));
+const Register = lazy(() => import("./pages/register"));
+const ClaseVirtual = lazy(() => import("./pages/ClaseVirtual").then(modulo => ({ default: modulo.ClaseVirtual })));
+const Buscar = lazy(() => import("./pages/buscar"));
 
 function PagePlaceholder({ title, description }) {
   return (
@@ -235,7 +240,7 @@ export default function App() {
     <BrowserRouter>
       <TemaProvider>
         <AuthProvider>
-          <AppRoutes />
+          <Suspense fallback={<p className="res-mensaje" role="status">Cargando…</p>}><AppRoutes /></Suspense>
         </AuthProvider>
       </TemaProvider>
     </BrowserRouter>

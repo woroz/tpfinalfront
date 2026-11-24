@@ -53,8 +53,8 @@ export default function OfertaModal({ solicitud, materias, onCerrar, onEnviada }
   async function enviar(event) {
     event.preventDefault();
     const precio = Number(form.precio);
-    const inicio = new Date(`${form.fecha}T${form.horaInicio}`);
-    const fin = new Date(`${form.fecha}T${form.horaFin}`);
+    const inicio = new Date(`${form.fecha}T${form.horaInicio}:00-03:00`);
+    const fin = new Date(`${form.fecha}T${form.horaFin}:00-03:00`);
 
     if (!form.idMateria) {
       setError("Elegí la materia de la clase.");
@@ -77,8 +77,8 @@ export default function OfertaModal({ solicitud, materias, onCerrar, onEnviada }
     datos.append("id_materia", form.idMateria);
     if (form.mensaje.trim()) datos.append("mensaje", form.mensaje.trim());
     datos.append("precio", String(precio));
-    datos.append("fecha_hora_inicio", `${form.fecha}T${form.horaInicio}`);
-    datos.append("fecha_hora_fin", `${form.fecha}T${form.horaFin}`);
+    datos.append("fecha_hora_inicio", inicio.toISOString());
+    datos.append("fecha_hora_fin", fin.toISOString());
     if (pdf) datos.append("material", pdf);
 
     setEnviando(true);
@@ -140,7 +140,7 @@ export default function OfertaModal({ solicitud, materias, onCerrar, onEnviada }
 
         <div className="tablon-dos-columnas">
           <div>
-            <label className="res-etiqueta" htmlFor="oferta-fecha">Fecha</label>
+            <label className="res-etiqueta" htmlFor="oferta-fecha">Fecha (hora argentina)</label>
             <input
               className="res-campo"
               id="oferta-fecha"

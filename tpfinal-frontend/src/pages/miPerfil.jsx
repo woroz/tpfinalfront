@@ -1,3 +1,4 @@
+import ReputacionProfesor from "../components/ReputacionProfesor";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -387,6 +388,7 @@ export default function MiPerfil() {
                           {perfilProfesor.promedioResenas.toFixed(1).replace(".", ",")} de 5
                         </p>
                       )}
+                      <ReputacionProfesor promedio={perfilProfesor.promedioResenas} />
                       <p className="mi-perfil-preview-descripcion">
                         {perfilProfesor.descripcion || perfilProfesor.usuario?.perfil?.biografia || "Todavía no agregaste una presentación."}
                       </p>

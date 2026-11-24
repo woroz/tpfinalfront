@@ -44,27 +44,24 @@ export function useGrabacionServidor(idClase) {
     }
   }, [idClase, estado]);
 
-  const consultarEstado = useCallback(async () => {
-    try {
-      const data = await obtenerEstadoGrabacionClase(idClase);
-      if (data.existe && data.estado) {
-        setEstado(data.estado);
-      } else if (!data.existe) {
-        setEstado("sin_grabacion");
-      }
-    } catch (err) {
-      console.error("Error al consultar el estado de la grabación:", err);
-    }
-  }, [idClase]);
-
   useEffect(() => {
     if (!["grabando", "finalizando"].includes(estado)) return;
+    let activo = true;
+    let temporizador;
+    async function consultarEstado() {
+      try {
+        const data = await obtenerEstadoGrabacionClase(idClase);
+        if (activo && !data.existe) setEstado("sin_grabacion");
+        else if (activo && data.estado) setEstado(data.estado);
+      } catch (err) {
+        console.error("Error al consultar el estado de la grabación:", err);
+      } finally {
+        if (activo) temporizador = setTimeout(consultarEstado, 5000);
+      }
+    }
     consultarEstado();
-    const intervalo = setInterval(() => {
-      consultarEstado();
-    }, 5000);
-    return () => clearInterval(intervalo);
-  }, [estado, consultarEstado]);
+    return () => { activo = false; clearTimeout(temporizador); };
+  }, [estado, idClase]);
   return {
     estado,
     error,

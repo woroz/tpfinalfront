@@ -1,3 +1,4 @@
+import { confirmarAccion } from "../utils/confirmarAccion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -69,7 +70,7 @@ export default function MateriasProfesor() {
   }
 
   async function eliminarMateria(materia) {
-    if (!window.confirm(`¿Querés quitar ${materia.nombreMateria} de las materias de tu perfil? Esto no elimina tus clases ya programadas.`)) {
+    if (!await confirmarAccion(`¿Querés quitar ${materia.nombreMateria} de las materias de tu perfil? Esto no elimina tus clases ya programadas.`, "Quitar materia")) {
       return;
     }
 

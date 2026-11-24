@@ -1,3 +1,4 @@
+import ReputacionProfesor from "../components/ReputacionProfesor";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Calendario from "../components/Calendario";
@@ -40,6 +41,7 @@ export default function PerfilProfesor() {
   const [fechaSeleccionada, setFechaSeleccionada] = useState(hoyLocal());
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  const [reporteEnviado, setReporteEnviado] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const hoy = useMemo(() => hoyLocal(), []);
 
@@ -119,11 +121,9 @@ export default function PerfilProfesor() {
   const resenas = perfil.resenas || [];
   const promedio = perfil.promedioResenas;
   const handleReporteExitoso = () => {
-    alert("¡Muchas gracias! Tu reporte ha sido enviado confidencialmente al equipo de administración.");
+    setReporteEnviado(true);
   };
-console.log("Perfil completo:", perfil);
-console.log("ID usuario:", perfil.usuario?.id_usuario);
-console.log("ID profesor:", perfil.id_profesor);
+
   return (
     <main className="app-page">
       <Navbar />
@@ -146,6 +146,7 @@ console.log("ID profesor:", perfil.id_profesor);
                   )
                   : "Todavía no tiene reseñas"}
               </p>
+              <ReputacionProfesor promedio={promedio} />
               {materias.length > 0 && (
                 <ul className="perfil-chips">
                   {materias.map((materia) => (
@@ -180,6 +181,7 @@ console.log("ID profesor:", perfil.id_profesor);
             </div>
           )}
         </header>
+          {reporteEnviado && <p className="res-ok" role="status">Tu reporte fue enviado al equipo de administración.</p>}
           <TarjetaEstadisticas
             rol="profesor"
             fechaAlta={perfil.usuario?.createdAt}

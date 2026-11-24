@@ -1,3 +1,5 @@
+import { createPortal } from "react-dom";
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   obtenerQuizzesClase,
@@ -207,7 +209,7 @@ export default function QuizzesAlumno({ idClase }) {
         ))}
       </div>
 
-      {modalAbierto && (
+      {modalAbierto && createPortal(
         <div className="quiz-alumno-overlay" onClick={cerrarModal}>
           <section
             className="quiz-alumno-modal"
@@ -230,7 +232,7 @@ export default function QuizzesAlumno({ idClase }) {
                 disabled={enviando}
                 aria-label="Cerrar"
               >
-                ×
+                <X size={18} aria-hidden="true" />
               </button>
             </header>
 
@@ -391,7 +393,7 @@ export default function QuizzesAlumno({ idClase }) {
               </>
             )}
           </section>
-        </div>
+        </div>, document.body
       )}
     </section>
   );

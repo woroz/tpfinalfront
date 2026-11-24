@@ -1,3 +1,4 @@
+import { confirmarAccion } from "../utils/confirmarAccion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -7,6 +8,7 @@ import {
   actualizarPerfil,
   cambiarHorarioClase,
   obtenerClasesProgramadas,
+  obtenerClasesBiblioteca,
   obtenerPerfil,
   eliminarMaterialClase,
   reemplazarMaterialClase,
@@ -144,6 +146,8 @@ function SolicitudUbicacionProfesor({ onComplete }) {
 
 export default function ClasesProfesor() {
   const { usuario } = useAuth();
+  const [asistencia, setAsistencia] = useState(null);
+  const [errorAsistencia, setErrorAsistencia] = useState("");
   const [historial, setHistorial] = useState(false);
   const [clases, setClases] = useState([]);
   const [claseEditando, setClaseEditando] = useState(null);
@@ -175,10 +179,21 @@ export default function ClasesProfesor() {
     };
   }, [historial]);
 
+  useEffect(() => {
+    if (!historial) return;
+    let activo = true;
+    obtenerClasesBiblioteca().then(({ clases }) => {
+      if (activo) setAsistencia(new Map(clases.map(c => [c.id_clase, c.alumnos])));
+    }).catch(() => { if (activo) setErrorAsistencia("No se pudo cargar la asistencia."); });
+    return () => { activo = false; };
+  }, [historial]);
+
   function cambiarVista(valor) {
     if (valor === historial) return;
     setCargando(true);
     setClaseEditando(null);
+    setAsistencia(null);
+    setErrorAsistencia("");
     setHistorial(valor);
   }
 
@@ -284,7 +299,7 @@ export default function ClasesProfesor() {
       setError("Cada PDF puede pesar como máximo 4 MB.");
       return;
     }
-    if (!window.confirm(`¿Querés reemplazar "${material.nombre}" por "${archivo.name}"?`)) return;
+    if (!await confirmarAccion(`¿Querés reemplazar "${material.nombre}" por "${archivo.name}"?`, "Reemplazar PDF")) return;
 
     setError("");
     setMensaje("");
@@ -308,7 +323,7 @@ export default function ClasesProfesor() {
   }
 
   async function borrarPdf(clase, material) {
-    if (!window.confirm(`¿Querés quitar "${material.nombre}" de esta clase? Los alumnos dejarán de verlo.`)) return;
+    if (!await confirmarAccion(`¿Querés quitar "${material.nombre}" de esta clase? Los alumnos dejarán de verlo.`, "Quitar PDF")) return;
 
     setError("");
     setMensaje("");
@@ -354,6 +369,7 @@ export default function ClasesProfesor() {
         </div>
 
         {error && <p className="res-error" role="alert">{error}</p>}
+        {errorAsistencia && <p role="alert" className="res-error">{errorAsistencia}</p>}
         {mensaje && <p className="res-ok" role="status">{mensaje}</p>}
         {cargando && <p className="res-mensaje">Cargando clases…</p>}
         {!cargando && !clases.length && (
@@ -423,6 +439,13 @@ export default function ClasesProfesor() {
                 </div>
                 <TareasClase idClase={clase.id_clase} esProfesor alumnos={clase.alumnos} />
                 <QuizzesProfesor clase={clase} />
+                {historial && <section className="asistencia-lista asistencia-profesor">
+                  <h3>Asistencia</h3>
+                  {!clase.alumnos.length ? <p>Sin alumnos inscriptos.</p> : !asistencia && !errorAsistencia ? <p>Cargando asistencia…</p> :
+                    (asistencia?.get(clase.id_clase) ?? clase.alumnos).map(a =>
+                      <p key={a.id_alumno}><strong>{a.nombre}</strong> <span data-asistio={a.asistio}>{a.asistio === true ? "✓ Asistió" : a.asistio === false ? "✕ Ausente" : "Sin registro"}</span></p>
+                    )}
+                </section>}
                 {historial && <RegistroActividadClase idClase={clase.id_clase} />}
               </div>
               <div className="res-item-lado">

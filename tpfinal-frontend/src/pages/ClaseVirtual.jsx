@@ -1,3 +1,4 @@
+import { confirmarAccion } from "../utils/confirmarAccion";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { LiveKitRoom, VideoConference } from "@livekit/components-react";
@@ -17,7 +18,7 @@ export const BotonFinalizarProfesor = ({ nombre_sala }) => {
   const room = useRoomContext();
 
   const handleFinalizar = async () => {
-    const confirmar = window.confirm("¿Seguro que quiere finalizar la clase? Esto desconectará a todos.");
+    const confirmar = await confirmarAccion("¿Seguro que quiere finalizar la clase? Esto desconectará a todos.", "Finalizar clase");
     if (!confirmar) return;
     try {
       const tokenAuth = localStorage.getItem("token") || localStorage.getItem("authToken");
@@ -155,7 +156,7 @@ export const ClaseVirtual = () => {
               if (!userRaw) return false;
               const userObj = JSON.parse(userRaw);
               return userObj.rol === "profesor";
-            } catch (error) {
+            } catch {
               return false;
             }
           })() && (
