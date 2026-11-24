@@ -15,7 +15,7 @@ import {
   sumarDias,
 } from "../utils/fechas";
 import TarjetaEstadisticas from "../components/TarjetaEstadisticas";
-import { ModalReportar } from "../components/ModalReporte";
+import { ModalReportar } from "../components/modalReporte";
 import "../styles/perfilReporte.css";
 
 const DIAS_SEMANA = [

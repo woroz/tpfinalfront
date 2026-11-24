@@ -4,7 +4,7 @@ import { CalendarDays, Send, User } from "lucide-react";
 import { obtenerMateriasProfesor, obtenerSolicitudesTablon } from "../../services/api";
 import { formatearFecha } from "../../utils/fechas";
 import { ChipsMaterias, EstadoChip } from "./comunes";
-import OfertaModal from "./ofertaModal";
+import OfertaModal from "./OfertaModal";
 
 const POR_PAGINA = 20;
 
