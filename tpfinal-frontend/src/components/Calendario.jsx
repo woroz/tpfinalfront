@@ -12,7 +12,7 @@ function armarClave(anio, mes, dia) {
 
 export default function Calendario({ diasDisponibles, seleccionada, onSeleccionar, minimo, maximo }) {
   const [vista, setVista] = useState(() => {
-    const referencia = seleccionada || [...diasDisponibles].sort()[0] || minimo;
+    const referencia = seleccionada || [...(diasDisponibles ?? [])].sort()[0] || minimo;
     const [anio, mes] = referencia.split("-").map(Number);
     return { anio, mes: mes - 1 };
   });
@@ -62,7 +62,7 @@ export default function Calendario({ diasDisponibles, seleccionada, onSelecciona
         {celdas.map((dia, indice) => {
           if (dia === null) return <span key={`hueco-${indice}`} />;
           const clave = armarClave(vista.anio, vista.mes, dia);
-          const disponible = diasDisponibles.has(clave);
+          const disponible = diasDisponibles ? diasDisponibles.has(clave) : clave >= minimo && clave <= maximo;
           const clases = [
             "res-dia",
             disponible ? "disponible" : "",

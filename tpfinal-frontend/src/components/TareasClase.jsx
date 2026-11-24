@@ -8,6 +8,8 @@ import {
   subirArchivoTarea,
 } from "../services/api";
 import { interpretarNota, prepararEntrega, prepararTarea, validarArchivos, validarListaTareas } from "../utils/tareas";
+import Calendario from "./Calendario";
+import { ChevronDown, Paperclip } from "lucide-react";
 import "../styles/tareasClase.css";
 
 export default function TareasClase({ idClase, esProfesor = false, alumnos = [] }) {
@@ -41,10 +43,9 @@ export default function TareasClase({ idClase, esProfesor = false, alumnos = [] 
       {abierto && (
         <div className="tareas-contenido">
           <h3>Tareas de la clase</h3>
-          <p>{esProfesor ? "Asigná tareas y calificá las entregas de tus alumnos." : "Consultá tus tareas, entregá tus respuestas y revisá tus notas."}</p>
           {error && <p className="res-error" role="alert">{error}</p>}
           {cargando && <p role="status">Actualizando tareas…</p>}
-          <button type="button" className="tareas-boton-secundario" disabled={cargando} onClick={() => void actualizar()}>Actualizar tareas</button>
+          {error && <button type="button" className="tareas-boton-secundario" disabled={cargando} onClick={() => void actualizar()}>Reintentar carga</button>}
           {esProfesor && <NuevaTarea idClase={idClase} alumnos={alumnos} actualizar={actualizar} existe={tareas.length > 0} deshabilitado={cargando || Boolean(error)} />}
           {!cargando && !error && !tareas.length && <p>{esProfesor ? "Todavía no asignaste tareas en esta clase." : "No tenés tareas asignadas en esta clase."}</p>}
           {tareas.map((item) => esProfesor
@@ -56,11 +57,39 @@ export default function TareasClase({ idClase, esProfesor = false, alumnos = [] 
   );
 }
 
+function FechaLimite() {
+  const [hoy] = useState(() => new Date(Date.now() - 3 * 3600000).toISOString().slice(0, 10));
+  const [dia, setDia] = useState("");
+  const [hora, setHora] = useState("23:59");
+  const [abierto, setAbierto] = useState(false);
+  const resumen = dia && new Date(dia + "T12:00:00").toLocaleDateString("es-AR", {
+    weekday: "short", day: "numeric", month: "long", year: "numeric",
+  });
+
+  return <fieldset className="tarea-plazo">
+    <legend>Fecha límite</legend>
+    <input type="hidden" name="fechaLimite" value={dia ? dia + "T" + hora : ""}/>
+    <div className="tarea-plazo-fila">
+      <button type="button" aria-expanded={abierto} onClick={() => setAbierto(!abierto)}>
+        {resumen || "Elegir fecha"}
+      </button>
+      {dia && <label>Hora argentina
+        <input className="res-campo" aria-label="Hora argentina, en formato de 24 horas"
+          placeholder="HH:MM" pattern="([01][0-9]|2[0-3]):[0-5][0-9]"
+          title="Ingresá la hora en formato de 24 horas, por ejemplo 18:30"
+          maxLength={5} required value={hora} onChange={e => setHora(e.target.value)}/>
+      </label>}
+      {dia && <button type="button" onClick={() => { setDia(""); setHora("23:59"); setAbierto(false); }}>Quitar fecha</button>}
+    </div>
+    {abierto && <Calendario seleccionada={dia || hoy} minimo={hoy}
+      maximo="9999-12-31" onSeleccionar={setDia}/>}
+  </fieldset>;
+}
+
 function NuevaTarea({ idClase, alumnos, actualizar, deshabilitado, existe }) {
   const [abierto, setAbierto] = useState(false);
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [fecha, setFecha] = useState("");
   const [seleccionados, setSeleccionados] = useState([]);
   const [archivos, setArchivos] = useState([]);
   const [publicada, setPublicada] = useState(null);
@@ -86,7 +115,6 @@ function NuevaTarea({ idClase, alumnos, actualizar, deshabilitado, existe }) {
       setPublicada(null);
       setTitulo("");
       setDescripcion("");
-      setFecha("");
       setSeleccionados([]);
       setArchivos([]);
       setAviso("La tarea fue publicada para los alumnos seleccionados.");
@@ -98,7 +126,8 @@ function NuevaTarea({ idClase, alumnos, actualizar, deshabilitado, existe }) {
     event.preventDefault();
     if (bloqueo.current || deshabilitado) return;
     try {
-      const datos = prepararTarea(idClase, titulo, descripcion, seleccionados, fecha);
+      const fecha = new FormData(event.currentTarget).get("fechaLimite");
+      const datos = prepararTarea(idClase, titulo, descripcion, seleccionados, fecha ? fecha + ":00-03:00" : "");
       validarArchivos(archivos);
       bloqueo.current = true;
       setOcupado(true);
@@ -150,14 +179,14 @@ function NuevaTarea({ idClase, alumnos, actualizar, deshabilitado, existe }) {
               {publicada.pendientes.map(({ archivo, error: detalle }, indice) => <p key={`${archivo.name}-${indice}`}>{archivo.name}: {detalle}</p>)}
               {publicada.id && publicada.pendientes.length > 0 && <button type="button" className="tareas-boton" disabled={ocupado || deshabilitado} onClick={() => void reintentar()}>Reintentar archivos pendientes</button>}
               <button type="button" className="tareas-boton-secundario" disabled={ocupado} onClick={() => {
-                setPublicada(null); setAbierto(false); setTitulo(""); setDescripcion(""); setFecha(""); setSeleccionados([]); setArchivos([]); setError("");
+                setPublicada(null); setAbierto(false); setTitulo(""); setDescripcion(""); setSeleccionados([]); setArchivos([]); setError("");
               }}>Terminar</button>
             </>
           ) : (
-            <form className="tareas-form" onSubmit={publicar}>
+            <form className="tareas-form tareas-editor" onSubmit={publicar}>
               <label>Título<input value={titulo} onChange={(event) => setTitulo(event.target.value)} maxLength={100} required /></label>
               <label>Consigna (opcional)<textarea value={descripcion} onChange={(event) => setDescripcion(event.target.value)} maxLength={1000} rows={3} /></label>
-              <label>Fecha límite (opcional)<input type="datetime-local" value={fecha} onChange={(event) => setFecha(event.target.value)} /></label>
+              <FechaLimite/>
               <fieldset><legend>Alumnos confirmados</legend>
                 {!alumnos.length && <p>No hay alumnos confirmados en esta clase.</p>}
                 {alumnos.length > 0 && <button type="button" className="tareas-boton-secundario" disabled={ocupado} onClick={() => {
@@ -192,7 +221,7 @@ function Archivos({ archivos, etiqueta, quitar, deshabilitado }) {
   return archivos.map((archivo, indice) => (
     <div className="tareas-archivo" key={archivo.id_adjunto || archivo.id_archivo || indice}>
       {typeof archivo.url === "string" && /^https:\/\//i.test(archivo.url)
-        ? <a href={archivo.url} target="_blank" rel="noopener noreferrer">{etiqueta}: {archivo.nombre}</a>
+        ? <a aria-label={etiqueta + ": " + archivo.nombre} href={archivo.url} target="_blank" rel="noopener noreferrer"><Paperclip size={15} aria-hidden="true"/> {archivo.nombre}</a>
         : <span>El archivo {archivo.nombre} no tiene una dirección segura.</span>}
       {quitar && <button type="button" className="tareas-boton-secundario" disabled={deshabilitado} onClick={() => quitar(archivo)}>Quitar archivo</button>}
     </div>
@@ -246,10 +275,11 @@ function CalificarEntrega({ idTarea, entrega, actualizar, deshabilitado }) {
   return (
     <div className="tareas-entrega">
       <strong>{entrega.nombre}</strong>
-      <p>Estado: {entrega.nota != null ? "Calificada" : entrega.entregadaEn ? "Entregada" : "Sin entregar"}</p>
+      <span className="tarea-estado" data-estado={entrega.nota != null ? "calificada" : entrega.entregadaEn ? "entregada" : "pendiente"}>
+        {entrega.nota != null ? "Calificada · " + entrega.nota + "/10" : entrega.entregadaEn ? "Entregada" : "Sin entregar"}
+      </span>
       {entrega.entregaTexto && <p className="tareas-respuesta">Respuesta: {entrega.entregaTexto}</p>}
       <Archivos archivos={entrega.archivos} etiqueta="Entrega" />
-      {entrega.nota != null && <p className="tareas-nota">Nota: {entrega.nota}/10</p>}
       {entrega.comentario && <p>Devolución: {entrega.comentario}</p>}
       {error && <p className="res-error" role="alert">{error}</p>}
       {!entrega.entregadaEn ? <p>Podrás calificar cuando el alumno entregue la tarea.</p> : editando ? (
@@ -292,17 +322,22 @@ export function TareaAlumno({ item, actualizar, deshabilitado }) {
   }
 
   return (
-    <article className="tareas-tarjeta">
-      <button type="button" className="tareas-desplegable" aria-expanded={abierta} onClick={() => setAbierta((valor) => !valor)}>
-        {item.tarea.titulo} {abierta ? "▴" : "▾"}<span>Estado: {item.nota != null ? "Calificada" : item.entregadaEn ? "Entregada" : "Sin entregar"}</span>
+    <article className="tareas-tarjeta tarea-alumno">
+      <button type="button" className="tarea-cabecera" aria-expanded={abierta} onClick={() => setAbierta(!abierta)}>
+        <strong>{item.tarea.titulo}</strong>
+        <span className="tarea-estado" data-estado={item.nota != null ? "calificada" : item.entregadaEn ? "entregada" : "pendiente"}>
+          {item.nota != null ? "Calificada" : item.entregadaEn ? "Entregada" : "Pendiente"}
+        </span>
+        {item.nota != null && <b aria-label={"Nota: " + item.nota + " de 10"}>{item.nota}<small>/10</small></b>}
+        <ChevronDown size={18} aria-hidden="true"/>
       </button>
-      {item.nota != null && <p className="tareas-nota">Nota: {item.nota}/10</p>}
+      {item.tarea.fechaLimite && <small className="tarea-vence">Vence el {new Date(item.tarea.fechaLimite).toLocaleString("es-AR", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Argentina/Buenos_Aires" })} (Argentina)</small>}
       {aviso && <p className="res-ok" role="status">{aviso}</p>}
       {abierta && <>
-      {item.tarea.descripcion && <p>{item.tarea.descripcion}</p>}
-      {item.tarea.fechaLimite && <p>Fecha límite: {new Date(item.tarea.fechaLimite).toLocaleString("es-AR")}</p>}
-      <Archivos archivos={item.tarea.adjuntos} etiqueta="Consigna" />
-      {item.comentario && <p>Devolución: {item.comentario}</p>}
+      {(item.tarea.descripcion || item.tarea.adjuntos.length > 0) && <section className="tarea-bloque">
+        <h4>Consigna</h4>{item.tarea.descripcion && <p>{item.tarea.descripcion}</p>}
+        <Archivos archivos={item.tarea.adjuntos} etiqueta="Consigna"/>
+      </section>}
       {error && <p className="res-error" role="alert">{error}</p>}
       {item.nota == null ? (
         <div className="tareas-form">
@@ -327,8 +362,12 @@ export function TareaAlumno({ item, actualizar, deshabilitado }) {
           }, "Tu tarea fue entregada.")}>{ocupado ? "Procesando…" : item.entregadaEn ? "Actualizar entrega" : "Entregar tarea"}</button>
         </div>
       ) : (
-        <>{item.entregaTexto && <p className="tareas-respuesta">Tu respuesta: {item.entregaTexto}</p>}<Archivos archivos={item.archivos} etiqueta="Tu archivo" /><p>La entrega ya fue calificada y no se puede modificar.</p></>
+        <section className="tarea-bloque"><h4>Tu entrega</h4>
+          {item.entregaTexto && <p>{item.entregaTexto}</p>}
+          <Archivos archivos={item.archivos} etiqueta="Tu archivo"/>
+        </section>
       )}
+      {item.comentario && <section className="tarea-bloque tarea-devolucion"><h4>Devolución del profesor</h4><p>{item.comentario}</p></section>}
       </>}
     </article>
   );

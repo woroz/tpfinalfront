@@ -1,16 +1,6 @@
 import { useEffect, useState } from "react";
 import { crearReclamo } from "../services/api";
-
-const ETIQUETAS = {
-  pendiente: "Pendiente",
-  en_revision: "En revisión",
-  resuelto: "Resuelto",
-  rechazado: "Rechazado",
-};
-
-export function estadoReclamoLabel(estado) {
-  return ETIQUETAS[estado] || estado;
-}
+import { estadoReclamoLabel } from "../utils/reclamos";
 
 export default function ReclamoClase({ idClase, reclamo, onCreado }) {
   const [abierto, setAbierto] = useState(false);

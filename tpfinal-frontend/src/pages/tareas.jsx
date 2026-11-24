@@ -53,7 +53,7 @@ export default function Tareas() {
           <p>Consultá y entregá las tareas de todas tus clases.</p>
         </header>
         <div className="tareas-clase tareas-contenido">
-          <button type="button" className="tareas-boton-secundario" disabled={cargando} onClick={() => void actualizar()}>Actualizar tareas</button>
+          {error && <button type="button" className="tareas-boton-secundario" disabled={cargando} onClick={() => void actualizar()}>Reintentar carga</button>}
           {cargando && <p role="status">Cargando tareas…</p>}
           {error && <p className="res-error" role="alert">{error}</p>}
           {!cargando && !error && !tareas.length && <p>No tenés tareas asignadas.</p>}

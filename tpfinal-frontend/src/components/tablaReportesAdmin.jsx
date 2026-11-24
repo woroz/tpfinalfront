@@ -1,43 +1,7 @@
-import { useEffect, useState } from 'react';
 import '../styles/tablaReportes.css';
-import { cambiarEstadoBloqueoProfesor } from "../services/api";
 
-export const TablaReportesAdmin = ({ reportes: reportesIniciales = [] }) => {
-  const [reportes, setReportes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const cargarReportes = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        
-        const response = await fetch('api/admin/reportes', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || 'Error al obtener los reportes.');
-        }
-
-        setReportes(data.reportes || []);
-      } catch (err) {
-        setError(err.message || 'Error de conexión.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    cargarReportes();
-  }, []);
-
-  if (loading) {
+export const TablaReportesAdmin = ({ reportes = [], cargando, error }) => {
+  if (cargando) {
     return (
       <div className="admin-status-container">
         <div className="admin-spinner"></div>
