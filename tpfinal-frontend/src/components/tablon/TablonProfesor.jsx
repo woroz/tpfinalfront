@@ -11,6 +11,8 @@ const POR_PAGINA = 20;
 export default function TablonProfesor() {
   const [solicitudes, setSolicitudes] = useState([]);
   const [materiasPropias, setMateriasPropias] = useState([]);
+  const [materiaFiltro, setMateriaFiltro] = useState("");
+  const [ofertaFiltro, setOfertaFiltro] = useState("");
   const [pagina, setPagina] = useState(1);
   const [hayMas, setHayMas] = useState(false);
   const [cargando, setCargando] = useState(true);
@@ -73,11 +75,20 @@ export default function TablonProfesor() {
 
   function ofertaEnviada(idSolicitud) {
     setSolicitudes((actuales) => actuales.map((item) => (
-      item.id_solicitud === idSolicitud ? { ...item, yaOfreciste: true } : item
+      item.id_solicitud === idSolicitud ? { ...item, yaOfreciste: true, estadoMiOferta: "pendiente" } : item
     )));
     setOfertando(null);
     setAviso("Oferta enviada. El alumno la va a ver en sus solicitudes.");
   }
+
+  const materias = new Map();
+  solicitudes.forEach(s => s.solicitudMateria?.forEach(({ materia }) => {
+    if (materia) materias.set(materia.id_materia, materia.nombreMateria);
+  }));
+  const visibles = solicitudes.filter(s =>
+    (!materiaFiltro || s.solicitudMateria?.some(({ materia }) => materia?.id_materia === materiaFiltro))
+    && (!ofertaFiltro || (ofertaFiltro === "enviada" ? s.yaOfreciste : !s.yaOfreciste))
+  );
 
   if (cargando) return <p className="res-mensaje">Cargando solicitudes…</p>;
 
@@ -90,8 +101,18 @@ export default function TablonProfesor() {
         <p className="res-mensaje">No hay solicitudes abiertas por ahora. Volvé más tarde.</p>
       )}
 
+      {solicitudes.length > 0 && <div className="tablon-filtros">
+        <label>Materia<select className="res-campo" value={materiaFiltro} onChange={e => setMateriaFiltro(e.target.value)}>
+          <option value="">Todas las materias</option>
+          {[...materias].map(([id, nombre]) => <option key={id} value={id}>{nombre}</option>)}
+        </select></label>
+        <label>Mi oferta<select className="res-campo" value={ofertaFiltro} onChange={e => setOfertaFiltro(e.target.value)}>
+          <option value="">Todas las solicitudes</option><option value="pendiente">Sin ofertar</option><option value="enviada">Oferta enviada</option>
+        </select></label>
+      </div>}
+      {!visibles.length && solicitudes.length > 0 && <p role="status">Sin coincidencias entre las solicitudes cargadas.</p>}
       <ul className="tablon-lista">
-        {solicitudes.map((solicitud) => {
+        {visibles.map((solicitud) => {
           const ofrecibles = materiasOfrecibles(solicitud);
           return (
             <li key={solicitud.id_solicitud}>
@@ -101,7 +122,7 @@ export default function TablonProfesor() {
                     <h3 className="tablon-titulo">{solicitud.titulo}</h3>
                     <p className="tablon-tema">{solicitud.tema}</p>
                   </div>
-                  {solicitud.yaOfreciste && <EstadoChip estado="pendiente" />}
+                  {solicitud.yaOfreciste && <EstadoChip estado={solicitud.estadoMiOferta || "pendiente"} />}
                 </div>
 
                 <ChipsMaterias solicitud={solicitud} />

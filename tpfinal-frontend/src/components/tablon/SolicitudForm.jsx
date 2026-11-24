@@ -1,27 +1,23 @@
+import { temasDeSeleccion } from "../../utils/temasTablon";
 import { useState } from "react";
-
-const MAX_MATERIAS = 5;
 
 export default function SolicitudForm({ catalogo, inicial, guardando, error, onGuardar, onCancelar }) {
   const [titulo, setTitulo] = useState(inicial?.titulo || "");
-  const [tema, setTema] = useState(inicial?.tema || "");
   const [descripcion, setDescripcion] = useState(inicial?.descripcion || "");
-  const [ids, setIds] = useState(
-    () => (inicial?.solicitudMateria || []).map((item) => item.materia.id_materia),
+  const materiasAnteriores = inicial?.solicitudMateria ?? [];
+  const [idMateria, setIdMateria] = useState(
+    materiasAnteriores.length === 1 ? materiasAnteriores[0].materia.id_materia : "",
   );
+  const opciones = temasDeSeleccion(catalogo, [idMateria]);
+  const [tema, setTema] = useState(inicial?.tema || "");
+  const [personalizado, setPersonalizado] = useState(Boolean(inicial?.tema && !opciones.includes(inicial.tema)));
   const [errorLocal, setErrorLocal] = useState("");
 
-  function alternarMateria(id) {
+  function elegirMateria(id) {
+    setIdMateria(id);
     setErrorLocal("");
-    if (ids.includes(id)) {
-      setIds(ids.filter((actual) => actual !== id));
-      return;
-    }
-    if (ids.length >= MAX_MATERIAS) {
-      setErrorLocal(`Podés elegir hasta ${MAX_MATERIAS} materias.`);
-      return;
-    }
-    setIds([...ids, id]);
+    setTema("");
+    setPersonalizado(false);
   }
 
   function enviar(event) {
@@ -30,15 +26,15 @@ export default function SolicitudForm({ catalogo, inicial, guardando, error, onG
       setErrorLocal("El título y el tema no pueden quedar vacíos.");
       return;
     }
-    if (!ids.length) {
-      setErrorLocal("Elegí al menos una materia.");
+    if (!idMateria) {
+      setErrorLocal("Elegí una materia.");
       return;
     }
     onGuardar({
       titulo: titulo.trim(),
       tema: tema.trim(),
       descripcion: descripcion.trim(),
-      ids_materia: ids,
+      ids_materia: [idMateria],
     });
   }
 
@@ -59,16 +55,46 @@ export default function SolicitudForm({ catalogo, inicial, guardando, error, onG
         placeholder="Ej. Necesito ayuda con álgebra"
       />
 
-      <label className="res-etiqueta" htmlFor="solicitud-tema">Tema</label>
-      <input
-        className="res-campo"
-        id="solicitud-tema"
-        required
-        maxLength={50}
-        value={tema}
-        onChange={(event) => setTema(event.target.value)}
-        placeholder="Ej. Ecuaciones de primer grado"
-      />
+      <fieldset className="tablon-fieldset">
+        <legend className="res-etiqueta">Materia (elegí una)</legend>
+        {materiasAnteriores.length > 1 && <p>Esta solicitud tenía varias materias. Elegí cuál conservar al guardar.</p>}
+        <div className="tablon-materias">
+          {catalogo.map((materia) => (
+            <label key={materia.id_materia} className="tablon-check">
+              <input
+                type="radio"
+                name="materia"
+                required
+                checked={idMateria === materia.id_materia}
+                onChange={() => elegirMateria(materia.id_materia)}
+              />
+              {materia.nombreMateria}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      {idMateria && <fieldset className="tablon-fieldset">
+        <legend className="res-etiqueta">Tema (elegí uno)</legend>
+        <div className="tablon-materias">
+          {opciones.map(opcion => (
+            <label className="tablon-check" key={opcion}>
+              <input type="radio" name="tema" required checked={!personalizado && tema === opcion}
+                onChange={() => { setPersonalizado(false); setTema(opcion); }} />
+              {opcion}
+            </label>
+          ))}
+          <label className="tablon-check">
+            <input type="radio" name="tema" required checked={personalizado}
+              onChange={() => { setPersonalizado(true); setTema(""); }} />
+            Otro tema
+          </label>
+        </div>
+        {personalizado && <label className="res-etiqueta">Tema para esta solicitud
+          <input className="res-campo" required maxLength={50} value={tema}
+            onChange={event => setTema(event.target.value)} />
+        </label>}
+      </fieldset>}
 
       <label className="res-etiqueta" htmlFor="solicitud-descripcion">Descripción (opcional)</label>
       <textarea
@@ -81,26 +107,10 @@ export default function SolicitudForm({ catalogo, inicial, guardando, error, onG
         placeholder="Contá qué necesitás, para cuándo y qué nivel tenés"
       />
 
-      <fieldset className="tablon-fieldset">
-        <legend className="res-etiqueta">Materias (elegí de 1 a {MAX_MATERIAS})</legend>
-        <div className="tablon-materias">
-          {catalogo.map((materia) => (
-            <label key={materia.id_materia} className="tablon-check">
-              <input
-                type="checkbox"
-                checked={ids.includes(materia.id_materia)}
-                onChange={() => alternarMateria(materia.id_materia)}
-              />
-              {materia.nombreMateria}
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
       {mensajeError && <p className="res-error" role="alert">{mensajeError}</p>}
 
       <div className="tablon-acciones">
-        <button type="submit" className="res-boton res-boton-chico" disabled={guardando}>
+        <button type="submit" className="res-boton res-boton-chico" disabled={guardando || !idMateria || !tema.trim()}>
           {guardando ? "Guardando..." : inicial ? "Guardar cambios" : "Publicar solicitud"}
         </button>
         <button type="button" className="res-boton-secundario" onClick={onCancelar} disabled={guardando}>

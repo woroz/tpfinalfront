@@ -160,3 +160,33 @@ body {
     min-height: 0;
   }
 }
+.confirmacion-accion { width: min(26rem, 90vw); margin: auto; padding: 1.25rem; border: 1px solid var(--border); border-radius: 14px; background: var(--surface,white); color: var(--text); }
+.confirmacion-accion::backdrop { background: rgb(0 0 0 / 55%); }
+.tablon-filtros { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.confirmacion-accion > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+  margin-top: 1rem;
+}
+.confirmacion-accion button {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  box-sizing: border-box;
+  white-space: normal;
+}
+.tablon-filtros { column-gap: 1.5rem; row-gap: 1rem; margin-block: 1rem 1.75rem; }
+.tablon-filtros label { display: grid; gap: .25rem; }
+.reputacion-profesor { display: grid; gap: .25rem; font-weight: 600; }
+.reputacion-profesor { margin-block: .75rem; color: var(--text); }
+.reputacion-pista { width: min(18rem, 100%); height: .65rem; overflow: hidden; border-radius: 1rem; background: var(--border, #cdd6e2); }
+.reputacion-pista > div { height: 100%; border-radius: inherit; background: var(--brand, #356ad0); }
+.asistencia-profesor { margin-block: 1rem; padding: 1rem; background: var(--surface-soft, #f5f8fb); border-radius: .75rem; }
+.asistencia-profesor h3 { margin: 0 0 .5rem; }
+.asistencia-profesor p { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin: .4rem 0; }
+.asistencia-lista summary { cursor: pointer; font-weight: 600; }
+.asistencia-lista [data-asistio=true] { color: #19744e; }
+.asistencia-lista [data-asistio=false] { color: #af303a; }
+[data-tema=oscuro] .asistencia-lista [data-asistio=true] { color: #83ddb1; }
+[data-tema=oscuro] .asistencia-lista [data-asistio=false] { color: #ffa7aa; }

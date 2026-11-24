@@ -1,8 +1,10 @@
+import { confirmarAccion } from "../../utils/confirmarAccion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CalendarDays, Check, Clock, FileText, Pencil, Plus, Trash2, User, X } from "lucide-react";
 import {
   aceptarOfertaTablon,
+  rechazarOfertaTablon,
   cerrarSolicitudTablon,
   crearSolicitudTablon,
   editarSolicitudTablon,
@@ -86,24 +88,31 @@ export default function MisSolicitudes() {
   }
 
   async function cerrar(solicitud) {
-    if (!window.confirm("¿Cerrar la solicitud? Los profesores ya no podran verla y sus ofertas pendientes se rechazan.")) return;
+    if (!await confirmarAccion("¿Cerrar la solicitud? Los profesores ya no podran verla y sus ofertas pendientes se rechazan.", "Cerrar solicitud")) return;
     await ejecutar(`cerrar-${solicitud.id_solicitud}`, () => cerrarSolicitudTablon(solicitud.id_solicitud), "Solicitud cerrada.");
   }
 
   async function eliminar(solicitud) {
-    if (!window.confirm("¿Eliminar la solicitud? Esta accion no se puede deshacer.")) return;
+    if (!await confirmarAccion("¿Eliminar la solicitud? Esta accion no se puede deshacer.", "Eliminar solicitud")) return;
     await ejecutar(`eliminar-${solicitud.id_solicitud}`, () => eliminarSolicitudTablon(solicitud.id_solicitud), "Solicitud eliminada.");
+  }
+
+  async function rechazar(solicitud, oferta) {
+    const nombre = oferta.profesor?.usuario?.nombre || "este profesor";
+    if (!await confirmarAccion(`¿Rechazar la oferta de ${nombre}? Tu solicitud seguirá abierta.`, "Rechazar oferta")) return;
+    await ejecutar("rechazar-" + oferta.id_oferta,
+      () => rechazarOfertaTablon(solicitud.id_solicitud, oferta.id_oferta), "Oferta rechazada.");
   }
 
   async function aceptar(solicitud, oferta) {
     const nombre = oferta.profesor?.usuario?.nombre || "este profesor";
-    if (!window.confirm(`¿Aceptar la oferta de ${nombre}? Las demas ofertas se van a rechazar.`)) return;
+    if (!await confirmarAccion(`¿Aceptar la oferta de ${nombre}? Las demas ofertas se van a rechazar.`, "Aceptar oferta")) return;
     const resultado = await ejecutar(
       `aceptar-${oferta.id_oferta}`,
       () => aceptarOfertaTablon(solicitud.id_solicitud, oferta.id_oferta),
-      "Oferta aceptada.",
+      oferta.precio === 0 ? "Clase gratuita confirmada. Ya podés verla en Mis clases." : "Oferta aceptada.",
     );
-    if (resultado?.id_inscripcion) setParaPagar(resultado.id_inscripcion);
+    if (resultado?.requierePago && resultado.id_inscripcion) setParaPagar(resultado.id_inscripcion);
   }
 
   if (cargando) return <p className="res-mensaje">Cargando tus solicitudes…</p>;
@@ -226,6 +235,12 @@ export default function MisSolicitudes() {
                             >
                               <Check size={16} aria-hidden="true" />
                               Aceptar oferta
+                            </button>
+                          )}
+                          {abierta && oferta.estado === "pendiente" && (
+                            <button type="button" className="res-boton-secundario" disabled={Boolean(trabajando)}
+                              onClick={() => rechazar(solicitud, oferta)}>
+                              Rechazar oferta
                             </button>
                           )}
                           {oferta.estado === "aceptada" && (

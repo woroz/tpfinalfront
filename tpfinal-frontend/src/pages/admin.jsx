@@ -42,7 +42,6 @@ export default function Admin() {
   useEffect(() => {
     if (seccionActiva !== "reportes") return undefined;
     let activo = true;
-    setCargandoReclamos(true);
     obtenerReclamosAdmin()
       .then((data) => {
         if (activo) {
@@ -107,9 +106,7 @@ export default function Admin() {
   useEffect(() => {
     let activo = true;
 
-    setCargando(true);
-    setError("");
-
+    if (seccionActiva !== "usuarios") return;
     obtenerUsuarios({
       busqueda: busquedaUsuarios,
       rol: filtroRol || undefined,
@@ -136,7 +133,7 @@ export default function Admin() {
     return () => {
       activo = false;
     };
-  }, [busquedaUsuarios, filtroRol, paginaUsuarios]);
+  }, [seccionActiva, busquedaUsuarios, filtroRol, paginaUsuarios]);
 
   
   useEffect(() => {
@@ -167,6 +164,7 @@ export default function Admin() {
 useEffect(() => {
     let activo = true;
 
+    if (seccionActiva !== "reportes") return;
     obtenerReportesAdmin()
       .then((data) => {
         if (activo) {
@@ -187,13 +185,11 @@ useEffect(() => {
     return () => {
       activo = false;
     };
-  }, []);
+  }, [seccionActiva]);
 
   useEffect(() => {
   if (seccionActiva !== "clases") return undefined;
   let activo = true;
-  setCargandoClases(true);
-  setErrorClases("");
   obtenerClasesAdmin()
     .then((data) => {
       if (activo) {
@@ -219,6 +215,27 @@ useEffect(() => {
     activo = false;
   };
 }, [seccionActiva]);
+
+  function prepararUsuarios() {
+    setCargando(true);
+    setError("");
+  }
+
+  function abrirSeccion(seccion) {
+    if (seccion === seccionActiva) return;
+    if (seccion === "usuarios") prepararUsuarios();
+    if (seccion === "reportes") {
+      setCargandoReclamos(true);
+      setCargandoReportes(true);
+      setErrorReportes("");
+      setErrorReclamos("");
+    }
+    if (seccion === "clases") {
+      setCargandoClases(true);
+      setErrorClases("");
+    }
+    setSeccionActiva(seccion);
+  }
 
   const totalPaginasClases = Math.ceil(clases.length / LIMITE_CLASES);
 
@@ -252,7 +269,7 @@ useEffect(() => {
               className={`admin-nav-boton ${
                 seccionActiva === seccion.id ? "activo" : ""
               }`}
-              onClick={() => setSeccionActiva(seccion.id)}
+              onClick={() => abrirSeccion(seccion.id)}
             >
               {seccion.nombre}
             </button>
@@ -311,6 +328,7 @@ useEffect(() => {
               placeholder="Buscar por nombre o correo electrónico..."
               value={busquedaUsuarios}
               onChange={(e) => {
+                prepararUsuarios();
                 setBusquedaUsuarios(e.target.value);
                 setPaginaUsuarios(1);
               }}
@@ -319,6 +337,7 @@ useEffect(() => {
             <select
               value={filtroRol}
               onChange={(e) => {
+                prepararUsuarios();
                 setFiltroRol(e.target.value);
                 setPaginaUsuarios(1);
               }}
@@ -403,7 +422,7 @@ useEffect(() => {
               {paginacionUsuarios && paginacionUsuarios.totalPaginas > 1 && (
                 <div className="admin-paginacion">
                   <button
-                    onClick={() => setPaginaUsuarios((pagina) => pagina - 1)}
+                    onClick={() => { prepararUsuarios(); setPaginaUsuarios(pagina => pagina - 1); }}
                     disabled={paginaUsuarios === 1}
                   >
                     Anterior
@@ -415,7 +434,7 @@ useEffect(() => {
                   </span>
 
                   <button
-                    onClick={() => setPaginaUsuarios((pagina) => pagina + 1)}
+                    onClick={() => { prepararUsuarios(); setPaginaUsuarios(pagina => pagina + 1); }}
                     disabled={paginaUsuarios === paginacionUsuarios.totalPaginas}
                   >
                     Siguiente

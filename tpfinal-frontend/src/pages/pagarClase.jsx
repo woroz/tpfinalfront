@@ -67,7 +67,7 @@ export default function PagarClase() {
         {inscripcion && (
           <div className="res-tarjeta">
             <h1 className="pago-titulo">
-              {estado === "confirmada" ? "Clase confirmada" : "Pagar clase"}
+              {estado === "confirmada" ? "Clase confirmada" : inscripcion.clase.precio === 0 ? "Reserva gratuita" : "Pagar clase"}
             </h1>
 
             <dl className="pago-detalle">
@@ -80,7 +80,8 @@ export default function PagarClase() {
               </div>
             </dl>
 
-            {estado === "pendiente_pago" && (
+            {estado === "pendiente_pago" && inscripcion.clase.precio === 0 && <p className="res-nota">Esta reserva gratuita figura pendiente de confirmación.</p>}
+            {estado === "pendiente_pago" && inscripcion.clase.precio > 0 && (
               <>
                 {inscripcion.expira_en && (
                   <p className="res-nota">

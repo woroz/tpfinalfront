@@ -85,7 +85,7 @@
 .quiz-alumno-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 1400;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -120,6 +120,10 @@
 }
 
 .quiz-alumno-cerrar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  padding: 0;
   width: 34px;
   height: 34px;
   border: none;

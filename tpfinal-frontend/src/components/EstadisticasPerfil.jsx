@@ -57,7 +57,7 @@ export default function EstadisticasPerfil({ rol }) {
 
   return (
     <section className="res-tarjeta mi-perfil-estadisticas" aria-label="Mis estadísticas">
-      <h2>Mis estadisticas</h2>
+      <h2>Mis estadísticas</h2>
 
       {cargando && <p className="res-mensaje">Cargando estadísticas…</p>}
 

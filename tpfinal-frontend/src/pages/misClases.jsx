@@ -190,10 +190,12 @@ export default function MisClases() {
                     <p>Tu profesor todavía no registró calificaciones o notas para esta clase.</p>
                   )}
                 </section>
+                {historial && claseFinalizada && item.estado === "confirmada" && typeof item.asistio === "boolean" &&
+                  <p className="asistencia-lista">Tu asistencia · <span data-asistio={item.asistio}>{item.asistio ? "✓ Presente" : "✕ Ausente"}</span></p>}
                 {item.estado === "confirmada" && <TareasClase idClase={item.clase.id_clase} />}
                 <br></br>
                 <TranscripcionClase idClase={item.clase.id_clase} />
-                <QuizzesAlumno idClase={item.clase.id_clase} />
+                {item.estado === "confirmada" && <QuizzesAlumno idClase={item.clase.id_clase} />}
               </div>
               <div className="res-item-lado">
                 <span className={`res-estado ${item.estado}`}>{ETIQUETAS[item.estado] || item.estado}</span>
@@ -276,7 +278,7 @@ export default function MisClases() {
                   {item.reclamo && !item.puede_reclamar && (
                     <ReclamoClase idClase={item.clase.id_clase} reclamo={item.reclamo} onCreado={() => {}} />
                   )}
-                  {item.estado === "pendiente_pago" && (
+                  {item.estado === "pendiente_pago" && item.clase.precio > 0 && (
                     <>
                       <Link className="res-boton res-enlace res-boton-chico" to={`/mis-clases/${item.id_inscripcion}/pagar`}>
                         Pagar clase

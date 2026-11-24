@@ -1,3 +1,4 @@
+import { confirmarAccion } from "../utils/confirmarAccion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowDown, ArrowUp, Download, Eye, FileText, MoreHorizontal } from "lucide-react";
 import Navbar from "../components/Navbar";
@@ -168,7 +169,7 @@ export default function Biblioteca() {
     });
   }
   async function eliminar(material) {
-    if (!window.confirm(`¿Querés eliminar "${material.titulo}" de la biblioteca de sus alumnos?`)) return;
+    if (!await confirmarAccion(`¿Querés eliminar "${material.titulo}" de la biblioteca de sus alumnos?`, "Eliminar material")) return;
     await ejecutar(material.id_material, async () => {
       await eliminarMaterialBiblioteca(material.id_material);
       setVista(null);
