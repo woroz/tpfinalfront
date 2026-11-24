@@ -1,19 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useState } from "react";
 import '../styles/tablaReportes.css';
 import { actualizarEstadoReporte } from "../services/api";
 
 export const TablaReportesAdmin = ({
-  reportes: reportesIniciales = [],
+  reportes = [], setReportes,
   cargando = false,
   error = ""
 }) => {
-  const [reportes, setReportes] = useState(reportesIniciales);
   const [actualizando, setActualizando] = useState("");
   const [errorAccion, setErrorAccion] = useState("");
 
-  useEffect(() => {
-    setReportes(reportesIniciales);
-  }, [reportesIniciales]);
+
 
   const cambiarEstado = async (idReporte, nuevoEstado) => {
     try {

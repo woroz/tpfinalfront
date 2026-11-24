@@ -7,6 +7,7 @@ import "../styles/inicio.css";
 const seccionesAlumno = [
   { titulo: "Explorar", descripcion: "Buscá profesores y clases", ruta: "/buscar", icono: Search },
   { titulo: "Mis clases", descripcion: "Consultá tu agenda y reservas", ruta: "/mis-clases", icono: CalendarDays },
+  { titulo: "Tareas", descripcion: "Consultá y entregá tus tareas", ruta: "/tareas", icono: ClipboardList },
   { titulo: "Biblioteca", descripcion: "Accedé al material de tus clases", ruta: "/biblioteca", icono: Library },
   { titulo: "Tablón", descripcion: "Publicá y seguí tus solicitudes", ruta: "/tablon", icono: ClipboardList },
   { titulo: "Mis pagos", descripcion: "Revisá tus operaciones", ruta: "/mis-pagos", icono: CreditCard },

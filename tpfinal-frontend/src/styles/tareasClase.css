@@ -1,0 +1,217 @@
+.tareas-clase {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 12px;
+  background: var(--surface-soft, #f8fafc);
+  color: var(--text, #172235);
+  overflow-wrap: anywhere;
+}
+
+.tareas-contenido,
+.tareas-form {
+  display: grid;
+  gap: 12px;
+}
+
+.tareas-contenido {
+  margin-top: 16px;
+}
+
+.tareas-grupo {
+  display: grid;
+  gap: 8px;
+}
+
+.tareas-grupo h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.tareas-contenido h3,
+.tareas-contenido h4,
+.tareas-contenido p {
+  margin: 0;
+}
+
+.tareas-boton,
+.tareas-boton-secundario {
+  width: fit-content;
+  max-width: 100%;
+  padding: 9px 13px;
+  border: 1px solid var(--brand, #2e62d2);
+  border-radius: 9px;
+  background: var(--brand, #2e62d2);
+  color: var(--surface, #fff);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tareas-boton-secundario {
+  background: var(--surface, #fff);
+  color: var(--text, #172235);
+  border-color: var(--border, #cbd5e1);
+}
+
+.tareas-clase button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.tareas-nueva,
+.tareas-tarjeta {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+}
+
+.tareas-form label:not(.tareas-check) {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.tareas-form input:not([type="checkbox"]),
+.tareas-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 9px;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 8px;
+  color: var(--text, #172235);
+  background: var(--surface, #fff);
+  font: inherit;
+}
+
+.tareas-form fieldset {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 8px;
+}
+
+.tareas-campo-archivo {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.tareas-form label.tareas-selector-archivo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 8px;
+  background: var(--surface, #fff);
+  cursor: pointer;
+}
+
+.tareas-form .tareas-selector-archivo:focus-within {
+  outline: 2px solid var(--brand, #2e62d2);
+  outline-offset: 2px;
+}
+
+.tareas-selector-boton {
+  flex: none;
+  padding: 10px 12px;
+  color: var(--brand, #2e62d2);
+  background: var(--brand-soft, #e6eefc);
+}
+
+.tareas-selector-nombre {
+  min-width: 0;
+  padding: 0 10px;
+  overflow: hidden;
+  color: var(--text, #172235);
+  font-size: 0.9rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tareas-form .tareas-selector-archivo input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.tareas-selector-archivo:has(input:disabled) {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.tareas-entrega {
+  display: grid;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border, #e2e8f0);
+}
+
+.tareas-archivo,
+.tareas-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.tareas-archivo a {
+  color: var(--brand, #2e62d2);
+}
+
+.tareas-desplegable {
+  display: grid;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text, #172235);
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tareas-desplegable span,
+.tareas-respuesta {
+  color: var(--text, #172235);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.tareas-entrega > .tarea-estado { justify-self: start; }
+
+.tareas-editor { padding: clamp(.5rem, 2vw, 1.25rem); gap: 1.15rem; }
+.tareas-editor fieldset, .tareas-editor .tareas-campo-archivo {
+  min-width: 0; padding: 1rem; border-radius: 12px; background: var(--surface-soft, #f6f8fc);
+}
+.tareas-editor .tareas-campo-archivo { border: 1px dashed var(--border, #bac9db); }
+.tareas-editor .tareas-check { padding: .4rem .65rem; border-radius: 8px; }
+.tareas-editor .tareas-check:has(:checked) { background: var(--brand-soft, #edf4ff); }
+.tarea-plazo-fila { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
+.tarea-plazo-fila button { padding: .55rem .85rem; border: 1px solid var(--border, #cad6e4); border-radius: 8px; background: var(--surface, white); color: var(--text); cursor: pointer; }
+.tareas-editor .tarea-plazo-fila input { width: 6em; }
+.tareas-editor .res-calendario { width: min(100%, 22rem); box-sizing: border-box; margin-inline: auto; }
+.tareas-clase .tarea-alumno { padding: clamp(1rem, 3vw, 1.5rem); gap: 1rem; border-radius: 16px; }
+.tarea-cabecera { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; width: 100%; text-align: left; font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+.tarea-cabecera strong { flex: 1 1 10rem; font-size: 1.15rem; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; }
+.tarea-cabecera[aria-expanded=true] svg { transform: rotate(180deg); }
+.tarea-estado { padding: .22rem .65rem; border-radius: 2rem; font-size: .8rem; font-weight: 650; color: var(--primary-text,#214e8d); background: var(--brand-soft,#eaf1ff); }
+.tarea-estado[data-estado=pendiente] { color: #764900; background: #fff0c6; }
+.tarea-estado[data-estado=calificada] { color: #145340; background: #def3e8; }
+.tarea-cabecera b { font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+.tarea-cabecera small, .tarea-vence { color: var(--text-muted,#576982); font-size: .85rem; }
+.tarea-bloque { display: grid; gap: .5rem; border-top: 1px solid var(--border,#dce3eb); padding-top: 1rem; }
+.tarea-bloque p { white-space: pre-wrap; line-height: 1.55; }
+.tarea-bloque.tarea-devolucion { background: var(--brand-soft,#edf4ff); border: 0; border-radius: 10px; padding: .85rem 1rem; }
+.tareas-archivo a { display: inline-flex; align-items: center; gap: .45rem; padding: .4rem .65rem; border: 1px solid var(--border,#dce3eb); border-radius: 8px; font-weight: 600; }

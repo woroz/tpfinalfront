@@ -1,5 +1,11 @@
 # React + Vite
 
+## Tareas de las clases
+
+En Clases programadas, el profesor puede asignar una tarea por clase a alumnos confirmados, seleccionar a todos, consultar las entregas y registrar o modificar una nota de 0 a 10 después de recibirlas. Desde Tareas en Inicio o desde Mis clases, el alumno puede consultar la consigna, adjuntar hasta tres archivos, entregar su respuesta y ver la nota. El seguimiento de la clase es independiente de las tareas. Estas acciones requieren conexión. Los avisos y la limitación entre dispositivos requieren la versión actualizada del backend.
+
+Para comprobar las validaciones: `node --test pruebas/tareas.test.mjs`.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

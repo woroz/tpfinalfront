@@ -8,16 +8,21 @@ function estadoLabel(estado) {
 }
 
 export default function LogrosPerfil({ rol }) {
+  const [intento, setIntento] = useState(0);
+  if (rol !== "alumno" && rol !== "profesor") return null;
+
+  return <ListaLogros key={rol + intento} reintentar={() => setIntento(actual => actual + 1)} />;
+}
+
+function ListaLogros({ reintentar }) {
   const [logros, setLogros] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
-  const [intento, setIntento] = useState(0);
 
   useEffect(() => {
-    if (rol !== "alumno" && rol !== "profesor") return undefined;
 
     let activo = true;
-    setCargando(true);
+
     obtenerLogros()
       .then((respuesta) => {
         if (!activo) return;
@@ -34,9 +39,7 @@ export default function LogrosPerfil({ rol }) {
     return () => {
       activo = false;
     };
-  }, [rol, intento]);
-
-  if (rol !== "alumno" && rol !== "profesor") return null;
+  }, []);
 
   const obtenidos = logros.filter((logro) => logro.estado === "obtenido");
 
@@ -57,7 +60,7 @@ export default function LogrosPerfil({ rol }) {
       {!cargando && error && (
         <div>
           <p className="res-error" role="alert">{error}</p>
-          <button type="button" className="res-boton" onClick={() => setIntento((actual) => actual + 1)}>
+          <button type="button" className="res-boton" onClick={reintentar}>
             Reintentar
           </button>
         </div>

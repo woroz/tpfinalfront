@@ -113,6 +113,9 @@ export default function Navbar() {
             <NavLink className={claseLink} to="/mis-clases">
               Mis clases
             </NavLink>
+            <NavLink className={claseLink} to="/tareas">
+              Tareas
+            </NavLink>
             <NavLink className={claseLink} to="/mis-pagos">
               Mis pagos
             </NavLink>

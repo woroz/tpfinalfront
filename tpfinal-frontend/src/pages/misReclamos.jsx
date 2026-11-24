@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { estadoReclamoLabel } from "../components/ReclamoClase";
+import { estadoReclamoLabel } from "../utils/reclamos";
 import { obtenerMisReclamos } from "../services/api";
 
 export default function MisReclamos() {

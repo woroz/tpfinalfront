@@ -1,4 +1,3 @@
-import Tareas from "../components/Tareas";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -10,6 +9,7 @@ import { useAuth } from "../context/authContext";
 import TranscripcionClase from "../components/TranscripcionClase";
 import ResenaClase from "../components/ResenaClase";
 import ReclamoClase from "../components/ReclamoClase";
+import TareasClase from "../components/TareasClase";
 import "../styles/misClases.css";
 import QuizzesAlumno from "../components/QuizzesAlumno";
 
@@ -46,7 +46,6 @@ export default function MisClases() {
       || (
         Number.isFinite(Date.parse(item.clase.fin))
         && Date.parse(item.clase.fin) <= ahora
-        && (item.asistio || item.profesor.resenaHecha)
       )
     ))
     : inscripciones;
@@ -108,8 +107,6 @@ export default function MisClases() {
           <h1>Mis clases</h1>
           <p>Consultá tus clases agendadas y completá los pagos pendientes.</p>
         </header>
-
-        <Tareas />
         <div className="res-pestanias" role="tablist">
           <button type="button" role="tab" aria-selected={!historial} className={!historial ? "activo" : ""} onClick={() => cambiarVista(false)}>
             Próximas
@@ -193,6 +190,7 @@ export default function MisClases() {
                     <p>Tu profesor todavía no registró calificaciones o notas para esta clase.</p>
                   )}
                 </section>
+                {item.estado === "confirmada" && <TareasClase idClase={item.clase.id_clase} />}
                 <br></br>
                 <TranscripcionClase idClase={item.clase.id_clase} />
                 <QuizzesAlumno idClase={item.clase.id_clase} />

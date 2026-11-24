@@ -434,7 +434,7 @@ useEffect(() => {
               <p>Revisá las denuncias realizadas por los usuarios.</p>
             </div>
             <TablaReportesAdmin
-            reportes={reportes}
+            reportes={reportes} setReportes={setReportes}
             cargando={cargandoReportes}
             error={errorReportes}/>
             <div className="admin-seccion-encabezado">

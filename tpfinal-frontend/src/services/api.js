@@ -426,6 +426,42 @@ export async function obtenerActividadAlumnoDeClase(idClase) {
   return request(`/actividad-alumno/clases/${encodeURIComponent(idClase)}`);
 }
 
+export async function obtenerTareasClase(idClase) {
+  return request(`/tareas/clase/${encodeURIComponent(idClase)}`);
+}
+
+export async function obtenerMisTareas() {
+  return request("/tareas/misTareas");
+}
+
+export async function crearTarea(datos) {
+  return request("/tareas", { method: "POST", body: JSON.stringify(datos) });
+}
+
+export async function subirArchivoTarea(idTarea, archivo, tipo) {
+  const datos = new FormData();
+  datos.append("archivo", archivo);
+  return request(`/tareas/${encodeURIComponent(idTarea)}/${tipo}`, { method: "POST", body: datos });
+}
+
+export async function quitarArchivoEntrega(idTarea, idArchivo) {
+  return request(`/tareas/${encodeURIComponent(idTarea)}/archivos/${encodeURIComponent(idArchivo)}`, { method: "DELETE" });
+}
+
+export async function entregarTarea(idTarea, entregaTexto) {
+  return request(`/tareas/${encodeURIComponent(idTarea)}/entregar`, {
+    method: "POST",
+    body: JSON.stringify({ entregaTexto }),
+  });
+}
+
+export async function calificarTarea(idTarea, idAlumno, nota, comentario) {
+  return request(`/tareas/${encodeURIComponent(idTarea)}/alumnos/${encodeURIComponent(idAlumno)}/nota`, {
+    method: "POST",
+    body: JSON.stringify({ nota, comentario }),
+  });
+}
+
 export async function crearRegistroActividadAlumno(datos) {
   return request("/actividad-alumno", {
     method: "POST",
