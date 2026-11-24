@@ -1,4 +1,3 @@
-/* Contenedores de Estado (Carga y Errores) */
 .admin-status-container {
   display: flex;
   flex-direction: column;
@@ -28,11 +27,10 @@
 
 .admin-error-text {
   color: #dc2626;
-  margin: 0;
+  margin: 8px 0;
   font-weight: 500;
 }
 
-/* Contenedor Principal de la Tabla */
 .admin-table-wrapper {
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
@@ -66,7 +64,6 @@
   border-radius: 9999px;
 }
 
-/* Estado Vacío */
 .admin-empty-state {
   padding: 48px;
   text-align: center;
@@ -74,7 +71,6 @@
   font-size: 0.937rem;
 }
 
-/* Estructura de la Tabla */
 .admin-responsive-scroll {
   overflow-x: auto;
   width: 100%;
@@ -95,6 +91,7 @@
   letter-spacing: 0.05em;
   color: #6b7280;
   border-bottom: 1px solid #f3f4f6;
+  white-space: nowrap;
 }
 
 .admin-main-table td {
@@ -109,7 +106,6 @@
   background-color: #f9fafb;
 }
 
-/* Celdas Específicas */
 .admin-td-date {
   color: #6b7280;
   white-space: nowrap;
@@ -143,15 +139,15 @@
   color: #4b5563;
 }
 
-/* Badges de Estado */
 .admin-badge-status {
   display: inline-flex;
   align-items: center;
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 4px 8px;
+  padding: 5px 9px;
   border-radius: 6px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .status-pendiente {
@@ -159,13 +155,96 @@
   color: #d97706;
 }
 
-.status-resuelto {
+.status-aceptado {
   background-color: #d1fae5;
   color: #065f46;
 }
 
-/* Animación del Spinner */
+.status-rechazado {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.admin-reporte-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-btn-aceptar,
+.admin-btn-rechazar {
+  border: none;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.admin-btn-aceptar {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.admin-btn-aceptar:hover:not(:disabled) {
+  background-color: #bbf7d0;
+}
+
+.admin-btn-rechazar {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.admin-btn-rechazar:hover:not(:disabled) {
+  background-color: #fecaca;
+}
+
+.admin-btn-aceptar:active:not(:disabled),
+.admin-btn-rechazar:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.admin-btn-aceptar:disabled,
+.admin-btn-rechazar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-reporte-acciones + span {
+  color: #6b7280;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
 @keyframes adminSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-main-table th,
+  .admin-main-table td {
+    padding: 12px 14px;
+  }
+
+  .admin-table-header-box {
+    padding: 16px;
+  }
+
+  .admin-reporte-acciones {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-btn-aceptar,
+  .admin-btn-rechazar {
+    width: 100%;
+  }
 }

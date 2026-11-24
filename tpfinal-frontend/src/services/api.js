@@ -93,6 +93,10 @@ export async function obtenerUsuarios(filtros = {}) {
   return request(`/admin/usuarios?${query}`);
 }
 
+export async function obtenerClasesAdmin() {
+  return request("/admin/clases");
+}
+
 export async function cambiarEstadoBloqueoProfesor(idUsuario, bloqueado) {
   return request(`/admin/usuarios/${encodeURIComponent(idUsuario)}/bloqueo`, {
     method: "PATCH",
@@ -552,23 +556,14 @@ export async function aceptarOfertaTablon(idSolicitud, idOferta) {
 }
 
 export async function obtenerReportesAdmin() {
-  const token = localStorage.getItem('token');
-  
-  const response = await fetch('/admin/reportes', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
+  return request("/admin/reportes");
+}
+
+export async function actualizarEstadoReporte(idReporte, estado) {
+  return request(`/admin/reportes/${encodeURIComponent(idReporte)}/estado`, {
+    method: "PATCH",
+    body: JSON.stringify({ estado }),
   });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || 'Error al obtener los reportes.');
-  }
-
-  return data;
 }
 
 export async function iniciarGrabacionClase(idClase) {
@@ -593,4 +588,51 @@ export async function obtenerUrlGrabacionClase(idClase) {
   return request(
     `/sala-videollamada/grabacion/url/${encodeURIComponent(idClase)}`
   );
+}
+export function solicitarTareas(ruta, method = "GET", datos) {
+  return request("/tareas" + ruta, {
+    method,
+    body: datos instanceof FormData ? datos : JSON.stringify(datos),
+  });
+}
+
+export async function crearQuiz(datos) {
+  return request("/quizzes", {
+    method: "POST",
+    body: JSON.stringify(datos),
+  });
+}
+
+export async function obtenerQuizzesClase(idClase) {
+  return request(`/quizzes/clase/${encodeURIComponent(idClase)}`);
+}
+
+export async function obtenerQuiz(idQuiz) {
+  return request(`/quizzes/${encodeURIComponent(idQuiz)}`);
+}
+
+export async function cambiarEstadoQuiz(idQuiz, estado) {
+  return request(`/quizzes/${encodeURIComponent(idQuiz)}/estado`, {
+    method: "PATCH",
+    body: JSON.stringify({ estado }),
+  });
+}
+
+export async function obtenerResultadosQuiz(idQuiz) {
+  return request(`/quizzes/${encodeURIComponent(idQuiz)}/resultados`);
+}
+
+export async function responderQuiz(idQuiz, respuestas) {
+  return request(`/quizzes/${encodeURIComponent(idQuiz)}/intentos`, {
+    method: "POST",
+    body: JSON.stringify({ respuestas }),
+  });
+}
+
+export async function obtenerMisIntentosQuiz(idQuiz) {
+  return request(`/quizzes/${encodeURIComponent(idQuiz)}/mis-intentos`);
+}
+
+export async function obtenerDetalleIntentoQuiz(idIntento) {
+  return request(`/quizzes/intentos/${encodeURIComponent(idIntento)}`);
 }

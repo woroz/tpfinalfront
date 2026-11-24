@@ -6,6 +6,7 @@ import {
   obtenerReclamosAdmin,
   obtenerReportesAdmin,
   obtenerUsuarios,
+  obtenerClasesAdmin
 } from "../services/api";
 import "../styles/Admin.css";
 import Navbar from "../components/Navbar";
@@ -28,6 +29,15 @@ export default function Admin() {
   const [reportes, setReportes] = useState([]);
   const [cargandoReportes, setCargandoReportes] = useState(true);
   const [errorReportes, setErrorReportes] = useState("");
+  const [busquedaUsuarios, setBusquedaUsuarios] = useState("");
+  const [filtroRol, setFiltroRol] = useState("");
+  const [paginaUsuarios, setPaginaUsuarios] = useState(1);
+  const [paginacionUsuarios, setPaginacionUsuarios] = useState(null);
+  const [clases, setClases] = useState([]);
+  const [cargandoClases, setCargandoClases] = useState(false);
+  const [errorClases, setErrorClases] = useState("");
+  const [paginaClases, setPaginaClases] = useState(1);
+  const LIMITE_CLASES = 10;
 
   useEffect(() => {
     if (seccionActiva !== "reportes") return undefined;
@@ -97,15 +107,24 @@ export default function Admin() {
   useEffect(() => {
     let activo = true;
 
-    obtenerUsuarios()
+    setCargando(true);
+    setError("");
+
+    obtenerUsuarios({
+      busqueda: busquedaUsuarios,
+      rol: filtroRol || undefined,
+      pagina: paginaUsuarios,
+      limite: 10,
+    })
       .then((data) => {
         if (activo) {
-          setUsuarios(data.usuarios);
+          setUsuarios(data.usuarios || []);
+          setPaginacionUsuarios(data.paginacion);
         }
       })
       .catch((err) => {
         if (activo) {
-          setError(err.message);
+          setError(err.message || "No se pudieron cargar los usuarios.");
         }
       })
       .finally(() => {
@@ -117,8 +136,9 @@ export default function Admin() {
     return () => {
       activo = false;
     };
-  }, []);
+  }, [busquedaUsuarios, filtroRol, paginaUsuarios]);
 
+  
   useEffect(() => {
   let activo = true;
 
@@ -169,10 +189,47 @@ useEffect(() => {
     };
   }, []);
 
+  useEffect(() => {
+  if (seccionActiva !== "clases") return undefined;
+  let activo = true;
+  setCargandoClases(true);
+  setErrorClases("");
+  obtenerClasesAdmin()
+    .then((data) => {
+      if (activo) {
+        console.log("Clases recibidas del backend:", data.clases);
+        console.log("Detalle de una clase:", data.clases[0]);
+        setClases(data.clases || []);
+      }
+    })
+    .catch((err) => {
+      if (activo) {
+        setErrorClases(
+          err.message || "No se pudieron cargar las clases."
+        );
+      }
+    })
+    .finally(() => {
+      if (activo) {
+        setCargandoClases(false);
+      }
+    });
+
+  return () => {
+    activo = false;
+  };
+}, [seccionActiva]);
+
+  const totalPaginasClases = Math.ceil(clases.length / LIMITE_CLASES);
+
+  const clasesPaginadas = clases.slice(
+    (paginaClases - 1) * LIMITE_CLASES,
+    paginaClases * LIMITE_CLASES
+  );
+
   const secciones = [
     { id: "dashboard", nombre: "Dashboard" },
     { id: "usuarios", nombre: "Usuarios" },
-    { id: "perfiles", nombre: "Profesores y alumnos" },
     { id: "clases", nombre: "Clases" },
     { id: "reportes", nombre: "Reportes y reclamos" },
   ];
@@ -242,11 +299,35 @@ useEffect(() => {
         {seccionActiva === "usuarios" && (
           <section className="admin-seccion-usuarios">
             <div className="admin-seccion-encabezado">
-              <div>
-                <h2>Usuarios registrados</h2>
-                <p>Listado de usuarios de MentorAr.</p>
-              </div>
+            <div>
+              <h2>Usuarios registrados</h2>
+              <p>Buscá y administrá los profesores y alumnos de MentorAr.</p>
             </div>
+          </div>
+
+          <div className="admin-filtros-usuarios">
+            <input
+              type="text"
+              placeholder="Buscar por nombre o correo electrónico..."
+              value={busquedaUsuarios}
+              onChange={(e) => {
+                setBusquedaUsuarios(e.target.value);
+                setPaginaUsuarios(1);
+              }}
+            />
+
+            <select
+              value={filtroRol}
+              onChange={(e) => {
+                setFiltroRol(e.target.value);
+                setPaginaUsuarios(1);
+              }}
+            >
+              <option value="">Todos los usuarios</option>
+              <option value="profesor">Profesores</option>
+              <option value="alumno">Alumnos</option>
+            </select>
+          </div>
 
             {cargando && <p>Cargando usuarios...</p>}
 
@@ -258,6 +339,7 @@ useEffect(() => {
             )}
 
             {!cargando && !error && usuarios.length > 0 && (
+            <>
               <div className="admin-tabla-contenedor">
                 <table className="admin-tabla">
                   <thead>
@@ -266,6 +348,7 @@ useEffect(() => {
                       <th>Correo electrónico</th>
                       <th>Rol</th>
                       <th>Fecha de registro</th>
+                      <th>Acciones</th>
                     </tr>
                   </thead>
 
@@ -275,52 +358,72 @@ useEffect(() => {
                         <td className="admin-nombre">{usuario.nombre}</td>
                         <td>{usuario.email}</td>
                         <td>
-                          <span
-                            className={`admin-rol admin-rol-${usuario.rol}`}
-                          >
+                          <span className={`admin-rol admin-rol-${usuario.rol}`}>
                             {usuario.rol}
                           </span>
                         </td>
                         <td>
-                          {new Date(usuario.createdAt).toLocaleDateString(
-                            "es-AR"
+                          {new Date(usuario.createdAt).toLocaleDateString("es-AR")}
+                        </td>
+                        <td>
+                          {usuario.rol === "profesor" ? (
+                            <div className="admin-acciones-bloqueo">
+                              <span
+                                className={`admin-estado ${
+                                  usuario.bloqueado ? "bloqueado" : "habilitado"
+                                }`}
+                              >
+                                {usuario.bloqueado ? "Bloqueado" : "Habilitado"}
+                              </span>
+
+                              <button
+                                className={`admin-boton-bloqueo ${
+                                  usuario.bloqueado ? "desbloquear" : "bloquear"
+                                }`}
+                                onClick={() => cambiarBloqueoProfesor(usuario)}
+                                disabled={actualizandoBloqueo === usuario.id_usuario}
+                              >
+                                {actualizandoBloqueo === usuario.id_usuario
+                                  ? "Actualizando..."
+                                  : usuario.bloqueado
+                                    ? "Desbloquear"
+                                    : "Bloquear"}
+                              </button>
+                            </div>
+                          ) : (
+                            <span>—</span>
                           )}
                         </td>
-                      <td>
-                      {usuario.rol === "profesor" ? (
-                        <div className="admin-acciones-bloqueo">
-                          <span
-                            className={`admin-estado ${
-                              usuario.bloqueado ? "bloqueado" : "habilitado"
-                            }`}
-                          >
-                            {usuario.bloqueado ? "Bloqueado" : "Habilitado"}
-                          </span>
-
-                          <button
-                            className={`admin-boton-bloqueo ${
-                              usuario.bloqueado ? "desbloquear" : "bloquear"
-                            }`}
-                            onClick={() => cambiarBloqueoProfesor(usuario)}
-                            disabled={actualizandoBloqueo === usuario.id_usuario}
-                          >
-                            {actualizandoBloqueo === usuario.id_usuario
-                              ? "Actualizando..."
-                              : usuario.bloqueado
-                                ? "Desbloquear"
-                                : "Bloquear"}
-                          </button>
-                        </div>
-                      ) : (
-                        <span>—</span>
-                      )}
-                    </td>
-                   </tr>
-                  ))}
+                      </tr>
+                    ))}
                   </tbody>
-                  </table>
-                  </div>
-                   )}
+                </table>
+              </div>
+
+              {paginacionUsuarios && paginacionUsuarios.totalPaginas > 1 && (
+                <div className="admin-paginacion">
+                  <button
+                    onClick={() => setPaginaUsuarios((pagina) => pagina - 1)}
+                    disabled={paginaUsuarios === 1}
+                  >
+                    Anterior
+                  </button>
+
+                  <span>
+                    Página {paginacionUsuarios.pagina} de{" "}
+                    {paginacionUsuarios.totalPaginas}
+                  </span>
+
+                  <button
+                    onClick={() => setPaginaUsuarios((pagina) => pagina + 1)}
+                    disabled={paginaUsuarios === paginacionUsuarios.totalPaginas}
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              )}
+            </>
+          )}
                   </section>
                  )}
 
@@ -331,7 +434,7 @@ useEffect(() => {
               <p>Revisá las denuncias realizadas por los usuarios.</p>
             </div>
             <TablaReportesAdmin
-            reportes={reportes}
+            reportes={reportes} setReportes={setReportes}
             cargando={cargandoReportes}
             error={errorReportes}/>
             <div className="admin-seccion-encabezado">
@@ -414,15 +517,118 @@ useEffect(() => {
           </section>
         )}
 
-        {["perfiles", "clases"].includes(seccionActiva) && (
-          <section className="admin-seccion-usuarios admin-proximamente">
-            <h2>
-              {secciones.find((seccion) => seccion.id === seccionActiva).nombre}
-            </h2>
-            <p>Esta sección estará disponible próximamente.</p>
-          </section>
+        
+{seccionActiva === "clases" && (
+  <section className="admin-seccion-usuarios">
+    <div className="admin-seccion-encabezado">
+      <div>
+        <h2>Clases registradas</h2>
+        <p>Consultá todas las clases creadas en MentorAr.</p>
+      </div>
+    </div>
+
+    {cargandoClases && <p>Cargando clases...</p>}
+
+    {errorClases && (
+      <p className="admin-error">{errorClases}</p>
+    )}
+
+    {!cargandoClases && !errorClases && clases.length === 0 && (
+      <p>No hay clases registradas.</p>
+    )}
+
+    {!cargandoClases && !errorClases && clases.length > 0 && (
+      <>
+        <div className="admin-tabla-contenedor">
+          <table className="admin-tabla">
+            <thead>
+              <tr>
+                <th>Clase</th>
+                <th>Profesor</th>
+                <th>Materia</th>
+                <th>Fecha y hora</th>
+                <th>Precio</th>
+                <th>Alumnos</th>
+                <th>Estado</th>
+                <th>Asistencia profesor</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {clasesPaginadas.map((clase) => (
+                <tr key={clase.id_clase}>
+                  <td>
+                    <strong>{clase.titulo}</strong>
+                    <small className="admin-reclamo-profesor">
+                      {clase.tema}
+                    </small>
+                  </td>
+
+                  <td>
+                    {clase.profesor?.usuario?.nombre || "Sin nombre"}
+                  </td>
+
+                  <td>
+                    {clase.materia?.nombreMateria || "Sin materia"}
+                  </td>
+
+                  <td>
+                    {new Date(clase.fecha_hora_inicio).toLocaleString("es-AR")}
+                  </td>
+
+                  <td>
+                    {clase.precio != null
+                      ? `$${clase.precio}`
+                      : "Sin precio"}
+                  </td>
+
+                  <td>
+                    {clase.inscripciones?.length || 0} / {clase.cupo_maximo}
+                  </td>
+
+                  <td>{clase.estado}</td>
+
+                  <td>
+                    <span
+                      className={`admin-asistencia ${
+                        clase.profesorAsistio ? "presente" : "ausente"
+                      }`}
+                    >
+                      {clase.profesorAsistio ? "Presente" : "Ausente"}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+                {totalPaginasClases > 1 && (
+          <div className="admin-paginacion">
+            <button
+              onClick={() => setPaginaClases((pagina) => pagina - 1)}
+              disabled={paginaClases === 1}
+            >
+              Anterior
+            </button>
+
+            <span>
+              Página {paginaClases} de {totalPaginasClases}
+            </span>
+
+            <button
+              onClick={() => setPaginaClases((pagina) => pagina + 1)}
+              disabled={paginaClases === totalPaginasClases}
+            >
+              Siguiente
+            </button>
+          </div>
         )}
-      </section>
-    </main>
+      </>
+    )}
+  </section>
+)}
+    </section>
+  </main>
   );
 }

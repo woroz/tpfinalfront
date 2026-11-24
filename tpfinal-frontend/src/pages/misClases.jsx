@@ -11,6 +11,7 @@ import ResenaClase from "../components/ResenaClase";
 import ReclamoClase from "../components/ReclamoClase";
 import TareasClase from "../components/TareasClase";
 import "../styles/misClases.css";
+import QuizzesAlumno from "../components/QuizzesAlumno";
 
 const ETIQUETAS = {
   confirmada: "Confirmada",
@@ -106,7 +107,6 @@ export default function MisClases() {
           <h1>Mis clases</h1>
           <p>Consultá tus clases agendadas y completá los pagos pendientes.</p>
         </header>
-
         <div className="res-pestanias" role="tablist">
           <button type="button" role="tab" aria-selected={!historial} className={!historial ? "activo" : ""} onClick={() => cambiarVista(false)}>
             Próximas
@@ -193,6 +193,7 @@ export default function MisClases() {
                 {item.estado === "confirmada" && <TareasClase idClase={item.clase.id_clase} />}
                 <br></br>
                 <TranscripcionClase idClase={item.clase.id_clase} />
+                <QuizzesAlumno idClase={item.clase.id_clase} />
               </div>
               <div className="res-item-lado">
                 <span className={`res-estado ${item.estado}`}>{ETIQUETAS[item.estado] || item.estado}</span>

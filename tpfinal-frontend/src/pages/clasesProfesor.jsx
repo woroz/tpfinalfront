@@ -17,6 +17,7 @@ import { useAuth } from "../context/authContext";
 import TranscripcionClase from "../components/TranscripcionClase";
 import RegistroActividadClase from "../components/RegistroActividadClase";
 import TareasClase from "../components/TareasClase";
+import QuizzesProfesor from "../components/QuizzesProfesor";
 
 const MAX_PDF = 4 * 1024 * 1024;
 const MAX_PDFS = 10;
@@ -421,6 +422,7 @@ export default function ClasesProfesor() {
                   <TranscripcionClase idClase={clase.id_clase} esProfesor />
                 </div>
                 <TareasClase idClase={clase.id_clase} esProfesor alumnos={clase.alumnos} />
+                <QuizzesProfesor clase={clase} />
                 {historial && <RegistroActividadClase idClase={clase.id_clase} />}
               </div>
               <div className="res-item-lado">
