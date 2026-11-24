@@ -1941,9 +1941,10 @@
 .mis-clases-registros {
   margin-top: 16px;
   padding: 14px;
-  border: 1px solid #dce5f4;
+  border: 1px solid var(--border, #dce5f4);
   border-radius: 10px;
-  background: #f8faff;
+  background: var(--surface-soft, #f8faff);
+  color: var(--text, #172235);
 }
 
 .registro-actividad-toggle,
@@ -1951,10 +1952,10 @@
 .registro-actividad-acciones button,
 .registro-actividad-lista button {
   padding: 8px 12px;
-  border: 1px solid #cbd8ee;
+  border: 1px solid var(--border, #cbd8ee);
   border-radius: 7px;
-  background: #fff;
-  color: #2457a7;
+  background: var(--surface, #fff);
+  color: var(--brand, #2457a7);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -1963,20 +1964,20 @@
 .registro-actividad-contenido > p,
 .mis-clases-registros > p,
 .registro-actividad-alumno > p {
-  color: #667085;
+  color: var(--text-muted, #667085);
   font-size: 14px;
 }
 
 .registro-actividad-alumno {
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 1px solid #e4eaf4;
+  border-top: 1px solid var(--border, #e4eaf4);
 }
 
 .registro-actividad-alumno h3,
 .mis-clases-registros h3 {
   margin: 0 0 10px;
-  color: #172235;
+  color: var(--text, #172235);
   font-size: 16px;
 }
 
@@ -1993,9 +1994,9 @@
   justify-content: space-between;
   gap: 12px;
   padding: 10px;
-  border: 1px solid #e4eaf4;
+  border: 1px solid var(--border, #e4eaf4);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface, #fff);
 }
 
 .registro-actividad-lista li > div {
@@ -2004,7 +2005,7 @@
 }
 
 .registro-actividad-lista span {
-  color: #2457a7;
+  color: var(--brand, #2457a7);
   font-weight: 600;
 }
 
@@ -2018,15 +2019,15 @@
   gap: 10px;
   margin-top: 12px;
   padding: 12px;
-  border: 1px solid #dce5f4;
+  border: 1px solid var(--border, #dce5f4);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface, #fff);
 }
 
 .registro-actividad-form label {
   display: grid;
   gap: 5px;
-  color: #344054;
+  color: var(--text, #344054);
   font-size: 14px;
   font-weight: 600;
 }
@@ -2035,9 +2036,10 @@
 .registro-actividad-form textarea {
   width: 100%;
   padding: 9px 10px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--border, #cbd5e1);
   border-radius: 7px;
-  color: #172235;
+  color: var(--text, #172235);
+  background: var(--surface, #fff);
   font: inherit;
 }
 

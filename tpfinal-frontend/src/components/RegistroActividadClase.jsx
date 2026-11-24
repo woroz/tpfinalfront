@@ -4,6 +4,7 @@ import {
   crearRegistroActividadAlumno,
   obtenerActividadAlumnoDeClase,
 } from "../services/api";
+import { interpretarNota } from "../utils/tareas";
 
 const FORMULARIO_VACIO = {
   id_registro: null,
@@ -59,9 +60,16 @@ export default function RegistroActividadClase({ idClase }) {
       return;
     }
 
+    let calificacion;
+    try {
+      calificacion = tieneCalificacion ? interpretarNota(String(formulario.calificacion)) : null;
+    } catch (err) {
+      setError(err.message);
+      return;
+    }
     const datos = {
       actividad: formulario.actividad.trim() || null,
-      calificacion: tieneCalificacion ? Number(formulario.calificacion) : null,
+      calificacion,
       nota: formulario.nota.trim() || null,
     };
     setGuardando(true);
@@ -96,11 +104,11 @@ export default function RegistroActividadClase({ idClase }) {
           setAbierto((actual) => !actual);
         }}
       >
-        {abierto ? "Ocultar seguimiento de alumnos" : "Registrar actividad de alumnos"}
+        {abierto ? "Ocultar seguimiento de alumnos" : "Seguimiento de la clase"}
       </button>
       {abierto && (
         <div className="registro-actividad-contenido">
-          <p>Las calificaciones y notas solo las pueden consultar vos y el alumno.</p>
+          <p>Este seguimiento es independiente de las tareas y sus notas. Solo vos y el alumno pueden consultarlo.</p>
           {error && <p className="res-error" role="alert">{error}</p>}
           {cargando && <p className="res-mensaje">Cargando alumnos…</p>}
           {!cargando && alumnos.length === 0 && (
@@ -128,7 +136,7 @@ export default function RegistroActividadClase({ idClase }) {
                 <p>Aún no hay registros para este alumno.</p>
               )}
               <button type="button" className="registro-actividad-nuevo" onClick={() => iniciarNuevo(alumno)}>
-                + Agregar calificación o nota
+                + Agregar seguimiento
               </button>
               {formulario?.id_alumno === alumno.id_alumno && (
                 <form className="registro-actividad-form" onSubmit={guardar}>
@@ -143,10 +151,11 @@ export default function RegistroActividadClase({ idClase }) {
                     />
                   </label>
                   <label>
-                    Calificación numérica (opcional)
+                    Calificación de la clase (opcional, de 0 a 10)
                     <input
                       type="number"
                       min="0"
+                      max="10"
                       step="any"
                       value={formulario.calificacion}
                       onChange={(event) => setFormulario((actual) => ({ ...actual, calificacion: event.target.value }))}
@@ -163,7 +172,7 @@ export default function RegistroActividadClase({ idClase }) {
                   </label>
                   <div className="registro-actividad-acciones">
                     <button type="submit" disabled={guardando}>
-                      {guardando ? "Guardando…" : "Guardar"}
+                      {guardando ? "Guardando…" : "Guardar seguimiento"}
                     </button>
                     <button type="button" onClick={() => setFormulario(null)} disabled={guardando}>
                       Cancelar

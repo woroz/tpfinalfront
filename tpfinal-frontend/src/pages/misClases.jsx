@@ -9,6 +9,7 @@ import { useAuth } from "../context/authContext";
 import TranscripcionClase from "../components/TranscripcionClase";
 import ResenaClase from "../components/ResenaClase";
 import ReclamoClase from "../components/ReclamoClase";
+import TareasClase from "../components/TareasClase";
 import "../styles/misClases.css";
 
 const ETIQUETAS = {
@@ -44,7 +45,6 @@ export default function MisClases() {
       || (
         Number.isFinite(Date.parse(item.clase.fin))
         && Date.parse(item.clase.fin) <= ahora
-        && (item.asistio || item.profesor.resenaHecha)
       )
     ))
     : inscripciones;
@@ -190,6 +190,7 @@ export default function MisClases() {
                     <p>Tu profesor todavía no registró calificaciones o notas para esta clase.</p>
                   )}
                 </section>
+                {item.estado === "confirmada" && <TareasClase idClase={item.clase.id_clase} />}
                 <br></br>
                 <TranscripcionClase idClase={item.clase.id_clase} />
               </div>

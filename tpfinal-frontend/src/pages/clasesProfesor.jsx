@@ -16,6 +16,7 @@ import { formatearFecha, formatearHora, formatearPrecio } from "../utils/fechas"
 import { useAuth } from "../context/authContext";
 import TranscripcionClase from "../components/TranscripcionClase";
 import RegistroActividadClase from "../components/RegistroActividadClase";
+import TareasClase from "../components/TareasClase";
 
 const MAX_PDF = 4 * 1024 * 1024;
 const MAX_PDFS = 10;
@@ -419,6 +420,7 @@ export default function ClasesProfesor() {
                 <div className="clases-profesor-transcripcion">
                   <TranscripcionClase idClase={clase.id_clase} esProfesor />
                 </div>
+                <TareasClase idClase={clase.id_clase} esProfesor alumnos={clase.alumnos} />
                 {historial && <RegistroActividadClase idClase={clase.id_clase} />}
               </div>
               <div className="res-item-lado">
